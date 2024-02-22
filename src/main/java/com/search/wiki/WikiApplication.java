@@ -1,4 +1,4 @@
-package com.search.wiki;
+package W;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
