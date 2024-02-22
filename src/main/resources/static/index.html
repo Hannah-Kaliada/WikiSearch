@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WikiSearch</title>
+    <link rel="icon" href="http://s1.iconbird.com/ico/2014/1/595/w32h321390845934W32.png">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: flex-start;
+            height: 100vh;
+            flex-direction: column;
+            background-color: rgba(240, 240, 240, 0.8);
+        }
+        #header {
+            background: linear-gradient(to right, rgba(200, 200, 200, 0.1), rgba(180, 180, 180, 1));
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            font-size: 2em;
+            font-family: 'Rubik', sans-serif;
+            font-weight: 300;
+        }
+        #header h1 {
+            text-align: left;
+            display: inline;
+            padding-left: 120px;
+        }
+        #searchBox {
+            border: 1px solid black;
+            padding: 20px;
+            width: 50%;
+            margin-top: 20px;
+        }
+        #wiki-logo {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div id="header">
+    <img id="wiki-logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png" alt="Wikipedia Logo">
+    <h1>WikiSearch</h1>
+</div>
+<hr>
+<div id="searchBox">
+    <form action="http://localhost:8080/api/v1/search/getSearchResult" method="get">
+        <input type="text" id="word" name="word" required>
+        <input type="submit" value="See JSON">
+    </form>
+</div>
+</body>
+</html>
