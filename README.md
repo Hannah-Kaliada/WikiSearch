@@ -14,7 +14,7 @@
     <h2>Setup</h2>
 <p>Follow these steps to set up and run the service:</p>
 <ol>
-    <li>Clone the repository: <code>git clone https://github.com/Hannah-Kaliada/wikiservice.git</code></li>
+    <li>Clone the repository: <code>git clone https://github.com/Hannah-Kaliada/WikiSearch.git</code></li>
     <li>Build the project:</li>
         <ul>
             <li>For macOS:</li>
@@ -25,9 +25,9 @@
     <li>Run the service:</li>
         <ul>
             <li>For macOS:</li>
-                <code>./mvnw exec:java -Dexec.mainClass="il.wikisearch.wikiservice.WikiserviceApplication"</code>
+                <code>./mvnw exec:java -Dexec.mainClass="com.search.wiki.WikiApplication"</code>
             <li>For Windows:</li>
-                <code>mvnw exec:java -Dexec.mainClass="il.wikisearch.wikiservice.WikiserviceApplication"</code>
+                <code>mvnw exec:java -Dexec.mainClass="com.search.wiki.WikiApplication"</code>
         </ul>
 </ol>
     <h2>Code Quality</h2>
