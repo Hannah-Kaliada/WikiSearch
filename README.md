@@ -32,5 +32,3 @@
 </ol>
     <h2>Code Quality</h2>
    <p><a href="https://sonarcloud.io/summary/overall?id=Hannah-Kaliada_wikiservice">View the overall code quality status on SonarCloud.</a></p>
-
-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
