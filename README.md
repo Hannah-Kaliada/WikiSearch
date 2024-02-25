@@ -3,7 +3,7 @@
 <p>This service takes a term/word as input and retrieves relevant text from Wikipedia using the Wikipedia API.</p>
  <h2>API Documentation</h2>
 <p>The service uses the Wikipedia API for retrieving information. You can find more about the API in the official documentation:</p>
- <p><a href="https://en.wikipedia.org/w/api.php">Wikipedia API Documentation</a></p>
+ <p><a href="https://en.wikipedia.org/w/api.php" target="_blank">Wikipedia API Documentation</a></p>
      <h2>Example Request</h2>
     <p>Make a GET request to the following endpoint:</p>
     <pre>
@@ -31,4 +31,4 @@
         </ul>
 </ol>
     <h2>Code Quality</h2>
-   <p><a href="https://sonarcloud.io/summary/overall?id=Hannah-Kaliada_WikiSearch">View the overall code quality status on SonarCloud.</a></p>
+   <p><a href="https://sonarcloud.io/summary/overall?id=Hannah-Kaliada_WikiSearch" target="_blank">View the overall code quality status on SonarCloud.</a></p>
