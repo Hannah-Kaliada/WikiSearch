@@ -31,4 +31,4 @@
         </ul>
 </ol>
     <h2>Code Quality</h2>
-   <p><a href="https://sonarcloud.io/summary/overall?id=Hannah-Kaliada_wikiservice">View the overall code quality status on SonarCloud.</a></p>
+   <p><a href="https://sonarcloud.io/summary/overall?id=Hannah-Kaliada_WikiSearch">View the overall code quality status on SonarCloud.</a></p>
