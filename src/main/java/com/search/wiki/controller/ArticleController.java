@@ -38,20 +38,20 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable long id) {
+    public ResponseEntity<String> findById(@PathVariable long id) {
         Article article = service.findById(id);
         if (article != null) {
-            return ResponseEntity.ok(article);
+            return ResponseEntity.ok(article.toString());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article not found");
         }
     }
 
     @PutMapping("updateArticle")
-    public ResponseEntity<?> updateArticle(@RequestBody Article article) {
+    public ResponseEntity<String> updateArticle(@RequestBody Article article) {
         Article updatedArticle = service.updateArticle(article);
         if (updatedArticle != null) {
-            return ResponseEntity.ok(updatedArticle);
+            return ResponseEntity.ok(updatedArticle.toString());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article not found");
         }
