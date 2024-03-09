@@ -16,10 +16,13 @@ import java.util.List;
 @RequestMapping("api/v1")
 @AllArgsConstructor
 public class ArticleController {
+    private static final String ARTICLE_NOT_FOUND_MESSAGE = "Article not found";
+
     @NonNull
     private final ArticleService service;
     @NonNull
     private final WikipediaApiService wikipediaApiService;
+
     @GetMapping("getAllArticles")
     public ResponseEntity<List<Article>> findAllArticles() {
         List<Article> articles = service.findAllArticles();
@@ -43,7 +46,7 @@ public class ArticleController {
         if (article != null) {
             return ResponseEntity.ok(article.toString());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
         }
     }
 
@@ -53,7 +56,7 @@ public class ArticleController {
         if (updatedArticle != null) {
             return ResponseEntity.ok(updatedArticle.toString());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
         }
     }
 
@@ -63,7 +66,7 @@ public class ArticleController {
         if (deleted) {
             return ResponseEntity.ok("Article deleted successfully!");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Article not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
         }
     }
 }
