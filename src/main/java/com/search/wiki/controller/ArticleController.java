@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-//todo:change to /api/v1/articles
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/articles")
 @AllArgsConstructor
 public class ArticleController {
     private static final String ARTICLE_NOT_FOUND_MESSAGE = "Article not found";
@@ -24,7 +23,7 @@ public class ArticleController {
     @NonNull
     private final WikipediaApiService wikipediaApiService;
 
-    @GetMapping("getAllArticles")//todo:delete getAllArticles
+    @GetMapping()
     public ResponseEntity<List<Article>> findAllArticles() {
         List<Article> articles = service.findAllArticles();
         return ResponseEntity.ok(articles);
