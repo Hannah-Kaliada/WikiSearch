@@ -27,7 +27,7 @@ public class QueryController {
     @GetMapping("/getSearchResult")
     public String getSearchResult(@RequestParam String searchTerm) {
         Query query = new Query(searchTerm);
-        List<Article> articles = wikipediaApiService.search(query);
+        wikipediaApiService.search(query);
         return "";
     }
 }
