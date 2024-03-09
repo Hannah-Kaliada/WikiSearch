@@ -28,17 +28,6 @@ public class QueryController {
     public String getSearchResult(@RequestParam String searchTerm) {
         Query query = new Query(searchTerm);
         List<Article> articles = wikipediaApiService.search(query);
-
-        // Iterate through the list of articles and print information
-        for (Article article : articles) {
-            System.out.println("Title: " + article.getTitle());
-            System.out.println("URL: " + article.getUrl());
-            System.out.println("Snippet: " + article.getSnippet());
-            System.out.println("Image Path: " + article.getImagePath());
-            System.out.println();
-        }
-
-        // You can return a response or simply return an empty string for this example
         return "";
     }
 }
