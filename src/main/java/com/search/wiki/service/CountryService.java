@@ -1,6 +1,6 @@
 package com.search.wiki.service;
 
-import com.search.wiki.model.Country;
+import com.search.wiki.entity.Country;
 
 import java.util.List;
 

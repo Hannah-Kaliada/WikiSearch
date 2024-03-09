@@ -1,6 +1,6 @@
 package com.search.wiki.service.impl;
 
-import com.search.wiki.model.Country;
+import com.search.wiki.entity.Country;
 import com.search.wiki.repository.CountryDAO;
 import com.search.wiki.service.CountryService;
 import org.springframework.stereotype.Service;

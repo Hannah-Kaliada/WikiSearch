@@ -1,5 +1,5 @@
-// com.search.wiki.model.Query.java
-package com.search.wiki.model;
+// com.search.wiki.entity.Query.java
+package com.search.wiki.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

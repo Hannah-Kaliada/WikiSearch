@@ -1,7 +1,7 @@
 package com.search.wiki.service;
 
-import com.search.wiki.model.Article;
-import com.search.wiki.model.Query;
+import com.search.wiki.entity.Article;
+import com.search.wiki.entity.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

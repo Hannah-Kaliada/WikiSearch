@@ -1,6 +1,6 @@
 package com.search.wiki.service.impl;
 
-import com.search.wiki.model.Article;
+import com.search.wiki.entity.Article;
 import com.search.wiki.repository.ArticleRepository;
 import com.search.wiki.service.ArticleService;
 import lombok.AllArgsConstructor;

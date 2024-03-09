@@ -1,4 +1,4 @@
-package com.search.wiki.model;
+package com.search.wiki.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

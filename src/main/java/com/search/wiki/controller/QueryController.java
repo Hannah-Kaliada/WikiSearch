@@ -1,7 +1,6 @@
 package com.search.wiki.controller;
 
-import com.search.wiki.model.Article;
-import com.search.wiki.model.Query;
+import com.search.wiki.entity.Query;
 import com.search.wiki.service.WikipediaApiService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @Data

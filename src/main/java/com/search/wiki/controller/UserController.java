@@ -2,8 +2,8 @@ package com.search.wiki.controller;
 
 import com.search.wiki.controller.dto.CountryDTO;
 import com.search.wiki.controller.dto.UserDTO;
-import com.search.wiki.model.Country;
-import com.search.wiki.model.User;
+import com.search.wiki.entity.Country;
+import com.search.wiki.entity.User;
 import com.search.wiki.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,10 +30,11 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getAllUsersWithCountries() {
-        List<User> users = userService.getAllUsers();
+        List<User> users = userService.getAllUsersWithCountries();
         List<UserDTO> userDTOList = convertToDTOList(users);
         return new ResponseEntity<>(userDTOList, HttpStatus.OK);
     }
+
 
 
 

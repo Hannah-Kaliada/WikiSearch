@@ -1,6 +1,6 @@
 package com.search.wiki.service.impl;
 
-import com.search.wiki.model.Country;
+import com.search.wiki.entity.Country;
 import com.search.wiki.repository.CountryRepository;
 import com.search.wiki.service.CountryService;
 import lombok.AllArgsConstructor;

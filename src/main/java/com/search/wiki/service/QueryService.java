@@ -1,7 +1,6 @@
 package com.search.wiki.service;
 
-import com.search.wiki.model.Query;
-import lombok.Builder;
+import com.search.wiki.entity.Query;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,6 @@
 package com.search.wiki.repository;
 
-import com.search.wiki.model.User;
+import com.search.wiki.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

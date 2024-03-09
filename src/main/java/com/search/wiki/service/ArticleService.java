@@ -1,6 +1,6 @@
 package com.search.wiki.service;
 
-import com.search.wiki.model.Article;
+import com.search.wiki.entity.Article;
 
 import java.util.List;
 

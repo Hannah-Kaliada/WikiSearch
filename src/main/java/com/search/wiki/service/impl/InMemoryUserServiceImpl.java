@@ -1,6 +1,6 @@
 package com.search.wiki.service.impl;
 
-import com.search.wiki.model.User;
+import com.search.wiki.entity.User;
 import com.search.wiki.repository.UserDAO;
 import com.search.wiki.service.UserService;
 import org.springframework.stereotype.Service;
@@ -38,6 +38,11 @@ public class InMemoryUserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
+        return repository.findAllUsers();
+    }
+    @Override
+    public List<User> getAllUsersWithCountries()
+    {
         return repository.findAllUsers();
     }
 }

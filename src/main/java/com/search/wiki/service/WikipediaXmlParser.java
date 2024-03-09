@@ -1,6 +1,6 @@
 package com.search.wiki.service;
 
-import com.search.wiki.model.Article;
+import com.search.wiki.entity.Article;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.search.wiki.controller;
 
-import com.search.wiki.model.Article;
-import com.search.wiki.model.Query;
+import com.search.wiki.entity.Article;
+import com.search.wiki.entity.Query;
 import com.search.wiki.service.ArticleService;
 import com.search.wiki.service.WikipediaApiService;
 import lombok.AllArgsConstructor;

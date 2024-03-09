@@ -1,10 +1,12 @@
 package com.search.wiki.service;
 
-import com.search.wiki.model.User;
+import com.search.wiki.entity.User;
 
 import java.util.List;
 
-public interface UserService {
+public interface
+UserService {
+    List<User> getAllUsersWithCountries();
     User addUser(User user);
     User getUserById(long id);
     User updateUser(User user);

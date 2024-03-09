@@ -1,6 +1,6 @@
 package com.search.wiki.repository;
 
-import com.search.wiki.model.Country;
+import com.search.wiki.entity.Country;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

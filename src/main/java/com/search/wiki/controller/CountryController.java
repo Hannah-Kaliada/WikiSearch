@@ -1,6 +1,6 @@
 package com.search.wiki.controller;
 
-import com.search.wiki.model.Country;
+import com.search.wiki.entity.Country;
 import com.search.wiki.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
