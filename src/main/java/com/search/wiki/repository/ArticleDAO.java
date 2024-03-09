@@ -9,23 +9,23 @@ import java.util.Optional;
 
 @Repository
 public class ArticleDAO {
-    private final List<Article> ARTICLES = new ArrayList<>();
+    private final List<Article> articles = new ArrayList<>();
 
     public List<Article> findAllArticles() {
-        return ARTICLES;
+        return articles;
     }
 
     public Article saveArticle(Article article) {
-        ARTICLES.add(article);
+        articles.add(article);
         return article;
     }
 
     public Article findById(long id) {
-        return ARTICLES.stream().filter(article -> article.getId() == id).findFirst().orElse(null);
+        return articles.stream().filter(article -> article.getId() == id).findFirst().orElse(null);
     }
 
     public Article updateArticle(Article article) {
-        Optional<Article> existingArticle = ARTICLES.stream().filter(a -> a.getId() == article.getId()).findFirst();
+        Optional<Article> existingArticle = articles.stream().filter(a -> a.getId() == article.getId()).findFirst();
         existingArticle.ifPresent(a -> {
             a.setTitle(article.getTitle());
             a.setUrl(article.getUrl());
@@ -35,6 +35,6 @@ public class ArticleDAO {
         return article;
     }
     public boolean deleteArticle(long id) {
-        return ARTICLES.removeIf(article -> article.getId() == id);
+        return articles.removeIf(article -> article.getId() == id);
     }
 }
