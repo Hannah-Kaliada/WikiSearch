@@ -29,7 +29,6 @@ public class ArticleDAO {
         existingArticle.ifPresent(a -> {
             a.setTitle(article.getTitle());
             a.setUrl(article.getUrl());
-            a.setSnippet(article.getSnippet());
             a.setImagePath(article.getImagePath());
         });
         return article;

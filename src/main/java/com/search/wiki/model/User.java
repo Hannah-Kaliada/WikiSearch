@@ -1,12 +1,13 @@
 package com.search.wiki.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 public class User {
     @Id
     @GeneratedValue
