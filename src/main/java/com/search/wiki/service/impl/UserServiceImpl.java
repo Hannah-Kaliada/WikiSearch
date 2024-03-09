@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -32,11 +33,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User updateUser(User user) {
-        Country country = countryService.getCountryByName(user.getCountry().getName());
-        user.setCountry(country);
-        return repository.save(user);
+        Optional<User> existingUserOptional = repository.findById(user.getId());
+
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+
+            Country country = countryService.getCountryByName(user.getCountry().getName());
+
+            existingUser.setUsername(user.getUsername());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setPassword(user.getPassword());
+            existingUser.setCountry(country);
+
+            return repository.save(existingUser);
+        }
+
+        return null;
     }
+
 
     @Override
     @Transactional
