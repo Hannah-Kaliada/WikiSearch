@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SearchResult {
-    private String query;
+public class Country {
+    private long id;
+    private String name;
 }
