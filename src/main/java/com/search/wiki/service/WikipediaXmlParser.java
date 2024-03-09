@@ -1,6 +1,8 @@
 package com.search.wiki.service;
 
 import com.search.wiki.model.Article;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Service
 public class WikipediaXmlParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(WikipediaXmlParser.class);
 
     public List<Article> parseXml(String xml) {
         List<Article> articles = new ArrayList<>();
@@ -44,7 +48,7 @@ public class WikipediaXmlParser {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error parsing XML: {}", e.getMessage(), e);
         }
 
         return articles;
