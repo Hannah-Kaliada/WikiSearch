@@ -1,4 +1,4 @@
-package com.search.wiki.service.Impl;
+package com.search.wiki.service.impl;
 
 import com.search.wiki.model.User;
 import com.search.wiki.repository.UserRepository;
