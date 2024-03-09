@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+//todo:change to /api/v1/articles
 @RequestMapping("api/v1")
 @AllArgsConstructor
 public class ArticleController {
@@ -23,7 +24,7 @@ public class ArticleController {
     @NonNull
     private final WikipediaApiService wikipediaApiService;
 
-    @GetMapping("getAllArticles")
+    @GetMapping("getAllArticles")//todo:delete getAllArticles
     public ResponseEntity<List<Article>> findAllArticles() {
         List<Article> articles = service.findAllArticles();
         return ResponseEntity.ok(articles);
@@ -31,11 +32,8 @@ public class ArticleController {
 
     @PostMapping("saveArticle")
     public ResponseEntity<String> saveArticle(@RequestBody Article article) {
-        // Save the provided article
         service.saveArticle(article);
-
-        // Trigger Wikipedia API search and save
-        Query query = new Query(article.getTitle()); // Assuming the article title is used as the search term
+        Query query = new Query(article.getTitle());
         wikipediaApiService.search(query);
         return ResponseEntity.status(HttpStatus.CREATED).body("Article saved successfully!");
     }
