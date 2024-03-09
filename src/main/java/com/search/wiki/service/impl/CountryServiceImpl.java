@@ -6,6 +6,7 @@ import com.search.wiki.service.CountryService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,13 +38,21 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public boolean deleteCountry(long id) {
-        try {
-            repository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            return false;
+    @Transactional
+    public boolean deleteCountry(long countryId) {
+        Country country = repository.findById(countryId).orElse(null);
+        if (country == null) {
+            return false; // Страна не найдена
         }
+
+        // Разорвать связи между страной и пользователями
+        country.getUsers().forEach(user -> user.setCountry(null));
+        country.getUsers().clear();
+
+        // Теперь можно удалить страну
+        repository.deleteById(countryId);
+
+        return true;
     }
 
     @Override

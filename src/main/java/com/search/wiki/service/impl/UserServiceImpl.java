@@ -1,11 +1,14 @@
 package com.search.wiki.service.impl;
 
+import com.search.wiki.model.Country;
 import com.search.wiki.model.User;
 import com.search.wiki.repository.UserRepository;
+import com.search.wiki.service.CountryService;
 import com.search.wiki.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,9 +17,12 @@ import java.util.List;
 @Primary
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
+    private final CountryService countryService;
 
     @Override
     public User addUser(User user) {
+        Country country = countryService.getCountryByName(user.getCountry().getName());
+        user.setCountry(country);
         return repository.save(user);
     }
 
@@ -27,17 +33,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
+        Country country = countryService.getCountryByName(user.getCountry().getName());
+        user.setCountry(country);
         return repository.save(user);
     }
 
     @Override
-    public boolean deleteUser(long id) {
-        try {
-            repository.deleteById(id);
-            return true;
-        } catch (Exception e) {
+    @Transactional
+    public boolean deleteUser(long userId) {
+        User user = repository.findById(userId).orElse(null);
+        if (user == null) {
             return false;
         }
+        repository.deleteById(userId);
+        return true;
     }
 
     @Override
