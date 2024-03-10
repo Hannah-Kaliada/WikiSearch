@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,14 +22,13 @@ public class UserWithCountryService {
     public List<UserDTO> getAllUsersInCountry(Long countryId) {
         Country country = countryService.getCountryById(countryId);
         if (country != null) {
-            List<UserDTO> usersInCountry = userService.getAllUsers()
+            return userService.getAllUsers()
                     .stream()
                     .filter(user -> country.equals(user.getCountry()))
                     .map(this::convertToDTO)
                     .toList();
-            return usersInCountry;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Transactional
@@ -61,20 +60,22 @@ public class UserWithCountryService {
         Country country = countryService.getCountryById(countryId);
 
         if (user != null && country != null) {
-            user.setCountry(country);
-            userService.updateUser(user);
+            if (user.getCountry() != null) {
+                user.getCountry().setName(country.getName());
+                userService.updateUser(user);
+            } else {
+                user.setCountry(country);
+                userService.updateUser(user);
+            }
             return convertToDTO(user);
         }
-
         return null;
     }
-
     @Transactional
     public List<UserDTO> getAllUsersWithCountries() {
         List<User> users = userService.getAllUsers();
-        return users.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return users.stream().map(this::convertToDTO).toList();
     }
-
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
 
