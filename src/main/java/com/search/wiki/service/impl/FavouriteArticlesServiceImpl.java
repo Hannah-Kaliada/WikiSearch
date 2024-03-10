@@ -134,7 +134,6 @@ public class FavouriteArticlesServiceImpl implements FavouriteArticlesService {
             articleDTO.setUrl(article.getUrl());
             articleDTO.setImagePath(article.getImagePath());
             articleDTOSet.add(articleDTO);
-            System.out.println("Converted article with ID " + article.getId() + " to DTO");
         });
         return articleDTOSet;
     }
