@@ -17,7 +17,6 @@ import java.util.Optional;
 @Primary
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
-    private final CountryService countryService;
 
     @Override
     public User addUser(User user) {
