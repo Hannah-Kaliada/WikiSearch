@@ -22,13 +22,14 @@ public class UserWithCountryService {
     public List<UserDTO> getAllUsersInCountry(Long countryId) {
         Country country = countryService.getCountryById(countryId);
         if (country != null) {
-            List<User> usersInCountry = userService.getAllUsers()
+            List<UserDTO> usersInCountry = userService.getAllUsers()
                     .stream()
                     .filter(user -> country.equals(user.getCountry()))
-                    .collect(Collectors.toList());
-            return usersInCountry.stream().map(this::convertToDTO).collect(Collectors.toList());
+                    .map(this::convertToDTO)
+                    .toList();
+            return usersInCountry;
         }
-        return null; // Handle the case when the country is not found
+        return null;
     }
 
     @Transactional
@@ -42,7 +43,7 @@ public class UserWithCountryService {
             return convertToDTO(user);
         }
 
-        return null; // Handle the case when the user or country is not found
+        return null;
     }
 
     @Transactional
@@ -52,7 +53,6 @@ public class UserWithCountryService {
             user.setCountry(null);
             userService.updateUser(user);
         }
-        // Handle the case when the user is not found
     }
 
     @Transactional
@@ -66,7 +66,7 @@ public class UserWithCountryService {
             return convertToDTO(user);
         }
 
-        return null; // Handle the case when the user or country is not found
+        return null;
     }
 
     @Transactional
@@ -76,21 +76,18 @@ public class UserWithCountryService {
     }
 
     private UserDTO convertToDTO(User user) {
-        // Convert User entity to UserDTO
         UserDTO userDTO = new UserDTO();
-        // Map user properties to userDTO properties
+
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
 
-        // Map country information
         Country country = user.getCountry();
         if (country != null) {
             CountryDTO countryDTO = new CountryDTO();
             countryDTO.setId(country.getId());
             countryDTO.setName(country.getName());
-            // ... (other properties)
             userDTO.setCountry(countryDTO);
         }
 

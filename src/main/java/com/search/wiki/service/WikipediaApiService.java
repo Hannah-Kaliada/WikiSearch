@@ -36,11 +36,10 @@ public class WikipediaApiService {
 
         List<Article> articles = wikipediaXmlParser.parseXml(xmlResponse);
 
-        // Save the fetched articles using the ArticleService
         for (Article article : articles) {
             articleService.saveArticle(article);
         }
 
-        return articles; // Return the list of articles if needed
+        return articles;
     }
 }

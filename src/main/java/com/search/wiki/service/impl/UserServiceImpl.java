@@ -1,13 +1,11 @@
 package com.search.wiki.service.impl;
 
-import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
 import com.search.wiki.repository.UserRepository;
 import com.search.wiki.service.CountryService;
 import com.search.wiki.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

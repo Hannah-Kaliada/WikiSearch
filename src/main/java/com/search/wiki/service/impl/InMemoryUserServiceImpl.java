@@ -41,5 +41,8 @@ public class InMemoryUserServiceImpl implements UserService {
         return repository.findAllUsers();
     }
     @Override
-    public void deleteUserCountry(Long userId){}
+    public void deleteUserCountry(Long userId){
+        // This method intentionally left empty or not implemented.
+        // It can't be used in the InMemoryUserServiceImpl class.
+    }
 }

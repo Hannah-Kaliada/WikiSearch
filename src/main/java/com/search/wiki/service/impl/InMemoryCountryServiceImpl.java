@@ -28,7 +28,7 @@ public class InMemoryCountryServiceImpl implements CountryService {
 
     @Override
     public Country getCountryByName(String name) {
-        return repository.findByName(name).orElse(null); // Handle the Optional here
+        return repository.findByName(name).orElse(null);
     }
 
     @Override

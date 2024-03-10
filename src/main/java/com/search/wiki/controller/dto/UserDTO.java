@@ -1,6 +1,5 @@
 package com.search.wiki.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data

@@ -42,14 +42,12 @@ public class CountryServiceImpl implements CountryService {
     public boolean deleteCountry(long countryId) {
         Country country = repository.findById(countryId).orElse(null);
         if (country == null) {
-            return false; // Страна не найдена
+            return false;
         }
 
-        // Разорвать связи между страной и пользователями
         country.getUsers().forEach(user -> user.setCountry(null));
         country.getUsers().clear();
 
-        // Теперь можно удалить страну
         repository.deleteById(countryId);
 
         return true;
