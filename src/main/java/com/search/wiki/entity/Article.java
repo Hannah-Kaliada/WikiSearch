@@ -21,7 +21,7 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
+    @Column(unique = true)
     private String title;
     private String url;
     private String imagePath;

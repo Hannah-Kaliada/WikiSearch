@@ -44,12 +44,9 @@ public class CountryServiceImpl implements CountryService {
         if (country == null) {
             return false;
         }
-
         country.getUsers().forEach(user -> user.setCountry(null));
         country.getUsers().clear();
-
         repository.deleteById(countryId);
-
         return true;
     }
 

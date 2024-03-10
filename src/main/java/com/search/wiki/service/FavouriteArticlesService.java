@@ -1,6 +1,7 @@
 package com.search.wiki.service;
 
 import com.search.wiki.controller.dto.FavouriteArticlesDTO;
+import com.search.wiki.entity.User;
 
 import java.util.Set;
 
@@ -17,5 +18,5 @@ public interface FavouriteArticlesService {
 
     FavouriteArticlesDTO getUserFavoriteArticles(Long userId);
 
-    Set<Long> getArticlesSavedByUser(Long articleId);
+    Set<User> getArticlesSavedByUser(Long articleId);
 }

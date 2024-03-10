@@ -1,6 +1,7 @@
 package com.search.wiki.controller;
 
 import com.search.wiki.controller.dto.FavouriteArticlesDTO;
+import com.search.wiki.entity.User;
 import com.search.wiki.service.FavouriteArticlesService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,15 +49,9 @@ public class FavouriteArticlesController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{userId}/get-favorites")
-    public ResponseEntity<FavouriteArticlesDTO> getUserFavoriteArticles(@PathVariable Long userId) {
-        FavouriteArticlesDTO favourites = favouriteArticlesService.getUserFavoriteArticles(userId);
-        return ResponseEntity.ok(favourites);
-    }
-
     @GetMapping("/{articleId}/get-saved-users")
-    public ResponseEntity<Set<Long>> getArticlesSavedByUser(@PathVariable Long articleId) {
-        Set<Long> savedUsers = favouriteArticlesService.getArticlesSavedByUser(articleId);
+    public ResponseEntity<Set<User>> getArticlesSavedByUser(@PathVariable Long articleId) {
+        Set<User> savedUsers = favouriteArticlesService.getArticlesSavedByUser(articleId);
         return ResponseEntity.ok(savedUsers);
     }
 }

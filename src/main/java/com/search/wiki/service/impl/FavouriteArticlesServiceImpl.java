@@ -114,16 +114,16 @@ public class FavouriteArticlesServiceImpl implements FavouriteArticlesService {
 
 
     @Override
-    public Set<Long> getArticlesSavedByUser(Long articleId) {
+    public Set<User> getArticlesSavedByUser(Long articleId) {
         Article article = articleRepository.findById(articleId).orElse(null);
-        Set<Long> userIds = new HashSet<>();
+        Set<User> users = new HashSet<>();
 
         if (article != null) {
-            article.getUsers().forEach(user -> userIds.add(user.getId()));
+            users.addAll(article.getUsers());
         }
-
-        return userIds;
+        return users;
     }
+
 
     private Set<ArticleDTO> convertToArticleDTOSet(Set<Article> articles) {
         Set<ArticleDTO> articleDTOSet = new HashSet<>();
