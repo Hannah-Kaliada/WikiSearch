@@ -1,6 +1,5 @@
 package com.search.wiki.controller;
 
-import com.search.wiki.controller.dto.FavouriteArticlesDTO;
 import com.search.wiki.entity.User;
 import com.search.wiki.service.FavouriteArticlesService;
 import lombok.AllArgsConstructor;
