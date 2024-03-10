@@ -57,18 +57,6 @@ public class UserServiceImpl implements UserService {
         return true;
     }
     @Override
-    @Transactional
-    public void deleteUserCountry(Long userId) {
-        Optional<User> userOptional = repository.findById(userId);
-
-        userOptional.ifPresent(user -> {
-            user.setCountry(null);
-            repository.save(user);
-        });
-    }
-
-
-    @Override
     public List<User> getAllUsers() {
         return repository.findAll();
     }

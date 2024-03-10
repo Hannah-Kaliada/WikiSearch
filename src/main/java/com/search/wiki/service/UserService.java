@@ -11,5 +11,4 @@ UserService {
     User updateUser(User user);
     boolean deleteUser(long id);
     List<User> getAllUsers();
-    public void deleteUserCountry(Long userId);
 }
