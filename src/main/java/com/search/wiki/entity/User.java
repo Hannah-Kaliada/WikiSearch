@@ -45,10 +45,6 @@ public class User {
     public Set<Article> getFavoriteArticles() {
         return favoriteArticles;
     }
-
-    public void setFavoriteArticles(Set<Article> favoriteArticles) {
-        this.favoriteArticles = favoriteArticles;
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
