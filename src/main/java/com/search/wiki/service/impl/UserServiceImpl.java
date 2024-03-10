@@ -23,8 +23,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
-        Country country = countryService.getCountryByName(user.getCountry().getName());
-        user.setCountry(country);
         return repository.save(user);
     }
 
@@ -40,14 +38,9 @@ public class UserServiceImpl implements UserService {
 
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
-
-            Country country = countryService.getCountryByName(user.getCountry().getName());
-
             existingUser.setUsername(user.getUsername());
             existingUser.setEmail(user.getEmail());
             existingUser.setPassword(user.getPassword());
-            existingUser.setCountry(country);
-
             return repository.save(existingUser);
         }
 
@@ -65,16 +58,21 @@ public class UserServiceImpl implements UserService {
         repository.deleteById(userId);
         return true;
     }
+    @Override
+    @Transactional
+    public void deleteUserCountry(Long userId) {
+        Optional<User> userOptional = repository.findById(userId);
+
+        userOptional.ifPresent(user -> {
+            user.setCountry(null);
+            repository.save(user);
+        });
+    }
+
 
     @Override
     public List<User> getAllUsers() {
         return repository.findAll();
     }
 
-    @Override
-    @Transactional
-    @EntityGraph(attributePaths = "country")
-    public List<User> getAllUsersWithCountries() {
-        return repository.findAll();
-    }
 }

@@ -28,7 +28,46 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/all")
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable long id) {
+        return userService.getUserById(id);
+    }
+
+    @PostMapping("/addUser")
+    public User addUser(@RequestBody User user) {
+        return userService.addUser(user);
+    }
+
+    @PutMapping("updateUser")
+    public User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
+    }
+
+    @DeleteMapping("deleteUser/{id}")
+    public boolean deleteUser(@PathVariable long id) {
+         return userService.deleteUser(id);
+    }
+}
+    /*@GetMapping("/userInfo/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        UserDTO userDTO = convertToDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+    private UserDTO convertToDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+
+        CountryDTO countryDTO = new CountryDTO();
+        countryDTO.setId(user.getCountry().getId());
+        countryDTO.setName(user.getCountry().getName());
+
+        userDTO.setCountry(countryDTO);
+        return userDTO;
+    }
+       /* @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getAllUsersWithCountries() {
         List<User> users = userService.getAllUsersWithCountries();
         List<UserDTO> userDTOList = convertToDTOList(users);
@@ -60,46 +99,4 @@ public class UserController {
                     return userDTO;
                 })
                 .toList();
-    }
-
-
-
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable long id) {
-        return userService.getUserById(id);
-    }
-
-    @PostMapping("/addUser")
-    public User addUser(@RequestBody User user) {
-        return userService.addUser(user);
-    }
-
-    @PutMapping("updateUser")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
-    }
-
-    @DeleteMapping("deleteUser/{id}")
-    public boolean deleteUser(@PathVariable long id) {
-        return userService.deleteUser(id);
-    }
-    @GetMapping("/userInfo/{userId}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
-        User user = userService.getUserById(userId);
-        UserDTO userDTO = convertToDTO(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
-    }
-    private UserDTO convertToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
-
-        CountryDTO countryDTO = new CountryDTO();
-        countryDTO.setId(user.getCountry().getId());
-        countryDTO.setName(user.getCountry().getName());
-
-        userDTO.setCountry(countryDTO);
-        return userDTO;
-    }
-}
+    }*/

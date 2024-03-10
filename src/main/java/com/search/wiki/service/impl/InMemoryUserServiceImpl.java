@@ -41,8 +41,5 @@ public class InMemoryUserServiceImpl implements UserService {
         return repository.findAllUsers();
     }
     @Override
-    public List<User> getAllUsersWithCountries()
-    {
-        return repository.findAllUsers();
-    }
+    public void deleteUserCountry(Long userId){}
 }
