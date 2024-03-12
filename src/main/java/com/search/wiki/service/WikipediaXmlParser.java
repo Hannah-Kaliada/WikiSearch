@@ -23,7 +23,6 @@ public class WikipediaXmlParser {
 
     public List<Article> parseXml(String xml) {
         List<Article> articles = new ArrayList<>();
-
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document doc = builder.parse(new InputSource(new StringReader(xml)));
@@ -50,7 +49,6 @@ public class WikipediaXmlParser {
         } catch (Exception e) {
             logger.error("Error parsing XML: {}", e.getMessage(), e);
         }
-
         return articles;
     }
 

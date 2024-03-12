@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserDAO {
+public class InMemoryUserRepository {
     private final List<User> users = new ArrayList<>();
 
     public List<User> findAllUsers() {

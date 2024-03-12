@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CountryDAO {
+public class InMemoryCountryRepository {
 
     private final List<Country> countries = new ArrayList<>();
 

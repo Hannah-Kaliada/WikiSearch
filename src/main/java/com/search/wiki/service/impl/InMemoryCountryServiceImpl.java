@@ -1,7 +1,7 @@
 package com.search.wiki.service.impl;
 
 import com.search.wiki.entity.Country;
-import com.search.wiki.repository.CountryDAO;
+import com.search.wiki.repository.InMemoryCountryRepository;
 import com.search.wiki.service.CountryService;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public class InMemoryCountryServiceImpl implements CountryService {
 
-    private final CountryDAO repository;
+    private final InMemoryCountryRepository repository;
 
-    public InMemoryCountryServiceImpl(CountryDAO repository) {
+    public InMemoryCountryServiceImpl(InMemoryCountryRepository repository) {
         this.repository = repository;
     }
 

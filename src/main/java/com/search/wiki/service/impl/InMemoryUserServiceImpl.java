@@ -1,7 +1,7 @@
 package com.search.wiki.service.impl;
 
 import com.search.wiki.entity.User;
-import com.search.wiki.repository.UserDAO;
+import com.search.wiki.repository.InMemoryUserRepository;
 import com.search.wiki.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public class InMemoryUserServiceImpl implements UserService {
 
-    private final UserDAO repository;
+    private final InMemoryUserRepository repository;
 
-    public InMemoryUserServiceImpl(UserDAO repository) {
+    public InMemoryUserServiceImpl(InMemoryUserRepository repository) {
         this.repository = repository;
     }
 

@@ -124,7 +124,6 @@ public class FavouriteArticlesServiceImpl implements FavouriteArticlesService {
         return users;
     }
 
-
     private Set<ArticleDTO> convertToArticleDTOSet(Set<Article> articles) {
         Set<ArticleDTO> articleDTOSet = new HashSet<>();
         articles.forEach(article -> {

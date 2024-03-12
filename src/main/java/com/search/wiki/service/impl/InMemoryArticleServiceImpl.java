@@ -1,7 +1,7 @@
 package com.search.wiki.service.impl;
 
 import com.search.wiki.entity.Article;
-import com.search.wiki.repository.ArticleDAO;
+import com.search.wiki.repository.InMemoryArticleRepository;
 import com.search.wiki.service.ArticleService;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public class InMemoryArticleServiceImpl implements ArticleService {
 
-    private final ArticleDAO repository;
+    private final InMemoryArticleRepository repository;
 
-    public InMemoryArticleServiceImpl(ArticleDAO repository) {
+    public InMemoryArticleServiceImpl(InMemoryArticleRepository repository) {
         this.repository = repository;
     }
 
