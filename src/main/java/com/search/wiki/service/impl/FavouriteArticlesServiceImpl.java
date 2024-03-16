@@ -2,10 +2,12 @@ package com.search.wiki.service.impl;
 
 import com.search.wiki.controller.dto.ArticleDTO;
 import com.search.wiki.controller.dto.FavouriteArticlesDTO;
+import com.search.wiki.controller.dto.UserDTO;
 import com.search.wiki.entity.Article;
 import com.search.wiki.entity.User;
 import com.search.wiki.repository.ArticleRepository;
 import com.search.wiki.repository.UserRepository;
+import com.search.wiki.service.ConvertToDTO;
 import com.search.wiki.service.FavouriteArticlesService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -104,8 +106,13 @@ public class FavouriteArticlesServiceImpl implements FavouriteArticlesService {
         FavouriteArticlesDTO favouriteArticlesDTO = new FavouriteArticlesDTO();
 
         if (user != null) {
+            UserDTO userDTO = ConvertToDTO.convertUserToDTO(user);
             favouriteArticlesDTO.setUserId(userId);
             Set<ArticleDTO> articleDTOSet = convertToArticleDTOSet(user.getFavoriteArticles());
+            favouriteArticlesDTO.setEmail(user.getEmail());
+            favouriteArticlesDTO.setUsername(user.getUsername());
+            favouriteArticlesDTO.setCountry(userDTO.getCountry());
+            favouriteArticlesDTO.setPassword(user.getPassword());
             favouriteArticlesDTO.setFavouriteArticles(articleDTOSet);
         }
 
@@ -136,6 +143,4 @@ public class FavouriteArticlesServiceImpl implements FavouriteArticlesService {
         });
         return articleDTOSet;
     }
-
-
 }

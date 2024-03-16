@@ -1,5 +1,6 @@
 package com.search.wiki.controller;
 
+import com.search.wiki.controller.dto.FavouriteArticlesDTO;
 import com.search.wiki.entity.User;
 import com.search.wiki.service.FavouriteArticlesService;
 import lombok.AllArgsConstructor;
@@ -52,5 +53,10 @@ public class FavouriteArticlesController {
     public ResponseEntity<Set<User>> getArticlesSavedByUser(@PathVariable Long articleId) {
         Set<User> savedUsers = favouriteArticlesService.getArticlesSavedByUser(articleId);
         return ResponseEntity.ok(savedUsers);
+    }
+    @GetMapping("/{userId}/get-favorite-articles")
+    public ResponseEntity<FavouriteArticlesDTO> getUserFavoriteArticles(@PathVariable Long userId) {
+        FavouriteArticlesDTO articles = favouriteArticlesService.getUserFavoriteArticles(userId);
+        return ResponseEntity.ok(articles);
     }
 }
