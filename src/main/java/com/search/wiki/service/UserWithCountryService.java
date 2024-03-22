@@ -27,7 +27,7 @@ public class UserWithCountryService {
                     .stream()
                     .filter(user -> country.equals(user.getCountry()))
                     .map(this::convertToDTO)
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return Collections.emptyList();
     }
@@ -72,7 +72,9 @@ public class UserWithCountryService {
 
     public List<UserDTO> getAllUsersWithCountries() {
         List<User> users = userService.getAllUsers();
-        return users.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return users.stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
     private UserDTO convertToDTO(User user) {
