@@ -1,18 +1,50 @@
 package com.search.wiki.service;
 
 import com.search.wiki.entity.Country;
+import com.search.wiki.repository.CountryRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface CountryService {
-    Country addCountry(Country country);
+@Service
+public class CountryService {
 
-    Country getCountryById(long id);
+    private final CountryRepository repository;
 
-    Country updateCountry(Country country);
+    public CountryService(CountryRepository repository) {
+        this.repository = repository;
+    }
 
-    boolean deleteCountry(long id);
+    public Country addCountry(Country country) {
+        return repository.save(country);
+    }
 
-    List<Country> getAllCountries();
-    Country getCountryByName(String name);
+    public Country getCountryById(long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    public Country getCountryByName(String name) {
+        return repository.findByName(name).orElse(null);
+    }
+
+    public Country updateCountry(Country country) {
+        return repository.save(country);
+    }
+
+    @Transactional
+    public boolean deleteCountry(long countryId) {
+        Country country = repository.findById(countryId).orElse(null);
+        if (country == null) {
+            return false;
+        }
+        country.getUsers().forEach(user -> user.setCountry(null));
+        country.getUsers().clear();
+        repository.deleteById(countryId);
+        return true;
+    }
+
+    public List<Country> getAllCountries() {
+        return repository.findAll();
+    }
 }

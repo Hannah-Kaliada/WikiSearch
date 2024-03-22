@@ -1,22 +1,130 @@
 package com.search.wiki.service;
 
+import com.search.wiki.controller.dto.ArticleDTO;
 import com.search.wiki.controller.dto.FavouriteArticlesDTO;
+import com.search.wiki.controller.dto.UserDTO;
+import com.search.wiki.entity.Article;
 import com.search.wiki.entity.User;
+import com.search.wiki.repository.ArticleRepository;
+import com.search.wiki.repository.UserRepository;
+import com.search.wiki.service.utils.ConvertToDTO;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-public interface FavouriteArticlesService {
-    void addArticleToUserFavorites(Long userId, Long articleId);
+@Service
+@AllArgsConstructor
+@Transactional
+public class FavouriteArticlesService {
 
-    void removeArticleFromUserFavorites(Long userId, Long articleId);
+    private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
 
-    public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId);
+    public void addArticleToUserFavorites(Long userId, Long articleId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Article article = articleRepository.findById(articleId).orElse(null);
 
-    void addFavoriteUserToArticle(Long articleId, Long userId);
+        if (user != null && article != null) {
+            user.getFavoriteArticles().add(article);
+            userRepository.save(user);
+        }
+    }
 
-    void removeFavoriteUserFromArticle(Long articleId, Long userId);
+    public void addFavoriteUserToArticle(Long articleId, Long userId) {
+        Article article = articleRepository.findById(articleId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
 
-    FavouriteArticlesDTO getUserFavoriteArticles(Long userId);
+        if (article != null && user != null) {
+            article.getUsers().add(user);
+            user.getFavoriteArticles().add(article);
+            articleRepository.save(article);
+            userRepository.save(user);
+        }
+    }
 
-    Set<User> getArticlesSavedByUser(Long articleId);
+    public void removeArticleFromUserFavorites(Long userId, Long articleId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            user.getFavoriteArticles().removeIf(article -> article.getId() == articleId);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeFavoriteUserFromArticle(Long articleId, Long userId) {
+        Article article = articleRepository.findById(articleId).orElse(null);
+
+        if (article != null) {
+            Iterator<User> iterator = article.getUsers().iterator();
+            while (iterator.hasNext()) {
+                User user = iterator.next();
+                if (user.getId() == userId) {
+                    iterator.remove();
+                    user.getFavoriteArticles().remove(article);
+                    userRepository.save(user);
+                }
+            }
+
+            articleRepository.save(article);
+        }
+    }
+
+    public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            user.getFavoriteArticles().removeIf(article -> article.getId() == prevArticleId);
+
+            Article newArticle = articleRepository.findById(newArticleId).orElse(null);
+            if (newArticle != null) {
+                user.getFavoriteArticles().add(newArticle);
+                userRepository.save(user);
+            }
+        }
+    }
+
+    public FavouriteArticlesDTO getUserFavoriteArticles(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        FavouriteArticlesDTO favouriteArticlesDTO = new FavouriteArticlesDTO();
+
+        if (user != null) {
+            UserDTO userDTO = ConvertToDTO.convertUserToDTO(user);
+            favouriteArticlesDTO.setUserId(userId);
+            Set<ArticleDTO> articleDTOSet = convertToArticleDTOSet(user.getFavoriteArticles());
+            favouriteArticlesDTO.setEmail(user.getEmail());
+            favouriteArticlesDTO.setUsername(user.getUsername());
+            favouriteArticlesDTO.setCountry(userDTO.getCountry());
+            favouriteArticlesDTO.setPassword(user.getPassword());
+            favouriteArticlesDTO.setFavouriteArticles(articleDTOSet);
+        }
+
+        return favouriteArticlesDTO;
+    }
+
+    public Set<User> getArticlesSavedByUser(Long articleId) {
+        Article article = articleRepository.findById(articleId).orElse(null);
+        Set<User> users = new HashSet<>();
+
+        if (article != null) {
+            users.addAll(article.getUsers());
+        }
+        return users;
+    }
+
+    private Set<ArticleDTO> convertToArticleDTOSet(Set<Article> articles) {
+        Set<ArticleDTO> articleDTOSet = new HashSet<>();
+        articles.forEach(article -> {
+            ArticleDTO articleDTO = new ArticleDTO();
+            articleDTO.setId(article.getId());
+            articleDTO.setTitle(article.getTitle());
+            articleDTO.setUrl(article.getUrl());
+            articleDTO.setImagePath(article.getImagePath());
+            articleDTOSet.add(articleDTO);
+        });
+        return articleDTOSet;
+    }
 }

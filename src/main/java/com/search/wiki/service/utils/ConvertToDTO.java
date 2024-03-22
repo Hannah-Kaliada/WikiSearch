@@ -1,4 +1,4 @@
-package com.search.wiki.service;
+package com.search.wiki.service.utils;
 
 import com.search.wiki.controller.dto.CountryDTO;
 import com.search.wiki.controller.dto.UserDTO;
