@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ConvertToDTO {
     private ConvertToDTO() {
-        // Private constructor to prevent instantiation of this class
+
     }
 
     public static CountryDTO convertCountryToDTO(Country country) {
