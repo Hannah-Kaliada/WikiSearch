@@ -66,4 +66,9 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
         }
     }
+    @GetMapping("/top5ByUserCount")
+    public ResponseEntity<List<Article>> getTop5ArticlesByUserCount() {
+        List<Article> top5Articles = service.findTop5ArticlesByUserCount();
+        return ResponseEntity.ok(top5Articles);
+    }
 }

@@ -3,14 +3,17 @@ package com.search.wiki.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "articles")
 @DynamicUpdate
@@ -29,6 +32,7 @@ public class Article {
     @ManyToMany(mappedBy = "favoriteArticles")
     @JsonBackReference
     private Set<User> users = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -41,7 +45,6 @@ public class Article {
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        return Objects.hash(id);
     }
-
 }

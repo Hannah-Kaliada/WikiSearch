@@ -25,10 +25,11 @@ public class WikipediaApiService {
         String action = "opensearch";
         String format = "xml";
         String inprop = "url";
+        int limit = 100; // Установите желаемый предел результатов
 
         String fullUrl = String.format(
-                "%s?action=%s&search=%s&format=%s&inprop=%s",
-                apiUrl, action, query.getSearchTerm(), format, inprop
+                "%s?action=%s&search=%s&format=%s&inprop=%s&limit=%d",
+                apiUrl, action, query.getSearchTerm(), format, inprop, limit
         );
 
         RestTemplate restTemplate = new RestTemplate();
@@ -42,4 +43,5 @@ public class WikipediaApiService {
 
         return articles;
     }
+
 }

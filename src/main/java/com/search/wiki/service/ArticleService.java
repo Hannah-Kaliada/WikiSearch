@@ -4,6 +4,7 @@ import com.search.wiki.entity.Article;
 import com.search.wiki.repository.ArticleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,5 +38,26 @@ public class ArticleService {
 
      public List<Article> findAllArticles() {
           return repository.findAll();
+     }
+
+     // Метод для получения топ 5 статей по количеству добавивших пользователей
+     public List<Article> findTop5ArticlesByUserCount() {
+          // Получаем результат запроса
+          List<Object[]> result = repository.findTop5ArticlesByUserCount();
+
+          // Создаем список статей
+          List<Article> top5Articles = new ArrayList<>();
+
+          // Проверяем, есть ли результат
+          if (result != null && !result.isEmpty()) {
+               // Преобразуем массивы объектов в объекты статей и добавляем их в список
+               for (Object[] row : result) {
+                    Article article = (Article) row[0];
+                    top5Articles.add(article);
+               }
+          }
+
+          // Возвращаем только топ 5 статей
+          return top5Articles.size() > 5 ? top5Articles.subList(0, 5) : top5Articles;
      }
 }
