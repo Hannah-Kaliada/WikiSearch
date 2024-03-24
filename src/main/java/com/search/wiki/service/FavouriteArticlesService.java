@@ -9,6 +9,8 @@ import com.search.wiki.entity.User;
 import com.search.wiki.repository.ArticleRepository;
 import com.search.wiki.repository.UserRepository;
 import com.search.wiki.service.utils.ConvertToDTO;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +25,9 @@ public class FavouriteArticlesService {
 
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
-    private final Cache userCache;
-    private final Cache articleCache;
+    private final Cache cache;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void addArticleToUserFavorites(Long userId, Long articleId) {
         User user = getUserFromCache(userId);
@@ -33,68 +36,78 @@ public class FavouriteArticlesService {
         if (user == null) {
             user = userRepository.findById(userId).orElse(null);
             if (user != null) {
-                userCache.put(getUserCacheKey(userId), user);
+                cache.put(getUserCacheKey(userId), user);
             }
         }
 
         if (article == null) {
             article = articleRepository.findById(articleId).orElse(null);
             if (article != null) {
-                articleCache.put(getArticleCacheKey(articleId), article);
+                cache.put(getArticleCacheKey(articleId), article);
             }
         }
 
         if (user != null && article != null) {
+            entityManager.detach(user);
+            user = entityManager.find(User.class, userId);
             user.getFavoriteArticles().add(article);
             userRepository.save(user);
-            userCache.put(getUserCacheKey(userId), user);
+            cache.put(getUserCacheKey(userId), user);
         }
     }
 
     public void removeArticleFromUserFavorites(long userId, long articleId) {
         String userCacheKey = getUserCacheKey(userId);
-        User user = (User) userCache.get(userCacheKey);
+        User user = (User) cache.get(userCacheKey);
 
         if (user == null) {
             user = userRepository.findById(userId).orElse(null);
             if (user != null) {
-                userCache.put(userCacheKey, user);
+                cache.put(userCacheKey, user);
             }
         }
+
         if (user != null) {
+            entityManager.detach(user);
+            user = entityManager.find(User.class, userId);
             user.getFavoriteArticles().removeIf(article -> article.getId() == articleId);
             userRepository.save(user);
-            userCache.remove(userCacheKey);
+            cache.remove(userCacheKey);
         }
     }
 
     public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
-        User user = getUserFromCache(userId);
-        Article prevArticle = getArticleFromCache(prevArticleId);
-        Article newArticle = getArticleFromCache(newArticleId);
+        String userCacheKey = getUserCacheKey(userId);
+
+        User user = (User) cache.get(userCacheKey);
+        Article prevArticle = (Article) cache.get(getArticleCacheKey(prevArticleId));
+        Article newArticle = (Article) cache.get(getArticleCacheKey(newArticleId));
 
         if (user == null) {
             user = userRepository.findById(userId).orElse(null);
             if (user != null) {
-                userCache.put(getUserCacheKey(userId), user);
+                cache.put(userCacheKey, user);
             }
         }
 
         if (prevArticle == null) {
             prevArticle = articleRepository.findById(prevArticleId).orElse(null);
             if (prevArticle != null) {
-                articleCache.put(getArticleCacheKey(prevArticleId), prevArticle);
+                cache.put(getArticleCacheKey(prevArticleId), prevArticle);
             }
         }
 
         if (newArticle == null) {
             newArticle = articleRepository.findById(newArticleId).orElse(null);
             if (newArticle != null) {
-                articleCache.put(getArticleCacheKey(newArticleId), newArticle);
+                cache.put(getArticleCacheKey(newArticleId), newArticle);
             }
         }
 
         if (user != null && prevArticle != null && newArticle != null) {
+            entityManager.detach(user);
+            user = entityManager.find(User.class, userId);
+
             user.getFavoriteArticles().remove(prevArticle);
             prevArticle.getUsers().remove(user);
             user.getFavoriteArticles().add(newArticle);
@@ -103,26 +116,29 @@ public class FavouriteArticlesService {
             articleRepository.save(prevArticle);
             articleRepository.save(newArticle);
 
-            User updatedUser = userRepository.save(user);
-            if (updatedUser != null) {
-                userCache.put(getUserCacheKey(userId), updatedUser);
-            }
+            userRepository.save(user);
+
+            cache.remove(userCacheKey);
         }
     }
 
 
     public FavouriteArticlesDTO getUserFavoriteArticles(Long userId) {
-        User user = getUserFromCache(userId);
+        String userCacheKey = getUserCacheKey(userId);
+        User user = (User) cache.get(userCacheKey);
         FavouriteArticlesDTO favouriteArticlesDTO = new FavouriteArticlesDTO();
 
         if (user == null) {
             user = userRepository.findById(userId).orElse(null);
             if (user != null) {
-                userCache.put(getUserCacheKey(userId), user);
+                cache.put(userCacheKey, user);
             }
         }
 
         if (user != null) {
+            entityManager.detach(user);
+            user = entityManager.find(User.class, userId);
+
             UserDTO userDTO = ConvertToDTO.convertUserToDTO(user);
             favouriteArticlesDTO.setUserId(userId);
             Set<ArticleDTO> articleDTOSet = convertToArticleDTOSet(user.getFavoriteArticles());
@@ -137,19 +153,22 @@ public class FavouriteArticlesService {
     }
 
     public Set<User> getArticlesSavedByUser(Long articleId) {
-        Article article = getArticleFromCache(articleId);
+        Article article = (Article) cache.get(getArticleCacheKey(articleId));
         Set<User> users = new HashSet<>();
 
         if (article == null) {
             article = articleRepository.findById(articleId).orElse(null);
             if (article != null) {
-                articleCache.put(getArticleCacheKey(articleId), article);
+                cache.put(getArticleCacheKey(articleId), article);
             }
         }
 
         if (article != null) {
+            entityManager.detach(article);
+            article = entityManager.find(Article.class, article.getId());
             users.addAll(article.getUsers());
         }
+
         return users;
     }
 
@@ -167,11 +186,11 @@ public class FavouriteArticlesService {
     }
 
     private User getUserFromCache(Long userId) {
-        return (User) userCache.get(getUserCacheKey(userId));
+        return (User) cache.get(getUserCacheKey(userId));
     }
 
     private Article getArticleFromCache(Long articleId) {
-        return (Article) articleCache.get(getArticleCacheKey(articleId));
+        return (Article) cache.get(getArticleCacheKey(articleId));
     }
 
     private String getUserCacheKey(Long userId) {
