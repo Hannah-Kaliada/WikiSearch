@@ -39,15 +39,16 @@ public class Cache {
                 String lfuKey = findLFUKey();
                 if (lfuKey != null) {
                     cacheMap.remove(lfuKey);
-                    logger.log(Level.INFO, String.format("Cache evicted item with key: %s", lfuKey));
+                    logger.log(Level.INFO, () -> String.format("Cache evicted item with key: %s", lfuKey));
                 }
             }
             cacheMap.put(key, new CacheEntry(value));
-            logger.log(Level.INFO, String.format("Added item to cache with key: %s", key));
+            logger.log(Level.INFO, () -> String.format("Added item to cache with key: %s", key));
         } finally {
             lock.writeLock().unlock();
         }
     }
+
 
     public Object get(String key) {
         lock.readLock().lock();
