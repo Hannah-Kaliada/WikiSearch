@@ -56,10 +56,10 @@ public class Cache {
             CacheEntry entry = cacheMap.get(key);
             if (entry != null) {
                 entry.frequency++;
-                logger.log(Level.INFO, "Cache hit for key: {}", key);
+                logger.log(Level.INFO, () -> String.format("Cache hit for key: %s", key));
                 return entry.value;
             }
-            logger.log(Level.INFO, "Cache miss for key: {}", key);
+            logger.log(Level.INFO, () -> String.format("Cache miss for key: %s", key));
             return null;
         } finally {
             lock.readLock().unlock();
