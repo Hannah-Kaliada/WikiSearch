@@ -1,12 +1,10 @@
 package com.search.wiki.controller;
 
 import com.search.wiki.controller.dto.UserDTO;
-import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
 import com.search.wiki.service.CountryService;
 import com.search.wiki.service.UserService;
 import com.search.wiki.service.UserWithCountryService;
-import com.search.wiki.service.utils.ConvertToDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -84,7 +82,7 @@ public class UserController {
         userWithCountryService.removeCountryFromUser(userId);
         return ResponseEntity.noContent().build();
     }
-    
+
     @PutMapping("/updateUserCountry/{userId}/{countryId}")
     public ResponseEntity<UserDTO> updateUserCountry(
             @PathVariable Long userId,

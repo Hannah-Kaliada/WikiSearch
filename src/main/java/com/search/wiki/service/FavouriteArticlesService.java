@@ -69,44 +69,47 @@ public class FavouriteArticlesService {
     }
 
     public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
-        String userCacheKey = getUserCacheKey(userId);
-        User user = (User) userCache.get(userCacheKey);
+        User user = getUserFromCache(userId);
+        Article prevArticle = getArticleFromCache(prevArticleId);
+        Article newArticle = getArticleFromCache(newArticleId);
 
-        if (user != null) {
-            Article prevArticle = getArticleFromCache(prevArticleId);
-
-            if (prevArticle == null) {
-                prevArticle = articleRepository.findById(prevArticleId).orElse(null);
-                if (prevArticle != null) {
-                    articleCache.put(getArticleCacheKey(prevArticleId), prevArticle);
-                }
+        if (user == null) {
+            user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                userCache.put(getUserCacheKey(userId), user);
             }
+        }
 
+        if (prevArticle == null) {
+            prevArticle = articleRepository.findById(prevArticleId).orElse(null);
             if (prevArticle != null) {
-                user.getFavoriteArticles().remove(prevArticle);
-                prevArticle.getUsers().remove(user);
-                articleRepository.save(prevArticle);
+                articleCache.put(getArticleCacheKey(prevArticleId), prevArticle);
             }
+        }
 
-            Article newArticle = getArticleFromCache(newArticleId);
-            if (newArticle == null) {
-                newArticle = articleRepository.findById(newArticleId).orElse(null);
-                if (newArticle != null) {
-                    articleCache.put(getArticleCacheKey(newArticleId), newArticle);
-                }
-            }
-
+        if (newArticle == null) {
+            newArticle = articleRepository.findById(newArticleId).orElse(null);
             if (newArticle != null) {
-                user.getFavoriteArticles().add(newArticle);
-                newArticle.getUsers().add(user);
-                articleRepository.save(newArticle);
-                User updatedUser = userRepository.save(user);
-                if (updatedUser != null) {
-                    userCache.put(userCacheKey, updatedUser);
-                }
+                articleCache.put(getArticleCacheKey(newArticleId), newArticle);
+            }
+        }
+
+        if (user != null && prevArticle != null && newArticle != null) {
+            user.getFavoriteArticles().remove(prevArticle);
+            prevArticle.getUsers().remove(user);
+            user.getFavoriteArticles().add(newArticle);
+            newArticle.getUsers().add(user);
+
+            articleRepository.save(prevArticle);
+            articleRepository.save(newArticle);
+
+            User updatedUser = userRepository.save(user);
+            if (updatedUser != null) {
+                userCache.put(getUserCacheKey(userId), updatedUser);
             }
         }
     }
+
 
     public FavouriteArticlesDTO getUserFavoriteArticles(Long userId) {
         User user = getUserFromCache(userId);

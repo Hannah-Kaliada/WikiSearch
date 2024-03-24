@@ -1,5 +1,6 @@
 package com.search.wiki.cache;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 
 @Component
 public class Cache {
-    private final Map<String, CacheEntry> cache;
+    private final Map<String, CacheEntry> cacheMap;
     private final int maxSize;
     private final ReentrantReadWriteLock lock;
     private static final Logger logger = Logger.getLogger(Cache.class.getName());
@@ -20,12 +21,13 @@ public class Cache {
     private static final int DEFAULT_MAX_SIZE = 1000;
     private static final int MAX_FREQUENCY_VALUE = Integer.MAX_VALUE;
 
+    @Autowired
     public Cache() {
         this(DEFAULT_MAX_SIZE);
     }
 
     public Cache(int maxSize) {
-        this.cache = new LinkedHashMap<>();
+        this.cacheMap = new LinkedHashMap<>();
         this.maxSize = maxSize;
         this.lock = new ReentrantReadWriteLock();
     }
@@ -33,13 +35,13 @@ public class Cache {
     public void put(String key, Object value) {
         lock.writeLock().lock();
         try {
-            if (cache.size() >= maxSize) {
+            if (cacheMap.size() >= maxSize) {
                 String lfuKey = findLFUKey();
-                cache.remove(lfuKey);
-                logger.log(Level.INFO, "Cache evicted item with key: " + lfuKey);
+                cacheMap.remove(lfuKey);
+                logger.log(Level.INFO, String.format("Cache evicted item with key: %s", lfuKey));
             }
-            cache.put(key, new CacheEntry(value));
-            logger.log(Level.INFO, "Added item to cache with key: " + key);
+            cacheMap.put(key, new CacheEntry(value));
+            logger.log(Level.INFO, String.format("Added item to cache with key: %s", key));
         } finally {
             lock.writeLock().unlock();
         }
@@ -48,13 +50,13 @@ public class Cache {
     public Object get(String key) {
         lock.readLock().lock();
         try {
-            CacheEntry entry = cache.get(key);
+            CacheEntry entry = cacheMap.get(key);
             if (entry != null) {
                 entry.frequency++;
-                logger.log(Level.INFO, "Cache hit for key: " + key);
+                logger.log(Level.INFO, "Cache hit for key: {}", key);
                 return entry.value;
             }
-            logger.log(Level.INFO, "Cache miss for key: " + key);
+            logger.log(Level.INFO, "Cache miss for key: {}", key);
             return null;
         } finally {
             lock.readLock().unlock();
@@ -64,7 +66,7 @@ public class Cache {
     public void remove(String key) {
         lock.writeLock().lock();
         try {
-            cache.remove(key);
+            cacheMap.remove(key);
         } finally {
             lock.writeLock().unlock();
         }
@@ -73,7 +75,7 @@ public class Cache {
     public boolean containsKey(String key) {
         lock.readLock().lock();
         try {
-            return cache.containsKey(key);
+            return cacheMap.containsKey(key);
         } finally {
             lock.readLock().unlock();
         }
@@ -82,7 +84,7 @@ public class Cache {
     private String findLFUKey() {
         String lfuKey = null;
         int minFrequency = MAX_FREQUENCY_VALUE;
-        for (Map.Entry<String, CacheEntry> entry : cache.entrySet()) {
+        for (Map.Entry<String, CacheEntry> entry : cacheMap.entrySet()) {
             if (entry.getValue().frequency < minFrequency) {
                 lfuKey = entry.getKey();
                 minFrequency = entry.getValue().frequency;
@@ -105,7 +107,7 @@ public class Cache {
         lock.readLock().lock();
         try {
             Set<String> keysStartingWithPrefix = new HashSet<>();
-            for (String key : cache.keySet()) {
+            for (String key : cacheMap.keySet()) {
                 if (key.startsWith(prefix)) {
                     keysStartingWithPrefix.add(key);
                 }
