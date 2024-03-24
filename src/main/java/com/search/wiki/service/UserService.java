@@ -50,7 +50,6 @@ public class UserService {
             Optional<User> optionalUser = repository.findById(id);
 
             if (optionalUser.isPresent()) {
-                User existingUser = optionalUser.get();
                 user.setId(id);
                 User updatedUser = repository.save(user);
                 cache.put(cacheKey, updatedUser);

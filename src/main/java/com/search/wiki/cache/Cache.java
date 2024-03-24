@@ -37,8 +37,10 @@ public class Cache {
         try {
             if (cacheMap.size() >= maxSize) {
                 String lfuKey = findLFUKey();
-                cacheMap.remove(lfuKey);
-                logger.log(Level.INFO, String.format("Cache evicted item with key: %s", lfuKey));
+                if (lfuKey != null) {
+                    cacheMap.remove(lfuKey);
+                    logger.log(Level.INFO, String.format("Cache evicted item with key: %s", lfuKey));
+                }
             }
             cacheMap.put(key, new CacheEntry(value));
             logger.log(Level.INFO, String.format("Added item to cache with key: %s", key));

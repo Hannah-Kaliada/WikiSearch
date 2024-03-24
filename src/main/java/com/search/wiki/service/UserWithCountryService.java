@@ -203,11 +203,6 @@ public class UserWithCountryService {
         return userDTO;
     }
 
-    private User getUserFromCache(Long userId) {
-        String cacheKey = getUserCacheKey(userId);
-        return (User) userCache.get(cacheKey);
-    }
-
     private Country getCountryFromCache(Long countryId) {
         String cacheKey = getCountryCacheKey(countryId);
         return (Country) countryCache.get(cacheKey);
