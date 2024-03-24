@@ -3,8 +3,8 @@ const itemsPerPage = 5;
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    name = name.replace(/[\[\]]/g, "$&");
+    let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
@@ -66,7 +66,7 @@ function goToNextPage() {
     loadArticles(currentPage);
 }
 
-var keyword = getParameterByName('keyword');
+let keyword = getParameterByName('keyword');
 
 loadArticles(currentPage);
 
