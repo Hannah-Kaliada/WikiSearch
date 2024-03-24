@@ -7,7 +7,7 @@ body {
 }
 
 #header {
-    background: linear-gradient(to right, rgba(200, 200, 200, 0.1), rgba(180, 180, 180, 1));
+    background: linear-gradient(to right, rgba(0, 0, 255, 0.1), rgba(255, 0, 0, 1));
     width: 100%;
     padding: 20px;
     position: relative;

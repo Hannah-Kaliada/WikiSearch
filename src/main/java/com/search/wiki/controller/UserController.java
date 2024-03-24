@@ -30,31 +30,12 @@ public class UserController {
 
     @PostMapping("/addUserAndCountry/{countryName}")
     public ResponseEntity<UserDTO> addUserAndCountry(@RequestBody UserDTO userDTO, @PathVariable String countryName) {
-        // Преобразуем UserDTO в объект User
-        User user = ConvertToDTO.convertToUser(userDTO);
-
-        // Добавляем пользователя
-        User addedUser = userService.addUser(user);
-        if (addedUser == null) {
-            return ResponseEntity.badRequest().build(); // Если не удалось добавить пользователя, возвращаем код ошибки 400
+        UserDTO addedUser = userWithCountryService.addUserAndCountry(userDTO, countryName);
+        if (addedUser != null) {
+            return ResponseEntity.ok(addedUser);
+        } else {
+            return ResponseEntity.badRequest().build();
         }
-
-        // Проверяем наличие страны по названию
-        Country country = countryService.getCountryByName(countryName);
-        if (country == null) {
-            // Если страны не существует, создаем новую страну
-            country = new Country();
-            country.setName(countryName);
-            countryService.addCountry(country);
-        }
-
-        // Добавляем страну к пользователю
-        UserDTO userWithCountry = userWithCountryService.addCountryToUser(addedUser.getId(), country.getId());
-        if (userWithCountry == null) {
-            return ResponseEntity.badRequest().build(); // Если не удалось добавить страну пользователю, возвращаем код ошибки 400
-        }
-
-        return ResponseEntity.ok(userWithCountry);
     }
 
     @GetMapping
@@ -72,14 +53,14 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @PutMapping("updateUser")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    @PutMapping("/updateUser/{userId}")
+    public User updateUser(@RequestBody User user, @PathVariable("userId") long userId) {
+        return userService.updateUser(user, userId);
     }
 
-    @DeleteMapping("deleteUser/{id}")
+    @DeleteMapping("/deleteUser/{id}")
     public boolean deleteUser(@PathVariable long id) {
-         return userService.deleteUser(id);
+        return userService.deleteUser(id);
     }
 
 
@@ -103,7 +84,7 @@ public class UserController {
         userWithCountryService.removeCountryFromUser(userId);
         return ResponseEntity.noContent().build();
     }
-
+    
     @PutMapping("/updateUserCountry/{userId}/{countryId}")
     public ResponseEntity<UserDTO> updateUserCountry(
             @PathVariable Long userId,

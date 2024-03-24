@@ -38,24 +38,25 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findById(@PathVariable long id) {
+    public ResponseEntity<Article> findById(@PathVariable long id) {
         Article article = service.findById(id);
         if (article != null) {
-            return ResponseEntity.ok(article.toString());
+            return ResponseEntity.ok(article);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @PutMapping("updateArticle")
-    public ResponseEntity<String> updateArticle(@RequestBody Article article) {
-        Article updatedArticle = service.updateArticle(article);
+    @PutMapping("updateArticle/{id}")
+    public ResponseEntity<Article> updateArticle(@RequestBody Article article, @PathVariable Long id) {
+        Article updatedArticle = service.updateArticle(article, id);
         if (updatedArticle != null) {
-            return ResponseEntity.ok(updatedArticle.toString());
+            return ResponseEntity.ok(updatedArticle);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
 
     @DeleteMapping("deleteArticle/{id}")
     public ResponseEntity<String> deleteArticle(@PathVariable long id) {
@@ -66,6 +67,7 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
         }
     }
+
     @GetMapping("/top5ByUserCount")
     public ResponseEntity<List<Article>> getTop5ArticlesByUserCount() {
         List<Article> top5Articles = service.findTop5ArticlesByUserCount();

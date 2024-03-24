@@ -7,29 +7,32 @@
             font-family: Arial, Helvetica, sans-serif;
             background-color: rgba(100, 100, 100, 0.8);
         }
+
         * {
             box-sizing: border-box;
         }
+
         .container {
             padding: 16px;
             background-color: rgba(240, 240, 240, 0.8);
         }
+
         input[type=text], input[type=password] {
             width: 100%;
             padding: 15px;
             margin: 5px 0 22px 0;
             display: inline-block;
             border: none;
-            background: #f1f1f1;
+            background: #f5f5f5;
         }
 
         input[type=text]:focus, input[type=password]:focus {
-            background-color: #ddd;
+            background-color: #ffffff;
             outline: none;
         }
 
         hr {
-            border: 1px solid #f1f1f1;
+            border: 1px solid #BEBEBE;
             margin-bottom: 25px;
         }
 
@@ -58,7 +61,6 @@
         }
     </style>
     <title></title>
-    <link rel="stylesheet" href="css/stylesForSearchPage.css">
 </head>
 <body>
 <form action="http://localhost:8080/index.html">
@@ -66,6 +68,12 @@
         <h1>Register</h1>
         <p>Please fill in this form to create an account in WikiService.</p>
         <hr>
+        <label for="country"><b>Country</b></label>
+        <input type="text" placeholder="Enter country" name="country" id="country" required>
+
+        <label for="name"><b>Username</b></label>
+        <input type="text" placeholder="Enter username" name="name" id="name" required>
+
 
         <label for="email"><b>Email</b></label>
         <input type="text" placeholder="Enter Email" name="email" id="email" required>

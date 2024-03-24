@@ -37,23 +37,12 @@ public class FavouriteArticlesController {
     }
 
 
-    @PostMapping("/{articleId}/add-favorite/{userId}")
-    public ResponseEntity<Void> addFavoriteUserToArticle(@PathVariable Long articleId, @PathVariable Long userId) {
-        favouriteArticlesService.addFavoriteUserToArticle(articleId, userId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{articleId}/remove-favorite/{userId}")
-    public ResponseEntity<Void> removeFavoriteUserFromArticle(@PathVariable Long articleId, @PathVariable Long userId) {
-        favouriteArticlesService.removeFavoriteUserFromArticle(articleId, userId);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/{articleId}/get-saved-users")
     public ResponseEntity<Set<User>> getArticlesSavedByUser(@PathVariable Long articleId) {
         Set<User> savedUsers = favouriteArticlesService.getArticlesSavedByUser(articleId);
         return ResponseEntity.ok(savedUsers);
     }
+
     @GetMapping("/{userId}/get-favorite-articles")
     public ResponseEntity<FavouriteArticlesDTO> getUserFavoriteArticles(@PathVariable Long userId) {
         FavouriteArticlesDTO articles = favouriteArticlesService.getUserFavoriteArticles(userId);

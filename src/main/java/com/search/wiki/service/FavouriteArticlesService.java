@@ -1,5 +1,6 @@
 package com.search.wiki.service;
 
+import com.search.wiki.cache.Cache;
 import com.search.wiki.controller.dto.ArticleDTO;
 import com.search.wiki.controller.dto.FavouriteArticlesDTO;
 import com.search.wiki.controller.dto.UserDTO;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 @Service
@@ -23,73 +23,101 @@ public class FavouriteArticlesService {
 
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
+    private final Cache userCache;
+    private final Cache articleCache;
 
     public void addArticleToUserFavorites(Long userId, Long articleId) {
-        User user = userRepository.findById(userId).orElse(null);
-        Article article = articleRepository.findById(articleId).orElse(null);
+        User user = getUserFromCache(userId);
+        Article article = getArticleFromCache(articleId);
+
+        if (user == null) {
+            user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                userCache.put(getUserCacheKey(userId), user);
+            }
+        }
+
+        if (article == null) {
+            article = articleRepository.findById(articleId).orElse(null);
+            if (article != null) {
+                articleCache.put(getArticleCacheKey(articleId), article);
+            }
+        }
 
         if (user != null && article != null) {
             user.getFavoriteArticles().add(article);
             userRepository.save(user);
+            userCache.put(getUserCacheKey(userId), user);
         }
     }
 
-    public void addFavoriteUserToArticle(Long articleId, Long userId) {
-        Article article = articleRepository.findById(articleId).orElse(null);
-        User user = userRepository.findById(userId).orElse(null);
+    public void removeArticleFromUserFavorites(long userId, long articleId) {
+        String userCacheKey = getUserCacheKey(userId);
+        User user = (User) userCache.get(userCacheKey);
 
-        if (article != null && user != null) {
-            article.getUsers().add(user);
-            user.getFavoriteArticles().add(article);
-            articleRepository.save(article);
-            userRepository.save(user);
+        if (user == null) {
+            user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                userCache.put(userCacheKey, user);
+            }
         }
-    }
-
-    public void removeArticleFromUserFavorites(Long userId, Long articleId) {
-        User user = userRepository.findById(userId).orElse(null);
-
         if (user != null) {
             user.getFavoriteArticles().removeIf(article -> article.getId() == articleId);
             userRepository.save(user);
-        }
-    }
-
-    public void removeFavoriteUserFromArticle(Long articleId, Long userId) {
-        Article article = articleRepository.findById(articleId).orElse(null);
-
-        if (article != null) {
-            Iterator<User> iterator = article.getUsers().iterator();
-            while (iterator.hasNext()) {
-                User user = iterator.next();
-                if (user.getId() == userId) {
-                    iterator.remove();
-                    user.getFavoriteArticles().remove(article);
-                    userRepository.save(user);
-                }
-            }
-
-            articleRepository.save(article);
+            userCache.remove(userCacheKey);
         }
     }
 
     public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
-        User user = userRepository.findById(userId).orElse(null);
+        String userCacheKey = getUserCacheKey(userId);
+        User user = (User) userCache.get(userCacheKey);
 
         if (user != null) {
-            user.getFavoriteArticles().removeIf(article -> article.getId() == prevArticleId);
+            Article prevArticle = getArticleFromCache(prevArticleId);
 
-            Article newArticle = articleRepository.findById(newArticleId).orElse(null);
+            if (prevArticle == null) {
+                prevArticle = articleRepository.findById(prevArticleId).orElse(null);
+                if (prevArticle != null) {
+                    articleCache.put(getArticleCacheKey(prevArticleId), prevArticle);
+                }
+            }
+
+            if (prevArticle != null) {
+                user.getFavoriteArticles().remove(prevArticle);
+                prevArticle.getUsers().remove(user);
+                articleRepository.save(prevArticle);
+            }
+
+            Article newArticle = getArticleFromCache(newArticleId);
+            if (newArticle == null) {
+                newArticle = articleRepository.findById(newArticleId).orElse(null);
+                if (newArticle != null) {
+                    articleCache.put(getArticleCacheKey(newArticleId), newArticle);
+                }
+            }
+
             if (newArticle != null) {
                 user.getFavoriteArticles().add(newArticle);
-                userRepository.save(user);
+                newArticle.getUsers().add(user);
+                articleRepository.save(newArticle);
+                User updatedUser = userRepository.save(user);
+                if (updatedUser != null) {
+                    userCache.put(userCacheKey, updatedUser);
+                }
             }
         }
     }
 
     public FavouriteArticlesDTO getUserFavoriteArticles(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = getUserFromCache(userId);
         FavouriteArticlesDTO favouriteArticlesDTO = new FavouriteArticlesDTO();
+
+        if (user == null) {
+            user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                userCache.put(getUserCacheKey(userId), user);
+            }
+        }
 
         if (user != null) {
             UserDTO userDTO = ConvertToDTO.convertUserToDTO(user);
@@ -106,8 +134,15 @@ public class FavouriteArticlesService {
     }
 
     public Set<User> getArticlesSavedByUser(Long articleId) {
-        Article article = articleRepository.findById(articleId).orElse(null);
+        Article article = getArticleFromCache(articleId);
         Set<User> users = new HashSet<>();
+
+        if (article == null) {
+            article = articleRepository.findById(articleId).orElse(null);
+            if (article != null) {
+                articleCache.put(getArticleCacheKey(articleId), article);
+            }
+        }
 
         if (article != null) {
             users.addAll(article.getUsers());
@@ -126,5 +161,21 @@ public class FavouriteArticlesService {
             articleDTOSet.add(articleDTO);
         });
         return articleDTOSet;
+    }
+
+    private User getUserFromCache(Long userId) {
+        return (User) userCache.get(getUserCacheKey(userId));
+    }
+
+    private Article getArticleFromCache(Long articleId) {
+        return (Article) articleCache.get(getArticleCacheKey(articleId));
+    }
+
+    private String getUserCacheKey(Long userId) {
+        return "User_" + userId;
+    }
+
+    private String getArticleCacheKey(Long articleId) {
+        return "Article_" + articleId;
     }
 }

@@ -12,6 +12,7 @@ public class FavouriteArticlesDTO {
     private CountryDTO country;
     private String password;
     private Set<ArticleDTO> favouriteArticles;
+
     public CountryDTO getCountry() {
         return country;
     }

@@ -33,15 +33,16 @@ public class CountryController {
         return countryService.addCountry(country);
     }
 
-    @PutMapping("/updateCountry")
-    public Country updateCountry(@RequestBody Country country) {
-        return countryService.updateCountry(country);
+    @PutMapping("/updateCountry/{id}")
+    public Country updateCountry(@PathVariable Long id, @RequestBody Country country) {
+        return countryService.updateCountry(country, id);
     }
 
     @DeleteMapping("/deleteCountry/{id}")
     public boolean deleteCountry(@PathVariable long id) {
         return countryService.deleteCountry(id);
     }
+
     @GetMapping("/name/{name}")
     public Country getCountryByName(@PathVariable String name) {
         return countryService.getCountryByName(name);

@@ -85,13 +85,15 @@
 </head>
 <body>
 <div id="header">
-    <img id="wiki-logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png" alt="Wikipedia Logo">
+    <img id="wiki-logo"
+         src="https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png"
+         alt="Wikipedia Logo">
     <h1>WikiSearch</h1>
 </div>
 <hr>
 <div id="searchBox">
     <form id="searchForm">
-        <input type="text" id="word" name="word" required>
+        <label for="word"></label><input type="text" id="word" name="word" required>
         <input type="button" value="Search" onclick="searchApi()">
     </form>
 </div>

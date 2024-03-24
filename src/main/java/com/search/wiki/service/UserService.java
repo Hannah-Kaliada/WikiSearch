@@ -1,85 +1,108 @@
 package com.search.wiki.service;
 
-import com.search.wiki.controller.dto.UserDTO;
-import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
 import com.search.wiki.repository.UserRepository;
-import com.search.wiki.service.utils.ConvertToDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.search.wiki.cache.Cache;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
+@Transactional
 public class UserService {
     private final UserRepository repository;
-    private final CountryService countryService;
+    private final Cache cache;
+    private static final String USER_CACHE_PREFIX = "User_";
 
-    public UserService(UserRepository repository, CountryService countryService) {
+    public UserService(UserRepository repository, Cache cache) {
         this.repository = repository;
-        this.countryService = countryService;
-    }
-    public UserDTO addUserWithCountry(UserDTO userDTO, Long countryId) {
-        // Создаем пользователя из DTO
-        User user = ConvertToDTO.convertToUser(userDTO);
-
-        // Проверяем наличие страны
-        Country country = countryService.getCountryById(countryId);
-        if (country == null) {
-            // Если страны не существует, создаем новую страну
-            country = new Country();
-            country.setId(countryId); // Предполагается, что идентификатор страны задается в запросе
-            countryService.addCountry(country);
-        }
-
-        // Привязываем пользователя к стране
-        user.setCountry(country);
-
-        // Сохраняем пользователя
-        User savedUser = repository.save(user);
-        if (savedUser == null) {
-            return null;
-        }
-
-        // Преобразуем сохраненного пользователя в DTO
-        return ConvertToDTO.convertUserToDTO(savedUser);
+        this.cache = cache;
     }
 
     public User addUser(User user) {
-        return repository.save(user);
+        User savedUser = repository.save(user);
+        cache.put(getUserCacheKey(savedUser.getId()), savedUser);
+        return savedUser;
     }
 
     public User getUserById(long id) {
-        return repository.findById(id).orElse(null);
+        String cacheKey = getUserCacheKey(id);
+        return getCachedOrFromRepository(cacheKey, id);
     }
 
     @Transactional
-    public User updateUser(User user) {
-        Optional<User> existingUserOptional = repository.findById(user.getId());
+    public User updateUser(User user, long id) {
+        String cacheKey = getUserCacheKey(id);
+        User cachedUser = (User) cache.get(cacheKey);
 
-        if (existingUserOptional.isPresent()) {
-            User existingUser = existingUserOptional.get();
-            existingUser.setUsername(user.getUsername());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setPassword(user.getPassword());
-            return repository.save(existingUser);
+        if (cachedUser != null) {
+            cachedUser.setUsername(user.getUsername());
+            cachedUser.setEmail(user.getEmail());
+            cachedUser.setPassword(user.getPassword());
+            cachedUser.setCountry(user.getCountry());
+            cache.put(cacheKey, cachedUser);
+            return cachedUser;
+        } else {
+            Optional<User> optionalUser = repository.findById(id);
+
+            if (optionalUser.isPresent()) {
+                User existingUser = optionalUser.get();
+                user.setId(id);
+                User updatedUser = repository.save(user);
+                cache.put(cacheKey, updatedUser);
+                return updatedUser;
+            } else {
+                return null;
+            }
         }
-
-        return null;
     }
 
     @Transactional
     public boolean deleteUser(long userId) {
-        User user = repository.findById(userId).orElse(null);
-        if (user == null) {
-            return false;
+        if (repository.existsById(userId)) {
+            repository.deleteById(userId);
+            cache.remove(getUserCacheKey(userId));
+            return true;
         }
-        repository.deleteById(userId);
-        return true;
+        return false;
     }
 
     public List<User> getAllUsers() {
-        return repository.findAll();
+        List<User> users = new ArrayList<>();
+        Set<String> userCacheKeys = cache.getCacheKeysStartingWith(USER_CACHE_PREFIX);
+        if (userCacheKeys.size() == repository.count()) {
+            for (String cacheKey : userCacheKeys) {
+                users.add((User) cache.get(cacheKey));
+            }
+            return users;
+        }
+        users = repository.findAll();
+        for (User user : users) {
+            String userCacheKey = getUserCacheKey(user.getId());
+            cache.put(userCacheKey, user);
+        }
+        return users;
+    }
+
+    private String getUserCacheKey(long id) {
+        return USER_CACHE_PREFIX + id;
+    }
+
+    private User getCachedOrFromRepository(String cacheKey, long id) {
+        if (cache.containsKey(cacheKey)) {
+            return (User) cache.get(cacheKey);
+        } else {
+            Optional<User> userOptional = repository.findById(id);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                cache.put(cacheKey, user);
+                return user;
+            }
+            return null;
+        }
     }
 }

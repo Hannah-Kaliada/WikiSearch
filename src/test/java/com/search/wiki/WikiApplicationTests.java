@@ -13,14 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 class WikiApplicationTests {
 
-	@Autowired
-	private DataSource dataSource;
-	@Test
-	void databaseIsRunning() throws SQLException {
-		assertNotNull(dataSource);
+    @Autowired
+    private DataSource dataSource;
 
-		try (Connection connection = dataSource.getConnection()) {
-			assertNotNull(connection);
-		}
-	}
+    @Test
+    void databaseIsRunning() throws SQLException {
+        assertNotNull(dataSource);
+
+        try (Connection connection = dataSource.getConnection()) {
+            assertNotNull(connection);
+        }
+    }
 }

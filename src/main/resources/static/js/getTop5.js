@@ -1,4 +1,3 @@
-
 fetch('/api/v1/articles/top5ByUserCount')
     .then(response => response.json())
     .then(articles => {
@@ -17,15 +16,14 @@ fetch('/api/v1/articles/top5ByUserCount')
 
             const titleElement = document.createElement('div');
             titleElement.classList.add('article-title');
-            titleElement.textContent = article.title;
-            contentElement.appendChild(titleElement);
 
-            const urlElement = document.createElement('a');
-            urlElement.classList.add('article-url');
-            urlElement.href = article.url;
-            urlElement.textContent = article.url;
-            urlElement.target = "_blank"; // Открывать ссылку в новой вкладке
-            contentElement.appendChild(urlElement);
+            const linkElement = document.createElement('a');
+            linkElement.href = article.url;
+            linkElement.target = "_blank";
+            linkElement.textContent = article.title;
+
+            titleElement.appendChild(linkElement);
+            contentElement.appendChild(titleElement);
 
             articleElement.appendChild(contentElement);
 

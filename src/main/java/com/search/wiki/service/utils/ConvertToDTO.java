@@ -37,6 +37,7 @@ public class ConvertToDTO {
         userDTO.setCountry(convertCountryToDTO(user.getCountry()));
         return userDTO;
     }
+
     public static User convertToUser(UserDTO userDTO) {
         User user = new User();
         user.setUsername(userDTO.getUsername());
@@ -45,6 +46,7 @@ public class ConvertToDTO {
         // Здесь можно добавить другие поля, если необходимо
         return user;
     }
+
     public static UserDTO convertToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());

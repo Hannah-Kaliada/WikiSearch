@@ -1,7 +1,10 @@
 package com.search.wiki.service;
 
+import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Article;
 import com.search.wiki.repository.ArticleRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,55 +12,83 @@ import java.util.List;
 
 @Service
 public class ArticleService {
-     private final ArticleRepository repository;
+    private final ArticleRepository repository;
+    private final Cache cache;
+    private static final String ARTICLE_CACHE_PREFIX = "Article_";
 
-     public ArticleService(ArticleRepository repository) {
-          this.repository = repository;
-     }
+    public ArticleService(ArticleRepository repository, Cache cache) {
+        this.repository = repository;
+        this.cache = cache;
+    }
 
-     public Article saveArticle(Article article) {
-          return repository.save(article);
-     }
+    public Article saveArticle(Article article) {
+        Article savedArticle = repository.save(article);
+        cache.put(getCacheKey(savedArticle.getId()), savedArticle);
+        return savedArticle;
+    }
 
-     public Article findById(long id) {
-          return repository.findById(id).orElse(null);
-     }
+    public Article findById(long id) {
+        String cacheKey = getCacheKey(id);
+        return getCachedOrFromRepository(cacheKey, id);
+    }
 
-     public Article updateArticle(Article article) {
-          return repository.save(article);
-     }
+    public Article updateArticle(Article article, Long id) {
+        Article existingArticle = findById(id);
 
-     public boolean deleteArticle(long id) {
-          try {
-               repository.deleteById(id);
-               return true;
-          } catch (Exception e) {
-               return false;
-          }
-     }
+        if (existingArticle != null) {
+            existingArticle.setTitle(article.getTitle());
+            existingArticle.setUrl(article.getUrl());
+            existingArticle.setImagePath(article.getImagePath());
 
-     public List<Article> findAllArticles() {
-          return repository.findAll();
-     }
+            Article updatedArticle = repository.save(existingArticle);
 
-     // Метод для получения топ 5 статей по количеству добавивших пользователей
-     public List<Article> findTop5ArticlesByUserCount() {
-          // Получаем результат запроса
-          List<Object[]> result = repository.findTop5ArticlesByUserCount();
+            if (updatedArticle != null) {
+                String cacheKey = getCacheKey(updatedArticle.getId());
+                cache.put(cacheKey, updatedArticle);
+            }
 
-          // Создаем список статей
-          List<Article> top5Articles = new ArrayList<>();
+            return updatedArticle;
+        } else {
+            return null;
+        }
+    }
 
-          // Проверяем, есть ли результат
-          if (result != null && !result.isEmpty()) {
-               // Преобразуем массивы объектов в объекты статей и добавляем их в список
-               for (Object[] row : result) {
-                    Article article = (Article) row[0];
-                    top5Articles.add(article);
-               }
-          }
+    public boolean deleteArticle(long id) {
+        try {
+            repository.deleteById(id);
+            cache.remove(getCacheKey(id));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-          // Возвращаем только топ 5 статей
-          return top5Articles.size() > 5 ? top5Articles.subList(0, 5) : top5Articles;
-     }
+    public List<Article> findAllArticles() {
+        List<Article> articles = repository.findAll();
+        for (Article article : articles) {
+            cache.put(getCacheKey(article.getId()), article);
+        }
+        return articles;
+    }
+
+    public List<Article> findTop5ArticlesByUserCount() {
+        Pageable pageable = PageRequest.of(0, 5);
+        return repository.findTop5ArticlesByUserCount(pageable);
+    }
+
+    private String getCacheKey(long id) {
+        return ARTICLE_CACHE_PREFIX + id;
+    }
+
+    private Article getCachedOrFromRepository(String cacheKey, long id) {
+        if (cache.containsKey(cacheKey)) {
+            return (Article) cache.get(cacheKey);
+        } else {
+            Article article = repository.findById(id).orElse(null);
+            if (article != null) {
+                cache.put(cacheKey, article);
+            }
+            return article;
+        }
+    }
 }
