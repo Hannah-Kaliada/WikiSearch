@@ -2,6 +2,7 @@ package com.search.wiki.service;
 
 import com.search.wiki.entity.Article;
 import com.search.wiki.entity.Query;
+import com.search.wiki.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,11 +14,13 @@ public class WikipediaApiService {
 
     private final WikipediaXmlParser wikipediaXmlParser;
     private final ArticleService articleService;
+    private final ArticleRepository articleRepository;
 
     @Autowired
-    public WikipediaApiService(WikipediaXmlParser wikipediaXmlParser, ArticleService articleService) {
+    public WikipediaApiService(WikipediaXmlParser wikipediaXmlParser, ArticleService articleService, ArticleRepository articleRepository) {
         this.wikipediaXmlParser = wikipediaXmlParser;
         this.articleService = articleService;
+        this.articleRepository = articleRepository;
     }
 
     public List<Article> search(Query query) {
@@ -38,8 +41,12 @@ public class WikipediaApiService {
         List<Article> articles = wikipediaXmlParser.parseXml(xmlResponse);
 
         for (Article article : articles) {
-            articleService.saveArticle(article);
+            // Проверяем, существует ли статья в базе данных по заголовку
+            if (!articleRepository.existsByTitle(article.getTitle())) {
+                articleRepository.save(article);
+            }
         }
+
 
         return articles;
     }

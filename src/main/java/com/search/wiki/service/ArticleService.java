@@ -91,4 +91,8 @@ public class ArticleService {
             return article;
         }
     }
+
+    public List<Article> searchArticlesByKeyword(String keyword) {
+        return repository.findByTitleContaining(keyword);
+    }
 }

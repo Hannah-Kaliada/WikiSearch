@@ -17,4 +17,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "ORDER BY COUNT(user) DESC")
     List<Article> findTop5ArticlesByUserCount(Pageable pageable);
 
+    @Query("SELECT a FROM Article a WHERE LOWER(a.title) LIKE LOWER(concat('%', :keyword, '%'))")
+    List<Article> findByTitleContaining(String keyword);
+
+    boolean existsByTitle(String title);
 }

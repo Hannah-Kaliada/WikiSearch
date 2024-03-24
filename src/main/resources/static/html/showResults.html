@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        .articles {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        body {
+            display: flex;
+            justify-content: flex-start;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .article {
+            display: flex;
+            gap: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+
+        .article-image {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+
+        .article-content {
+            flex-grow: 1;
+        }
+
+        h1 {
+            background: linear-gradient(to right, rgba(200, 200, 200, 0.1), rgba(180, 180, 180, 1));
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            font-size: 2em;
+            font-family: 'Rubik', sans-serif;
+            font-weight: 400;
+            text-align: left;
+            display: inline;
+            margin-bottom: 20px;
+        }
+
+
+        .article-title a {
+            text-decoration: none;
+            color: black;
+            font-size: 18px;
+        }
+
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            background-color: #555;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .pagination button:hover {
+            background-color: #777;
+        }
+    </style>
+</head>
+<body>
+<h1>Search Results</h1>
+<div class="articles">
+
+</div>
+<div class="pagination">
+    <button id="prevBtn" disabled>&lt; Previous</button>
+    <button id="nextBtn">Next &gt;</button>
+</div>
+<script src="js/showSearchResults.js"></script>
+</body>
+</html>
+

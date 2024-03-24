@@ -73,4 +73,9 @@ public class ArticleController {
         List<Article> top5Articles = service.findTop5ArticlesByUserCount();
         return ResponseEntity.ok(top5Articles);
     }
+
+    @GetMapping("/search")
+    public List<Article> searchArticles(@RequestParam("keyword") String keyword) {
+        return service.searchArticlesByKeyword(keyword);
+    }
 }
