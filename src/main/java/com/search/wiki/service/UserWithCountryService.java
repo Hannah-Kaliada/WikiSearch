@@ -30,6 +30,7 @@ public class UserWithCountryService {
   private final Cache countryCache;
   private final UserRepository userRepository;
   private final CountryRepository countryRepository;
+
   /**
    * Add user and country user dto.
    *
@@ -200,7 +201,8 @@ public class UserWithCountryService {
       country =
           countryRepository
               .findById(countryId)
-              .orElseThrow(() -> new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + userId));
+              .orElseThrow(
+                  () -> new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + userId));
       if (country != null) {
         countryCache.put(countryCacheKey, country);
       } else {

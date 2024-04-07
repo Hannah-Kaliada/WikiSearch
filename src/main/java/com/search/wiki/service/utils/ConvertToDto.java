@@ -17,7 +17,7 @@ public class ConvertToDto {
    *
    * @param country the country
    * @return the country dto
-   * @throws InvalidDataException if invalid data is encountered during conversion
+   * @throws InvalidDataException the invalid data exception
    */
   public static CountryDto convertCountryToDto(Country country) throws InvalidDataException {
     if (country == null) {
@@ -35,7 +35,7 @@ public class ConvertToDto {
    *
    * @param user the user
    * @return the user dto
-   * @throws InvalidDataException if invalid data is encountered during conversion
+   * @throws InvalidDataException the invalid data exception
    */
   public static UserDto convertUserToDto(User user) throws InvalidDataException {
     if (user == null) {
@@ -56,7 +56,7 @@ public class ConvertToDto {
    *
    * @param userDto the user dto
    * @return the user
-   * @throws InvalidDataException if invalid data is encountered during conversion
+   * @throws InvalidDataException the invalid data exception
    */
   public static User convertToUser(UserDto userDto) throws InvalidDataException {
     if (userDto == null) {
@@ -71,18 +71,11 @@ public class ConvertToDto {
   }
 
   /**
-   * Convert to user dto user dto.
-   *
-   * @param user the user
-   * @return the user dto
-   * @throws InvalidDataException if invalid data is encountered during conversion
-   */
-
-  /**
    * Convert user list to dto list.
    *
    * @param userList the user list
-   * @return the list of user dtos
+   * @return the list
+   * @throws InvalidDataException the invalid data exception
    */
   public static List<UserDto> convertUserListToDto(List<User> userList)
       throws InvalidDataException {

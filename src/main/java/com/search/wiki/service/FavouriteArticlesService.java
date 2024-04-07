@@ -60,14 +60,11 @@ public class FavouriteArticlesService {
         throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + articleId);
       }
     }
-
-    if (user != null && article != null) {
-      entityManager.detach(user);
-      user = entityManager.find(User.class, userId);
-      user.getFavoriteArticles().add(article);
-      userRepository.save(user);
-      cache.put(getUserCacheKey(userId), user);
-    }
+    entityManager.detach(user);
+    user = entityManager.find(User.class, userId);
+    user.getFavoriteArticles().add(article);
+    userRepository.save(user);
+    cache.put(getUserCacheKey(userId), user);
   }
 
   /**
@@ -92,13 +89,11 @@ public class FavouriteArticlesService {
       }
     }
 
-    if (user != null) {
-      entityManager.detach(user);
-      user = entityManager.find(User.class, userId);
-      user.getFavoriteArticles().removeIf(article -> article.getId() == articleId);
-      userRepository.save(user);
-      cache.remove(userCacheKey);
-    }
+    entityManager.detach(user);
+    user = entityManager.find(User.class, userId);
+    user.getFavoriteArticles().removeIf(article -> article.getId() == articleId);
+    userRepository.save(user);
+    cache.remove(userCacheKey);
   }
 
   /**
@@ -142,22 +137,20 @@ public class FavouriteArticlesService {
       throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + newArticleId);
     }
 
-    if (user != null && prevArticle != null && newArticle != null) {
-      entityManager.detach(user);
-      user = entityManager.find(User.class, userId);
+    entityManager.detach(user);
+    user = entityManager.find(User.class, userId);
 
-      user.getFavoriteArticles().remove(prevArticle);
-      prevArticle.getUsers().remove(user);
-      user.getFavoriteArticles().add(newArticle);
-      newArticle.getUsers().add(user);
+    user.getFavoriteArticles().remove(prevArticle);
+    prevArticle.getUsers().remove(user);
+    user.getFavoriteArticles().add(newArticle);
+    newArticle.getUsers().add(user);
 
-      articleRepository.save(prevArticle);
-      articleRepository.save(newArticle);
+    articleRepository.save(prevArticle);
+    articleRepository.save(newArticle);
 
-      userRepository.save(user);
+    userRepository.save(user);
 
-      cache.remove(userCacheKey);
-    }
+    cache.remove(userCacheKey);
   }
 
   /**
@@ -170,9 +163,9 @@ public class FavouriteArticlesService {
     if (userId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
-    String userCacheKey = getUserCacheKey(userId);
+
+    final String userCacheKey = getUserCacheKey(userId);
     User user = (User) cache.get(userCacheKey);
-    FavouriteArticlesDto favouriteArticlesDto = new FavouriteArticlesDto();
 
     if (user == null) {
       user = userRepository.findById(userId).orElse(null);
@@ -183,22 +176,22 @@ public class FavouriteArticlesService {
       }
     }
 
-    if (user != null) {
-      entityManager.detach(user);
-      user = entityManager.find(User.class, userId);
+    entityManager.detach(user);
+    user = entityManager.find(User.class, userId);
 
-      UserDto userDto = ConvertToDto.convertUserToDto(user);
-      favouriteArticlesDto.setUserId(userId);
-      Set<ArticleDto> articleDtoSet = convertToArticleDtoSet(user.getFavoriteArticles());
-      favouriteArticlesDto.setEmail(user.getEmail());
-      favouriteArticlesDto.setUsername(user.getUsername());
-      favouriteArticlesDto.setCountry(userDto.getCountry());
-      favouriteArticlesDto.setPassword(user.getPassword());
-      favouriteArticlesDto.setFavouriteArticles(articleDtoSet);
-    }
+    final FavouriteArticlesDto favouriteArticlesDto = new FavouriteArticlesDto();
+    UserDto userDto = ConvertToDto.convertUserToDto(user);
+    favouriteArticlesDto.setUserId(userId);
+    Set<ArticleDto> articleDtoSet = convertToArticleDtoSet(user.getFavoriteArticles());
+    favouriteArticlesDto.setEmail(user.getEmail());
+    favouriteArticlesDto.setUsername(user.getUsername());
+    favouriteArticlesDto.setCountry(userDto.getCountry());
+    favouriteArticlesDto.setPassword(user.getPassword());
+    favouriteArticlesDto.setFavouriteArticles(articleDtoSet);
 
     return favouriteArticlesDto;
   }
+
 
   /**
    * Gets articles saved by user.
@@ -210,26 +203,28 @@ public class FavouriteArticlesService {
     if (articleId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
-    Article article = (Article) cache.get(getArticleCacheKey(articleId));
-    Set<User> users = new HashSet<>();
+
+    final String articleCacheKey = getArticleCacheKey(articleId);
+    Article article = (Article) cache.get(articleCacheKey);
+    final Set<User> users;
 
     if (article == null) {
       article = articleRepository.findById(articleId).orElse(null);
       if (article != null) {
-        cache.put(getArticleCacheKey(articleId), article);
+        cache.put(articleCacheKey, article);
       } else {
         throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + articleId);
       }
     }
 
-    if (article != null) {
-      entityManager.detach(article);
-      article = entityManager.find(Article.class, article.getId());
-      users.addAll(article.getUsers());
-    }
+    entityManager.detach(article);
+    article = entityManager.find(Article.class, article.getId());
+    users = new HashSet<>(article.getUsers());
 
     return users;
   }
+
+
 
   private Set<ArticleDto> convertToArticleDtoSet(Set<Article> articles) {
     Set<ArticleDto> articleDtoSet = new HashSet<>();
