@@ -5,6 +5,7 @@ import com.search.wiki.entity.User;
 import com.search.wiki.service.CountryService;
 import com.search.wiki.service.UserService;
 import com.search.wiki.service.UserWithCountryService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class UserController {
    */
   @PostMapping("/addUserAndCountry/{countryName}")
   public ResponseEntity<UserDto> addUserAndCountry(
-      @RequestBody UserDto userDto, @PathVariable String countryName) {
+      @Valid @RequestBody UserDto userDto, @PathVariable String countryName) {
     UserDto addedUser = userWithCountryService.addUserAndCountry(userDto, countryName);
     if (addedUser != null) {
       return ResponseEntity.ok(addedUser);
@@ -89,7 +90,7 @@ public class UserController {
    * @return the user
    */
   @PostMapping("/addUser")
-  public User addUser(@RequestBody User user) {
+  public User addUser(@Valid @RequestBody User user) {
     return userService.addUser(user);
   }
 
@@ -101,7 +102,7 @@ public class UserController {
    * @return the user
    */
   @PutMapping("/updateUser/{userId}")
-  public User updateUser(@RequestBody User user, @PathVariable("userId") long userId) {
+  public User updateUser(@Valid @RequestBody User user, @PathVariable("userId") long userId) {
     return userService.updateUser(user, userId);
   }
 

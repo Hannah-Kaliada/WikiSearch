@@ -4,6 +4,7 @@ import com.search.wiki.controller.dto.CountryDto;
 import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
+import com.search.wiki.exceptions.customexceptions.InvalidDataException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +17,11 @@ public class ConvertToDto {
    *
    * @param country the country
    * @return the country dto
+   * @throws InvalidDataException if invalid data is encountered during conversion
    */
-  public static CountryDto convertCountryToDto(Country country) {
+  public static CountryDto convertCountryToDto(Country country) throws InvalidDataException {
     if (country == null) {
-      return null;
+      throw new InvalidDataException("Country is null. Cannot convert to CountryDto.");
     }
 
     CountryDto countryDto = new CountryDto();
@@ -33,10 +35,11 @@ public class ConvertToDto {
    *
    * @param user the user
    * @return the user dto
+   * @throws InvalidDataException if invalid data is encountered during conversion
    */
-  public static UserDto convertUserToDto(User user) {
+  public static UserDto convertUserToDto(User user) throws InvalidDataException {
     if (user == null) {
-      return null;
+      throw new InvalidDataException("User is null. Cannot convert to UserDto.");
     }
 
     UserDto userDto = new UserDto();
@@ -44,7 +47,7 @@ public class ConvertToDto {
     userDto.setUsername(user.getUsername());
     userDto.setEmail(user.getEmail());
     userDto.setPassword(user.getPassword());
-    userDto.setCountry(convertCountryToDto(user.getCountry()));
+    userDto.setCountry(convertCountryToDto(user.getCountry())); // May throw InvalidDataException
     return userDto;
   }
 
@@ -53,8 +56,13 @@ public class ConvertToDto {
    *
    * @param userDto the user dto
    * @return the user
+   * @throws InvalidDataException if invalid data is encountered during conversion
    */
-  public static User convertToUser(UserDto userDto) {
+  public static User convertToUser(UserDto userDto) throws InvalidDataException {
+    if (userDto == null) {
+      throw new InvalidDataException("UserDto is null. Cannot convert to User.");
+    }
+
     User user = new User();
     user.setUsername(userDto.getUsername());
     user.setEmail(userDto.getEmail());
@@ -67,14 +75,19 @@ public class ConvertToDto {
    *
    * @param user the user
    * @return the user dto
+   * @throws InvalidDataException if invalid data is encountered during conversion
    */
-  public static UserDto convertToUserDto(User user) {
+  public static UserDto convertToUserDto(User user) throws InvalidDataException {
+    if (user == null) {
+      throw new InvalidDataException("User is null. Cannot convert to UserDto.");
+    }
+
     UserDto userDto = new UserDto();
     userDto.setId(user.getId());
     userDto.setUsername(user.getUsername());
     userDto.setEmail(user.getEmail());
     userDto.setPassword(user.getPassword());
-    userDto.setCountry(convertCountryToDto(user.getCountry()));
+    userDto.setCountry(convertCountryToDto(user.getCountry())); // May throw InvalidDataException
     return userDto;
   }
 
@@ -82,12 +95,17 @@ public class ConvertToDto {
    * Convert user list to dto list.
    *
    * @param userList the user list
-   * @return the list
+   * @return the list of user dtos
    */
-  public static List<UserDto> convertUserListToDto(List<User> userList) {
+  public static List<UserDto> convertUserListToDto(List<User> userList)
+      throws InvalidDataException {
+    if (userList == null) {
+      throw new InvalidDataException("User list is null. Cannot convert to UserDto list.");
+    }
+
     List<UserDto> userDtoList = new ArrayList<>();
     for (User user : userList) {
-      userDtoList.add(convertToUserDto(user));
+      userDtoList.add(convertUserToDto(user));
     }
     return userDtoList;
   }

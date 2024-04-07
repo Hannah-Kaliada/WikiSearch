@@ -40,6 +40,9 @@ public class WikipediaApiService {
    * @return the list
    */
   public List<Article> search(Query query) {
+    if (query == null) {
+      throw new IllegalArgumentException("Query cannot be null");
+    }
     String apiUrl = "https://ru.wikipedia.org/w/api.php";
     String action = "opensearch";
     String format = "xml";
@@ -57,7 +60,7 @@ public class WikipediaApiService {
     List<Article> articles = wikipediaXmlParser.parseXml(xmlResponse);
 
     for (Article article : articles) {
-      // Проверяем, существует ли статья в базе данных по заголовку
+
       if (!articleRepository.existsByTitle(article.getTitle())) {
         articleRepository.save(article);
       }

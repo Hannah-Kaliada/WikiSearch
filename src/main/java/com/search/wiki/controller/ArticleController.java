@@ -2,8 +2,10 @@ package com.search.wiki.controller;
 
 import com.search.wiki.entity.Article;
 import com.search.wiki.entity.Query;
+import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.service.ArticleService;
 import com.search.wiki.service.WikipediaApiService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -47,7 +49,7 @@ public class ArticleController {
    * @return the response entity
    */
   @PostMapping("saveArticle")
-  public ResponseEntity<String> saveArticle(@RequestBody Article article) {
+  public ResponseEntity<String> saveArticle(@Valid @RequestBody Article article) {
     service.saveArticle(article);
     Query query = new Query(article.getTitle());
     wikipediaApiService.search(query);
@@ -62,11 +64,12 @@ public class ArticleController {
    */
   @GetMapping("/{id}")
   public ResponseEntity<Article> findById(@PathVariable long id) {
+
     Article article = service.findById(id);
     if (article != null) {
       return ResponseEntity.ok(article);
     } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+      throw new NotFoundException(ARTICLE_NOT_FOUND_MESSAGE);
     }
   }
 
@@ -79,7 +82,8 @@ public class ArticleController {
    */
   @PutMapping("updateArticle/{id}")
   public ResponseEntity<Article> updateArticle(
-      @RequestBody Article article, @PathVariable Long id) {
+      @Valid @RequestBody Article article, @PathVariable long id) {
+
     Article updatedArticle = service.updateArticle(article, id);
     if (updatedArticle != null) {
       return ResponseEntity.ok(updatedArticle);
@@ -100,7 +104,7 @@ public class ArticleController {
     if (deleted) {
       return ResponseEntity.ok("Article deleted successfully!");
     } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ARTICLE_NOT_FOUND_MESSAGE);
+      throw new NotFoundException(ARTICLE_NOT_FOUND_MESSAGE);
     }
   }
 

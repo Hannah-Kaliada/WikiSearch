@@ -2,6 +2,7 @@ package com.search.wiki.controller;
 
 import com.search.wiki.entity.Country;
 import com.search.wiki.service.CountryService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,19 +59,19 @@ public class CountryController {
    * @return the country
    */
   @PostMapping("/addCountry")
-  public Country addCountry(@RequestBody Country country) {
+  public Country addCountry(@Valid @RequestBody Country country) {
     return countryService.addCountry(country);
   }
 
   /**
-   * Update country country.
+   * Update  country.
    *
    * @param id the id
    * @param country the country
    * @return the country
    */
   @PutMapping("/updateCountry/{id}")
-  public Country updateCountry(@PathVariable Long id, @RequestBody Country country) {
+  public Country updateCountry(@PathVariable long id, @Valid @RequestBody Country country) {
     return countryService.updateCountry(country, id);
   }
 
@@ -82,6 +83,7 @@ public class CountryController {
    */
   @DeleteMapping("/deleteCountry/{id}")
   public boolean deleteCountry(@PathVariable long id) {
+
     return countryService.deleteCountry(id);
   }
 

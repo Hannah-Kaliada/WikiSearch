@@ -6,6 +6,7 @@ import com.search.wiki.controller.dto.FavouriteArticlesDto;
 import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.Article;
 import com.search.wiki.entity.User;
+import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.ArticleRepository;
 import com.search.wiki.repository.UserRepository;
 import com.search.wiki.service.utils.ConvertToDto;
@@ -35,6 +36,9 @@ public class FavouriteArticlesService {
    * @param articleId the article id
    */
   public void addArticleToUserFavorites(Long userId, Long articleId) {
+    if (userId < 1 || articleId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     User user = getUserFromCache(userId);
     Article article = getArticleFromCache(articleId);
 
@@ -42,13 +46,16 @@ public class FavouriteArticlesService {
       user = userRepository.findById(userId).orElse(null);
       if (user != null) {
         cache.put(getUserCacheKey(userId), user);
+      } else {
+        throw new NotFoundException("User not found with id: " + userId);
       }
     }
-
     if (article == null) {
       article = articleRepository.findById(articleId).orElse(null);
       if (article != null) {
         cache.put(getArticleCacheKey(articleId), article);
+      } else {
+        throw new NotFoundException("Article not found with id: " + articleId);
       }
     }
 
@@ -68,6 +75,9 @@ public class FavouriteArticlesService {
    * @param articleId the article id
    */
   public void removeArticleFromUserFavorites(long userId, long articleId) {
+    if (userId < 1 || articleId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) cache.get(userCacheKey);
 
@@ -75,6 +85,8 @@ public class FavouriteArticlesService {
       user = userRepository.findById(userId).orElse(null);
       if (user != null) {
         cache.put(userCacheKey, user);
+      } else {
+        throw new NotFoundException("User not found with id: " + userId);
       }
     }
 
@@ -95,6 +107,9 @@ public class FavouriteArticlesService {
    * @param newArticleId the new article id
    */
   public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
+    if (userId < 1 || prevArticleId < 1 || newArticleId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String userCacheKey = getUserCacheKey(userId);
 
     User user = (User) cache.get(userCacheKey);
@@ -106,6 +121,7 @@ public class FavouriteArticlesService {
       if (user != null) {
         cache.put(userCacheKey, user);
       }
+      throw new NotFoundException("User not found with id: " + userId);
     }
 
     if (prevArticle == null) {
@@ -113,6 +129,7 @@ public class FavouriteArticlesService {
       if (prevArticle != null) {
         cache.put(getArticleCacheKey(prevArticleId), prevArticle);
       }
+      throw new NotFoundException("Article not found with id: " + prevArticleId);
     }
 
     if (newArticle == null) {
@@ -120,6 +137,7 @@ public class FavouriteArticlesService {
       if (newArticle != null) {
         cache.put(getArticleCacheKey(newArticleId), newArticle);
       }
+      throw new NotFoundException("Article not found with id: " + newArticleId);
     }
 
     if (user != null && prevArticle != null && newArticle != null) {
@@ -147,6 +165,9 @@ public class FavouriteArticlesService {
    * @return the user favorite articles
    */
   public FavouriteArticlesDto getUserFavoriteArticles(Long userId) {
+    if (userId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) cache.get(userCacheKey);
     FavouriteArticlesDto favouriteArticlesDto = new FavouriteArticlesDto();
@@ -155,6 +176,8 @@ public class FavouriteArticlesService {
       user = userRepository.findById(userId).orElse(null);
       if (user != null) {
         cache.put(userCacheKey, user);
+      } else {
+        throw new NotFoundException("User not found with id: " + userId);
       }
     }
 
@@ -182,6 +205,9 @@ public class FavouriteArticlesService {
    * @return the articles saved by user
    */
   public Set<User> getArticlesSavedByUser(Long articleId) {
+    if (articleId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     Article article = (Article) cache.get(getArticleCacheKey(articleId));
     Set<User> users = new HashSet<>();
 
@@ -189,6 +215,8 @@ public class FavouriteArticlesService {
       article = articleRepository.findById(articleId).orElse(null);
       if (article != null) {
         cache.put(getArticleCacheKey(articleId), article);
+      } else {
+        throw new NotFoundException("Article not found with id: " + articleId);
       }
     }
 

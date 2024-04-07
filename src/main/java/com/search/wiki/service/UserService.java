@@ -2,6 +2,7 @@ package com.search.wiki.service;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.User;
+import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 /** The type User service. */
 @Service
@@ -37,6 +37,14 @@ public class UserService {
    * @return the user
    */
   public User addUser(User user) {
+    if (user == null) {
+      throw new IllegalArgumentException("User cannot be null");
+    } else if (repository.existsByUsername(user.getUsername())) {
+      throw new IllegalArgumentException(
+          "User already exists with username: " + user.getUsername());
+    } else if (repository.existsByEmail(user.getEmail())) {
+      throw new IllegalArgumentException("User already exists with email: " + user.getEmail());
+    }
     User savedUser = repository.save(user);
     cache.put(getUserCacheKey(savedUser.getId()), savedUser);
     return savedUser;
@@ -49,6 +57,9 @@ public class UserService {
    * @return the user by id
    */
   public User getUserById(long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String cacheKey = getUserCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
   }
@@ -62,6 +73,9 @@ public class UserService {
    */
   @Transactional
   public User updateUser(User user, long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String cacheKey = getUserCacheKey(id);
     User cachedUser = (User) cache.get(cacheKey);
 
@@ -81,7 +95,7 @@ public class UserService {
         cache.put(cacheKey, updatedUser);
         return updatedUser;
       } else {
-        return null;
+        throw new NotFoundException("User not found with id: " + id);
       }
     }
   }
@@ -94,12 +108,15 @@ public class UserService {
    */
   @Transactional
   public boolean deleteUser(long userId) {
+    if (userId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     if (repository.existsById(userId)) {
       repository.deleteById(userId);
       cache.remove(getUserCacheKey(userId));
       return true;
     }
-    return false;
+    throw new NotFoundException("User not found with id: " + userId);
   }
 
   /**
@@ -129,6 +146,9 @@ public class UserService {
   }
 
   private User getCachedOrFromRepository(String cacheKey, long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     if (cache.containsKey(cacheKey)) {
       return (User) cache.get(cacheKey);
     } else {
@@ -138,7 +158,7 @@ public class UserService {
         cache.put(cacheKey, user);
         return user;
       }
-      return null;
+      throw new NotFoundException("User not found with ID: " + id);
     }
   }
 }

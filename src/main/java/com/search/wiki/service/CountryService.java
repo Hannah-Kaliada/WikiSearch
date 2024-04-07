@@ -2,6 +2,7 @@ package com.search.wiki.service;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Country;
+import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +29,18 @@ public class CountryService {
   }
 
   /**
-   * Add country country.
+   * Add country.
    *
    * @param country the country
    * @return the country
    */
   public Country addCountry(Country country) {
+    if (country == null) {
+      throw new IllegalArgumentException("Country cannot be null");
+    }
+    if (repository.findByName(country.getName()).isPresent()) {
+      throw new IllegalArgumentException("Country already exists with name: " + country.getName());
+    }
     Country savedCountry = repository.save(country);
     cache.put(getCacheKey(savedCountry.getId()), savedCountry);
     return savedCountry;
@@ -46,6 +53,9 @@ public class CountryService {
    * @return the country by id
    */
   public Country getCountryById(long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String cacheKey = getCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
   }
@@ -57,18 +67,27 @@ public class CountryService {
    * @return the country by name
    */
   public Country getCountryByName(String name) {
+    if (!name.matches("^[A-Za-z\\s]+$")) {
+      throw new IllegalArgumentException("Invalid country name");
+    }
     Long id = getCountryIdByName(name);
-    return id != null ? getCachedOrFromRepository(getCacheKey(id), id) : null;
+    if (id == null) {
+      throw new NotFoundException("Country not found with name: " + name);
+    }
+    return getCachedOrFromRepository(getCacheKey(id), id);
   }
 
   /**
-   * Update country country.
+   * Update country.
    *
    * @param country the country
    * @param id the id
    * @return the country
    */
   public Country updateCountry(Country country, Long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     Optional<Country> optionalCountry = repository.findById(id);
     if (optionalCountry.isPresent()) {
       Country existingCountry = optionalCountry.get();
@@ -78,7 +97,7 @@ public class CountryService {
       cache.put(cacheKey, updatedCountry);
       return updatedCountry;
     } else {
-      return null;
+      throw new NotFoundException("Country not found with ID: " + id);
     }
   }
 
@@ -90,6 +109,9 @@ public class CountryService {
    */
   @Transactional
   public boolean deleteCountry(long countryId) {
+    if (countryId < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     Optional<Country> countryOptional = repository.findById(countryId);
     if (countryOptional.isPresent()) {
       Country country = countryOptional.get();
@@ -99,7 +121,7 @@ public class CountryService {
       cache.remove(getCacheKey(countryId));
       return true;
     }
-    return false;
+    throw new NotFoundException("Country not found with ID: " + countryId);
   }
 
   /**
@@ -113,6 +135,9 @@ public class CountryService {
       return (List<Country>) cache.get(cacheKey);
     } else {
       List<Country> countries = repository.findAll();
+      if (countries.isEmpty()) {
+        throw new NotFoundException("No countries found");
+      }
       for (Country country : countries) {
         String countryCacheKey = getCacheKey(country.getId());
         cache.put(countryCacheKey, country);
@@ -127,6 +152,9 @@ public class CountryService {
   }
 
   private Country getCachedOrFromRepository(String cacheKey, long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     if (cache.containsKey(cacheKey)) {
       return (Country) cache.get(cacheKey);
     } else {
@@ -136,7 +164,7 @@ public class CountryService {
         cache.put(cacheKey, country);
         return country;
       }
-      return null;
+      throw new NotFoundException("Country not found with ID: " + id);
     }
   }
 
@@ -147,7 +175,13 @@ public class CountryService {
    * @return the country id by name
    */
   public Long getCountryIdByName(String countryName) {
+    if (!countryName.matches("^[A-Za-z\\s]+$")) {
+      throw new IllegalArgumentException("Invalid country name");
+    }
     Optional<Country> optionalCountry = repository.findByName(countryName);
+    if (optionalCountry.isEmpty()) {
+      throw new NotFoundException("Country not found with name: " + countryName);
+    }
     return optionalCountry.map(Country::getId).orElse(null);
   }
 
@@ -158,6 +192,12 @@ public class CountryService {
    * @return the long
    */
   public Long addCountryAndGetId(Country country) {
+    if (country == null) {
+      throw new IllegalArgumentException("Country cannot be null");
+    }
+    if (repository.findByName(country.getName()).isPresent()) {
+      throw new IllegalArgumentException("Country already exists with name: " + country.getName());
+    }
     repository.save(country);
     return country.getId();
   }

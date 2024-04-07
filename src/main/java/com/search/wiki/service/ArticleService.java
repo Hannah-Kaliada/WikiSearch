@@ -2,8 +2,11 @@ package com.search.wiki.service;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Article;
+import com.search.wiki.exceptions.customexceptions.DatabaseAccessException;
+import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.ArticleRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,9 +34,18 @@ public class ArticleService {
    *
    * @param article the article
    * @return the article
+   * @throws IllegalArgumentException if article is null
    */
   public Article saveArticle(Article article) {
+    if (article == null) {
+      throw new IllegalArgumentException("Article cannot be null");
+    }
+
     Article savedArticle = repository.save(article);
+    if (savedArticle == null) {
+      throw new DatabaseAccessException("Error saving article");
+    }
+
     cache.put(getCacheKey(savedArticle.getId()), savedArticle);
     return savedArticle;
   }
@@ -45,6 +57,9 @@ public class ArticleService {
    * @return the article
    */
   public Article findById(long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     String cacheKey = getCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
   }
@@ -57,6 +72,9 @@ public class ArticleService {
    * @return the article
    */
   public Article updateArticle(Article article, Long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     Article existingArticle = findById(id);
 
     if (existingArticle != null) {
@@ -66,14 +84,16 @@ public class ArticleService {
 
       Article updatedArticle = repository.save(existingArticle);
 
-      if (updatedArticle != null) {
-        String cacheKey = getCacheKey(updatedArticle.getId());
-        cache.put(cacheKey, updatedArticle);
+      if (updatedArticle == null) {
+        throw new DatabaseAccessException("Error updating article");
       }
+
+      String cacheKey = getCacheKey(updatedArticle.getId());
+      cache.put(cacheKey, updatedArticle);
 
       return updatedArticle;
     } else {
-      return null;
+      throw new NotFoundException("Article not found with id: " + id);
     }
   }
 
@@ -84,12 +104,22 @@ public class ArticleService {
    * @return the boolean
    */
   public boolean deleteArticle(long id) {
-    try {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
+    Optional<Article> articleOptional = repository.findById(id);
+
+    if (articleOptional.isPresent()) {
       repository.deleteById(id);
-      cache.remove(getCacheKey(id));
-      return true;
-    } catch (Exception e) {
-      return false;
+      boolean articleDeleted = !repository.existsById(id);
+      if (articleDeleted) {
+        cache.remove(getCacheKey(id));
+        return true;
+      } else {
+        throw new DatabaseAccessException("Error deleting article with id: " + id);
+      }
+    } else {
+      throw new NotFoundException("Article not found with id: " + id);
     }
   }
 
@@ -100,6 +130,9 @@ public class ArticleService {
    */
   public List<Article> findAllArticles() {
     List<Article> articles = repository.findAll();
+    if (articles.isEmpty()) {
+      throw new NotFoundException("No articles found");
+    }
     for (Article article : articles) {
       cache.put(getCacheKey(article.getId()), article);
     }
@@ -121,12 +154,17 @@ public class ArticleService {
   }
 
   private Article getCachedOrFromRepository(String cacheKey, long id) {
+    if (id < 1) {
+      throw new IllegalArgumentException("Id cannot be less than 1");
+    }
     if (cache.containsKey(cacheKey)) {
       return (Article) cache.get(cacheKey);
     } else {
       Article article = repository.findById(id).orElse(null);
       if (article != null) {
         cache.put(cacheKey, article);
+      } else {
+        throw new NotFoundException("Article not found with id: " + id);
       }
       return article;
     }
