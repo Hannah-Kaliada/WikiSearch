@@ -1,5 +1,6 @@
 package com.search.wiki.controller.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -12,8 +13,7 @@ public class UserDto {
   @NotBlank(message = "Username is mandatory")
   @Size(max = 255, message = "Username cannot exceed 255 characters")
   private String username;
-  @NotBlank(message = "Email is mandatory")
-  @Size(max = 255, message = "Email cannot exceed 255 characters")
+  @Email(message = "Email should be valid")
   private String email;
   private CountryDto country;
   @NotBlank(message = "Password is mandatory")

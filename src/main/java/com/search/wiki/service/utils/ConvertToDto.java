@@ -70,23 +70,4 @@ public class ConvertToDto {
     return user;
   }
 
-  /**
-   * Convert user list to dto list.
-   *
-   * @param userList the user list
-   * @return the list
-   * @throws InvalidDataException the invalid data exception
-   */
-  public static List<UserDto> convertUserListToDto(List<User> userList)
-      throws InvalidDataException {
-    if (userList == null) {
-      throw new InvalidDataException("User list is null. Cannot convert to UserDto list.");
-    }
-
-    List<UserDto> userDtoList = new ArrayList<>();
-    for (User user : userList) {
-      userDtoList.add(convertUserToDto(user));
-    }
-    return userDtoList;
-  }
 }

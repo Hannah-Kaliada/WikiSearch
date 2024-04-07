@@ -66,8 +66,9 @@ public class UserController {
    * @return the all users
    */
   @GetMapping
-  public List<User> getAllUsers() {
-    return userService.getAllUsers();
+  public ResponseEntity<List<User>> getAllUsers() {
+    List<User> users = userService.getAllUsers();
+    return ResponseEntity.ok(users);
   }
 
   /**
@@ -77,42 +78,47 @@ public class UserController {
    * @return the user by id
    */
   @GetMapping("/{id}")
-  public User getUserById(@PathVariable long id) {
-    return userService.getUserById(id);
+  public ResponseEntity<User> getUserById(@PathVariable long id) {
+    User user = userService.getUserById(id);
+    return ResponseEntity.ok(user);
   }
 
   /**
-   * Add user user.
+   * Add user response entity.
    *
    * @param user the user
-   * @return the user
+   * @return the response entity
    */
   @PostMapping("/addUser")
-  public User addUser(@Valid @RequestBody User user) {
-    return userService.addUser(user);
+  public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+    User addedUser = userService.addUser(user);
+    return ResponseEntity.ok(addedUser);
   }
 
   /**
-   * Update user user.
+   * Update user response entity.
    *
    * @param user the user
    * @param userId the user id
-   * @return the user
+   * @return the response entity
    */
-  @PutMapping("/updateUser/{userId}")
-  public User updateUser(@Valid @RequestBody User user, @PathVariable("userId") long userId) {
-    return userService.updateUser(user, userId);
+  @PutMapping("/api/v1/users/updateUser/{userId}")
+  public ResponseEntity<User> updateUser(
+      @Valid @RequestBody User user, @PathVariable("userId") long userId) {
+    User updatedUser = userService.updateUser(user, userId);
+    return ResponseEntity.ok(updatedUser);
   }
 
   /**
-   * Delete user boolean.
+   * Delete user response entity.
    *
    * @param id the id
-   * @return the boolean
+   * @return the response entity
    */
-  @DeleteMapping("/deleteUser/{id}")
-  public boolean deleteUser(@PathVariable long id) {
-    return userService.deleteUser(id);
+  @DeleteMapping("/api/v1/users/deleteUser/{id}")
+  public ResponseEntity<Boolean> deleteUser(@PathVariable long id) {
+    boolean deleted = userService.deleteUser(id);
+    return ResponseEntity.ok(true);
   }
 
   /**

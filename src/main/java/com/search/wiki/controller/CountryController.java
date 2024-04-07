@@ -5,6 +5,8 @@ import com.search.wiki.service.CountryService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +39,9 @@ public class CountryController {
    * @return the all countries
    */
   @GetMapping
-  public List<Country> getAllCountries() {
-    return countryService.getAllCountries();
+  public ResponseEntity<List<Country>> getAllCountries() {
+    List<Country> countries = countryService.getAllCountries();
+    return ResponseEntity.ok(countries);
   }
 
   /**
@@ -48,42 +51,50 @@ public class CountryController {
    * @return the country by id
    */
   @GetMapping("/{id}")
-  public Country getCountryById(@PathVariable long id) {
-    return countryService.getCountryById(id);
+  public ResponseEntity<Country> getCountryById(@PathVariable long id) {
+    Country country = countryService.getCountryById(id);
+    return country != null ? ResponseEntity.ok(country) : ResponseEntity.notFound().build();
   }
 
   /**
-   * Add country.
+   * Add country response entity.
    *
    * @param country the country
-   * @return the country
+   * @return the response entity
    */
   @PostMapping("/addCountry")
-  public Country addCountry(@Valid @RequestBody Country country) {
-    return countryService.addCountry(country);
+  public ResponseEntity<Country> addCountry(@Valid @RequestBody Country country) {
+    Country addedCountry = countryService.addCountry(country);
+    return ResponseEntity.status(HttpStatus.CREATED).body(addedCountry);
   }
 
   /**
-   * Update  country.
+   * Update country response entity.
    *
    * @param id the id
    * @param country the country
-   * @return the country
+   * @return the response entity
    */
   @PutMapping("/updateCountry/{id}")
-  public Country updateCountry(@PathVariable long id, @Valid @RequestBody Country country) {
-    return countryService.updateCountry(country, id);
+  public ResponseEntity<Country> updateCountry(
+      @PathVariable long id, @Valid @RequestBody Country country) {
+    Country updatedCountry = countryService.updateCountry(country, id);
+    if (updatedCountry != null) {
+      return ResponseEntity.ok(updatedCountry);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
   }
 
   /**
-   * Delete country boolean.
+   * Delete country response entity.
    *
    * @param id the id
-   * @return the boolean
+   * @return the response entity
    */
   @DeleteMapping("/deleteCountry/{id}")
-  public boolean deleteCountry(@PathVariable long id) {
-
-    return countryService.deleteCountry(id);
+  public ResponseEntity<Boolean> deleteCountry(@PathVariable long id) {
+    boolean deleted = countryService.deleteCountry(id);
+    return ResponseEntity.ok(deleted);
   }
 }

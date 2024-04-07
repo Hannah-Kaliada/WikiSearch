@@ -1,6 +1,12 @@
 package com.search.wiki.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -19,9 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/**
- * The type Country service tests.
- */
+/** The type Country service tests. */
 @ExtendWith(MockitoExtension.class)
 class CountryServiceTests {
 
@@ -31,10 +35,8 @@ class CountryServiceTests {
 
   @InjectMocks private CountryService countryService;
 
-  /**
-   * Test add country success.
-   */
-@Test
+  /** Test add country success. */
+  @Test
   void testAddCountry_Success() {
     Country inputCountry = new Country();
     inputCountry.setName("Test Country");
@@ -42,9 +44,7 @@ class CountryServiceTests {
     when(countryRepository.findByName(any())).thenReturn(Optional.empty());
     when(countryRepository.save(any())).thenReturn(inputCountry);
 
-
     Country savedCountry = countryService.addCountry(inputCountry);
-
 
     assertNotNull(savedCountry);
     assertEquals("Test Country", savedCountry.getName());
@@ -52,11 +52,8 @@ class CountryServiceTests {
     verify(cache, times(1)).put(any(), any());
   }
 
-
-  /**
-   * Test add country duplicate name.
-   */
-@Test
+  /** Test add country duplicate name. */
+  @Test
   void testAddCountry_DuplicateName() {
     Country inputCountry = new Country();
     inputCountry.setName("Existing Country");
@@ -66,11 +63,8 @@ class CountryServiceTests {
     assertThrows(DuplicateEntryException.class, () -> countryService.addCountry(inputCountry));
   }
 
-
-  /**
-   * Test get country by id existing id.
-   */
-@Test
+  /** Test get country by id existing id. */
+  @Test
   void testGetCountryById_ExistingId() {
     long countryId = 1L;
     Country existingCountry = new Country();
@@ -86,10 +80,8 @@ class CountryServiceTests {
     assertEquals("Test Country", retrievedCountry.getName());
   }
 
-  /**
-   * Test get country by id nonexistent id.
-   */
-@Test
+  /** Test get country by id nonexistent id. */
+  @Test
   void testGetCountryById_NonexistentId() {
     long nonexistentId = 999L;
 
@@ -98,10 +90,8 @@ class CountryServiceTests {
     assertThrows(NotFoundException.class, () -> countryService.getCountryById(nonexistentId));
   }
 
-  /**
-   * Test update country success.
-   */
-@Test
+  /** Test update country success. */
+  @Test
   void testUpdateCountry_Success() {
     long countryId = 1L;
     Country existingCountry = new Country();
@@ -121,10 +111,8 @@ class CountryServiceTests {
     assertEquals("Updated Country", updatedCountry.getName());
   }
 
-  /**
-   * Test update country nonexistent id.
-   */
-@Test
+  /** Test update country nonexistent id. */
+  @Test
   void testUpdateCountry_NonexistentId() {
     long nonexistentId = 999L;
     Country updatedCountryData = new Country();
@@ -137,10 +125,8 @@ class CountryServiceTests {
         () -> countryService.updateCountry(updatedCountryData, nonexistentId));
   }
 
-  /**
-   * Test delete country success.
-   */
-@Test
+  /** Test delete country success. */
+  @Test
   void testDeleteCountry_Success() {
     long countryId = 1L;
     Country existingCountry = new Country();
@@ -157,10 +143,8 @@ class CountryServiceTests {
     verify(cache, times(1)).remove(any());
   }
 
-  /**
-   * Test delete country nonexistent id.
-   */
-@Test
+  /** Test delete country nonexistent id. */
+  @Test
   void testDeleteCountry_NonexistentId() {
     long nonexistentId = 999L;
 
@@ -169,18 +153,14 @@ class CountryServiceTests {
     assertThrows(NotFoundException.class, () -> countryService.deleteCountry(nonexistentId));
   }
 
-  /**
-   * Test add country null input.
-   */
-@Test
+  /** Test add country null input. */
+  @Test
   void testAddCountry_NullInput() {
     assertThrows(IllegalArgumentException.class, () -> countryService.addCountry(null));
   }
 
-  /**
-   * Test get all countries cache hit.
-   */
-@Test
+  /** Test get all countries cache hit. */
+  @Test
   void testGetAllCountries_CacheHit() {
 
     when(cache.containsKey(any())).thenReturn(true);
@@ -193,10 +173,8 @@ class CountryServiceTests {
     assertEquals(cachedCountries, result);
   }
 
-  /**
-   * Test get all countries empty repository.
-   */
-@Test
+  /** Test get all countries empty repository. */
+  @Test
   void testGetAllCountries_EmptyRepository() {
 
     when(countryRepository.findAll()).thenReturn(Collections.emptyList());
@@ -204,10 +182,8 @@ class CountryServiceTests {
     assertThrows(NotFoundException.class, () -> countryService.getAllCountries());
   }
 
-  /**
-   * Test get country id by name existing name.
-   */
-@Test
+  /** Test get country id by name existing name. */
+  @Test
   void testGetCountryIdByName_ExistingName() {
     String existingCountryName = "Existing Country";
     long countryId = 1L;
@@ -234,4 +210,44 @@ class CountryServiceTests {
         NotFoundException.class, () -> countryService.getCountryIdByName(nonexistentCountryName));
   }
 
+  /** Test add country and get id null country. */
+  @Test
+  void testAddCountryAndGetId_NullCountry() {
+    assertThrows(IllegalArgumentException.class, () -> countryService.addCountryAndGetId(null));
+  }
+
+  /** Test add country and get id duplicate name. */
+  @Test
+  void testAddCountryAndGetId_DuplicateName() {
+    Country existingCountry = new Country();
+    existingCountry.setName("Existing Country");
+
+    when(countryRepository.findByName(existingCountry.getName()))
+        .thenReturn(Optional.of(existingCountry));
+
+    assertThrows(
+        DuplicateEntryException.class, () -> countryService.addCountryAndGetId(existingCountry));
+  }
+
+  /** Test add country and get id success. */
+  @Test
+  void testAddCountryAndGetId_Success() {
+    Country newCountry = new Country();
+    newCountry.setName("New Country");
+
+    // Mock behavior of repository save method
+    when(countryRepository.findByName(newCountry.getName())).thenReturn(Optional.empty());
+    when(countryRepository.save(any()))
+        .thenAnswer(
+            invocation -> {
+              Country savedCountry = invocation.getArgument(0);
+              savedCountry.setId(1L); // Simulate setting an ID upon save
+              return savedCountry;
+            });
+
+    Long countryId = countryService.addCountryAndGetId(newCountry);
+
+    assertNotNull(countryId);
+    assertEquals(1L, countryId); // Ensure the returned ID is correct
+  }
 }
