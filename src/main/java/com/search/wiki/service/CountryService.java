@@ -3,6 +3,7 @@ package com.search.wiki.service;
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Country;
 import com.search.wiki.exceptions.ExceptionConstants;
+import com.search.wiki.exceptions.customexceptions.DuplicateEntryException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
 import java.util.List;
@@ -40,7 +41,7 @@ public class CountryService {
       throw new IllegalArgumentException("Country cannot be null");
     }
     if (repository.findByName(country.getName()).isPresent()) {
-      throw new IllegalArgumentException("Country already exists with name: " + country.getName());
+      throw new DuplicateEntryException("Country already exists with name: " + country.getName());
     }
     Country savedCountry = repository.save(country);
     cache.put(getCacheKey(savedCountry.getId()), savedCountry);
@@ -197,7 +198,7 @@ public class CountryService {
       throw new IllegalArgumentException("Country cannot be null");
     }
     if (repository.findByName(country.getName()).isPresent()) {
-      throw new IllegalArgumentException("Country already exists with name: " + country.getName());
+      throw new DuplicateEntryException("Country already exists with name: " + country.getName());
     }
     repository.save(country);
     return country.getId();

@@ -3,6 +3,7 @@ package com.search.wiki.service;
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.User;
 import com.search.wiki.exceptions.ExceptionConstants;
+import com.search.wiki.exceptions.customexceptions.DuplicateEntryException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.UserRepository;
 import java.util.ArrayList;
@@ -41,10 +42,10 @@ public class UserService {
     if (user == null) {
       throw new IllegalArgumentException("User cannot be null");
     } else if (repository.existsByUsername(user.getUsername())) {
-      throw new IllegalArgumentException(
+      throw new DuplicateEntryException(
           "User already exists with username: " + user.getUsername());
     } else if (repository.existsByEmail(user.getEmail())) {
-      throw new IllegalArgumentException("User already exists with email: " + user.getEmail());
+      throw new DuplicateEntryException("User already exists with email: " + user.getEmail());
     }
     User savedUser = repository.save(user);
     cache.put(getUserCacheKey(savedUser.getId()), savedUser);
