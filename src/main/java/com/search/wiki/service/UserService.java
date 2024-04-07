@@ -18,6 +18,7 @@ public class UserService {
   private final UserRepository repository;
   private final Cache cache;
   private static final String USER_CACHE_PREFIX = "User_";
+  private static final String IdRequired = "Id cannot be less than 1";
 
   /**
    * Instantiates a new User service.
@@ -58,7 +59,7 @@ public class UserService {
    */
   public User getUserById(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String cacheKey = getUserCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
@@ -74,7 +75,7 @@ public class UserService {
   @Transactional
   public User updateUser(User user, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String cacheKey = getUserCacheKey(id);
     User cachedUser = (User) cache.get(cacheKey);
@@ -109,7 +110,7 @@ public class UserService {
   @Transactional
   public boolean deleteUser(long userId) {
     if (userId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     if (repository.existsById(userId)) {
       repository.deleteById(userId);
@@ -147,7 +148,7 @@ public class UserService {
 
   private User getCachedOrFromRepository(String cacheKey, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     if (cache.containsKey(cacheKey)) {
       return (User) cache.get(cacheKey);

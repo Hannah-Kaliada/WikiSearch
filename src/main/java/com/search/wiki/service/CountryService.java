@@ -16,6 +16,7 @@ public class CountryService {
   private final CountryRepository repository;
   private final Cache cache;
   private static final String COUNTRY_CACHE_PREFIX = "Country_";
+  private static final String IdRequired = "Id cannot be less than 1";
 
   /**
    * Instantiates a new Country service.
@@ -54,7 +55,7 @@ public class CountryService {
    */
   public Country getCountryById(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String cacheKey = getCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
@@ -86,7 +87,7 @@ public class CountryService {
    */
   public Country updateCountry(Country country, Long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     Optional<Country> optionalCountry = repository.findById(id);
     if (optionalCountry.isPresent()) {
@@ -110,7 +111,7 @@ public class CountryService {
   @Transactional
   public boolean deleteCountry(long countryId) {
     if (countryId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     Optional<Country> countryOptional = repository.findById(countryId);
     if (countryOptional.isPresent()) {
@@ -153,7 +154,7 @@ public class CountryService {
 
   private Country getCachedOrFromRepository(String cacheKey, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     if (cache.containsKey(cacheKey)) {
       return (Country) cache.get(cacheKey);

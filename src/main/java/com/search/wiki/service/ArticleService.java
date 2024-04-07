@@ -17,6 +17,7 @@ public class ArticleService {
   private final ArticleRepository repository;
   private final Cache cache;
   private static final String ARTICLE_CACHE_PREFIX = "Article_";
+  private static final String IdRequired = "Id cannot be less than 1";
 
   /**
    * Instantiates a new Article service.
@@ -58,7 +59,7 @@ public class ArticleService {
    */
   public Article findById(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String cacheKey = getCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
@@ -73,7 +74,7 @@ public class ArticleService {
    */
   public Article updateArticle(Article article, Long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     Article existingArticle = findById(id);
 
@@ -105,7 +106,7 @@ public class ArticleService {
    */
   public boolean deleteArticle(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     Optional<Article> articleOptional = repository.findById(id);
 

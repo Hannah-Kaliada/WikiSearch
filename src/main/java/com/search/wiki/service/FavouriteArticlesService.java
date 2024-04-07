@@ -27,6 +27,7 @@ public class FavouriteArticlesService {
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
   private final Cache cache;
+  private static final String IdRequired = "Id cannot be less than 1";
   @PersistenceContext private EntityManager entityManager;
 
   /**
@@ -37,7 +38,7 @@ public class FavouriteArticlesService {
    */
   public void addArticleToUserFavorites(Long userId, Long articleId) {
     if (userId < 1 || articleId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     User user = getUserFromCache(userId);
     Article article = getArticleFromCache(articleId);
@@ -76,7 +77,7 @@ public class FavouriteArticlesService {
    */
   public void removeArticleFromUserFavorites(long userId, long articleId) {
     if (userId < 1 || articleId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) cache.get(userCacheKey);
@@ -108,7 +109,7 @@ public class FavouriteArticlesService {
    */
   public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
     if (userId < 1 || prevArticleId < 1 || newArticleId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String userCacheKey = getUserCacheKey(userId);
 

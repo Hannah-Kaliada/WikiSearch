@@ -29,6 +29,7 @@ public class UserWithCountryService {
   private final Cache countryCache;
   private final UserRepository userRepository;
   private final CountryRepository countryRepository;
+  private static final String IdRequired = "Id cannot be less than 1";
 
   /**
    * Add user and country user dto.
@@ -80,7 +81,7 @@ public class UserWithCountryService {
    */
   public List<UserDto> getAllUsersInCountry(Long countryId) {
     if (countryId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     Country country = getCountryFromCache(countryId);
     if (country == null) {
@@ -109,7 +110,7 @@ public class UserWithCountryService {
    */
   public UserDto addCountryToUser(Long userId, Long countryId) {
     if (userId < 1 || countryId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
@@ -145,7 +146,7 @@ public class UserWithCountryService {
    */
   public void removeCountryFromUser(Long userId) {
     if (userId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
@@ -177,7 +178,7 @@ public class UserWithCountryService {
    */
   public UserDto updateUserCountry(Long userId, Long countryId) {
     if (userId < 1 || countryId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(IdRequired);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
