@@ -2,6 +2,7 @@ package com.search.wiki.service;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Article;
+import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.DatabaseAccessException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.ArticleRepository;
@@ -17,7 +18,7 @@ public class ArticleService {
   private final ArticleRepository repository;
   private final Cache cache;
   private static final String ARTICLE_CACHE_PREFIX = "Article_";
-  private static final String IdRequired = "Id cannot be less than 1";
+
 
   /**
    * Instantiates a new Article service.
@@ -59,7 +60,7 @@ public class ArticleService {
    */
   public Article findById(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String cacheKey = getCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
@@ -74,7 +75,7 @@ public class ArticleService {
    */
   public Article updateArticle(Article article, Long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     Article existingArticle = findById(id);
 
@@ -94,7 +95,7 @@ public class ArticleService {
 
       return updatedArticle;
     } else {
-      throw new NotFoundException("Article not found with id: " + id);
+      throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + id);
     }
   }
 
@@ -106,7 +107,7 @@ public class ArticleService {
    */
   public boolean deleteArticle(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     Optional<Article> articleOptional = repository.findById(id);
 
@@ -120,7 +121,7 @@ public class ArticleService {
         throw new DatabaseAccessException("Error deleting article with id: " + id);
       }
     } else {
-      throw new NotFoundException("Article not found with id: " + id);
+      throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + id);
     }
   }
 
@@ -156,7 +157,7 @@ public class ArticleService {
 
   private Article getCachedOrFromRepository(String cacheKey, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     if (cache.containsKey(cacheKey)) {
       return (Article) cache.get(cacheKey);
@@ -165,7 +166,7 @@ public class ArticleService {
       if (article != null) {
         cache.put(cacheKey, article);
       } else {
-        throw new NotFoundException("Article not found with id: " + id);
+        throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + id);
       }
       return article;
     }

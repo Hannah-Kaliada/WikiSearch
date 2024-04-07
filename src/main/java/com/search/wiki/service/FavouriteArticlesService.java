@@ -6,6 +6,7 @@ import com.search.wiki.controller.dto.FavouriteArticlesDto;
 import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.Article;
 import com.search.wiki.entity.User;
+import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.ArticleRepository;
 import com.search.wiki.repository.UserRepository;
@@ -27,7 +28,7 @@ public class FavouriteArticlesService {
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
   private final Cache cache;
-  private static final String IdRequired = "Id cannot be less than 1";
+
   @PersistenceContext private EntityManager entityManager;
 
   /**
@@ -38,7 +39,7 @@ public class FavouriteArticlesService {
    */
   public void addArticleToUserFavorites(Long userId, Long articleId) {
     if (userId < 1 || articleId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     User user = getUserFromCache(userId);
     Article article = getArticleFromCache(articleId);
@@ -48,7 +49,7 @@ public class FavouriteArticlesService {
       if (user != null) {
         cache.put(getUserCacheKey(userId), user);
       } else {
-        throw new NotFoundException("User not found with id: " + userId);
+        throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
       }
     }
     if (article == null) {
@@ -56,7 +57,7 @@ public class FavouriteArticlesService {
       if (article != null) {
         cache.put(getArticleCacheKey(articleId), article);
       } else {
-        throw new NotFoundException("Article not found with id: " + articleId);
+        throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + articleId);
       }
     }
 
@@ -77,7 +78,7 @@ public class FavouriteArticlesService {
    */
   public void removeArticleFromUserFavorites(long userId, long articleId) {
     if (userId < 1 || articleId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) cache.get(userCacheKey);
@@ -87,7 +88,7 @@ public class FavouriteArticlesService {
       if (user != null) {
         cache.put(userCacheKey, user);
       } else {
-        throw new NotFoundException("User not found with id: " + userId);
+        throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
       }
     }
 
@@ -109,7 +110,7 @@ public class FavouriteArticlesService {
    */
   public void editUserFavoriteArticle(Long userId, Long prevArticleId, Long newArticleId) {
     if (userId < 1 || prevArticleId < 1 || newArticleId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String userCacheKey = getUserCacheKey(userId);
 
@@ -122,7 +123,7 @@ public class FavouriteArticlesService {
       if (user != null) {
         cache.put(userCacheKey, user);
       }
-      throw new NotFoundException("User not found with id: " + userId);
+      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
     }
 
     if (prevArticle == null) {
@@ -130,7 +131,7 @@ public class FavouriteArticlesService {
       if (prevArticle != null) {
         cache.put(getArticleCacheKey(prevArticleId), prevArticle);
       }
-      throw new NotFoundException("Article not found with id: " + prevArticleId);
+      throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + prevArticleId);
     }
 
     if (newArticle == null) {
@@ -138,7 +139,7 @@ public class FavouriteArticlesService {
       if (newArticle != null) {
         cache.put(getArticleCacheKey(newArticleId), newArticle);
       }
-      throw new NotFoundException("Article not found with id: " + newArticleId);
+      throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + newArticleId);
     }
 
     if (user != null && prevArticle != null && newArticle != null) {
@@ -167,7 +168,7 @@ public class FavouriteArticlesService {
    */
   public FavouriteArticlesDto getUserFavoriteArticles(Long userId) {
     if (userId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) cache.get(userCacheKey);
@@ -178,7 +179,7 @@ public class FavouriteArticlesService {
       if (user != null) {
         cache.put(userCacheKey, user);
       } else {
-        throw new NotFoundException("User not found with id: " + userId);
+        throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
       }
     }
 
@@ -207,7 +208,7 @@ public class FavouriteArticlesService {
    */
   public Set<User> getArticlesSavedByUser(Long articleId) {
     if (articleId < 1) {
-      throw new IllegalArgumentException("Id cannot be less than 1");
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     Article article = (Article) cache.get(getArticleCacheKey(articleId));
     Set<User> users = new HashSet<>();
@@ -217,7 +218,7 @@ public class FavouriteArticlesService {
       if (article != null) {
         cache.put(getArticleCacheKey(articleId), article);
       } else {
-        throw new NotFoundException("Article not found with id: " + articleId);
+        throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + articleId);
       }
     }
 

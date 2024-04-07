@@ -2,6 +2,7 @@ package com.search.wiki.service;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Country;
+import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
 import java.util.List;
@@ -16,7 +17,6 @@ public class CountryService {
   private final CountryRepository repository;
   private final Cache cache;
   private static final String COUNTRY_CACHE_PREFIX = "Country_";
-  private static final String IdRequired = "Id cannot be less than 1";
 
   /**
    * Instantiates a new Country service.
@@ -55,7 +55,7 @@ public class CountryService {
    */
   public Country getCountryById(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String cacheKey = getCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
@@ -87,7 +87,7 @@ public class CountryService {
    */
   public Country updateCountry(Country country, Long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     Optional<Country> optionalCountry = repository.findById(id);
     if (optionalCountry.isPresent()) {
@@ -98,7 +98,7 @@ public class CountryService {
       cache.put(cacheKey, updatedCountry);
       return updatedCountry;
     } else {
-      throw new NotFoundException("Country not found with ID: " + id);
+      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + id);
     }
   }
 
@@ -111,7 +111,7 @@ public class CountryService {
   @Transactional
   public boolean deleteCountry(long countryId) {
     if (countryId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     Optional<Country> countryOptional = repository.findById(countryId);
     if (countryOptional.isPresent()) {
@@ -122,7 +122,7 @@ public class CountryService {
       cache.remove(getCacheKey(countryId));
       return true;
     }
-    throw new NotFoundException("Country not found with ID: " + countryId);
+    throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryId);
   }
 
   /**
@@ -154,7 +154,7 @@ public class CountryService {
 
   private Country getCachedOrFromRepository(String cacheKey, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     if (cache.containsKey(cacheKey)) {
       return (Country) cache.get(cacheKey);
@@ -165,7 +165,7 @@ public class CountryService {
         cache.put(cacheKey, country);
         return country;
       }
-      throw new NotFoundException("Country not found with ID: " + id);
+      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + id);
     }
   }
 
@@ -181,7 +181,7 @@ public class CountryService {
     }
     Optional<Country> optionalCountry = repository.findByName(countryName);
     if (optionalCountry.isEmpty()) {
-      throw new NotFoundException("Country not found with name: " + countryName);
+      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryName);
     }
     return optionalCountry.map(Country::getId).orElse(null);
   }

@@ -5,6 +5,7 @@ import com.search.wiki.controller.dto.CountryDto;
 import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
+import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.DatabaseAccessException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
@@ -29,8 +30,6 @@ public class UserWithCountryService {
   private final Cache countryCache;
   private final UserRepository userRepository;
   private final CountryRepository countryRepository;
-  private static final String IdRequired = "Id cannot be less than 1";
-
   /**
    * Add user and country user dto.
    *
@@ -70,7 +69,7 @@ public class UserWithCountryService {
     if (addedUser == null) {
       throw new DatabaseAccessException("Failed to add user to the database");
     }
-    return ConvertToDto.convertToUserDto(addedUser);
+    return ConvertToDto.convertUserToDto(addedUser);
   }
 
   /**
@@ -81,7 +80,7 @@ public class UserWithCountryService {
    */
   public List<UserDto> getAllUsersInCountry(Long countryId) {
     if (countryId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     Country country = getCountryFromCache(countryId);
     if (country == null) {
@@ -90,7 +89,7 @@ public class UserWithCountryService {
         String cacheKey = getCountryCacheKey(country.getId());
         countryCache.put(cacheKey, country);
       } else {
-        throw new NotFoundException("Country not found with ID: " + countryId);
+        throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryId);
       }
     }
 
@@ -110,7 +109,7 @@ public class UserWithCountryService {
    */
   public UserDto addCountryToUser(Long userId, Long countryId) {
     if (userId < 1 || countryId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
@@ -131,9 +130,9 @@ public class UserWithCountryService {
       userCache.put(userCacheKey, updatedUser);
       return convertToDto(updatedUser);
     } else if (user == null) {
-      throw new NotFoundException("User not found with ID: " + userId);
+      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
     } else if (country == null) {
-      throw new NotFoundException("Country not found with ID: " + countryId);
+      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryId);
     }
 
     return null;
@@ -146,7 +145,7 @@ public class UserWithCountryService {
    */
   public void removeCountryFromUser(Long userId) {
     if (userId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
@@ -165,7 +164,7 @@ public class UserWithCountryService {
         throw new DatabaseAccessException("Failed to remove country from user");
       }
     } else {
-      throw new NotFoundException("User not found with ID: " + userId);
+      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
     }
   }
 
@@ -178,7 +177,7 @@ public class UserWithCountryService {
    */
   public UserDto updateUserCountry(Long userId, Long countryId) {
     if (userId < 1 || countryId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
@@ -189,11 +188,11 @@ public class UserWithCountryService {
       user =
           userRepository
               .findById(userId)
-              .orElseThrow(() -> new NotFoundException("User not found with ID: " + userId));
+              .orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId));
       if (user != null) {
         userCache.put(userCacheKey, user);
       } else {
-        throw new NotFoundException("User not found with ID: " + userId);
+        throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
       }
     }
 
@@ -201,11 +200,11 @@ public class UserWithCountryService {
       country =
           countryRepository
               .findById(countryId)
-              .orElseThrow(() -> new NotFoundException("Country not found with ID: " + userId));
+              .orElseThrow(() -> new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + userId));
       if (country != null) {
         countryCache.put(countryCacheKey, country);
       } else {
-        throw new NotFoundException("Country not found with ID: " + userId);
+        throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + userId);
       }
     }
 

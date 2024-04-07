@@ -2,6 +2,7 @@ package com.search.wiki.service;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.User;
+import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.UserRepository;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ public class UserService {
   private final UserRepository repository;
   private final Cache cache;
   private static final String USER_CACHE_PREFIX = "User_";
-  private static final String IdRequired = "Id cannot be less than 1";
 
   /**
    * Instantiates a new User service.
@@ -59,7 +59,7 @@ public class UserService {
    */
   public User getUserById(long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String cacheKey = getUserCacheKey(id);
     return getCachedOrFromRepository(cacheKey, id);
@@ -75,7 +75,7 @@ public class UserService {
   @Transactional
   public User updateUser(User user, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     String cacheKey = getUserCacheKey(id);
     User cachedUser = (User) cache.get(cacheKey);
@@ -96,7 +96,7 @@ public class UserService {
         cache.put(cacheKey, updatedUser);
         return updatedUser;
       } else {
-        throw new NotFoundException("User not found with id: " + id);
+        throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + id);
       }
     }
   }
@@ -110,14 +110,14 @@ public class UserService {
   @Transactional
   public boolean deleteUser(long userId) {
     if (userId < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     if (repository.existsById(userId)) {
       repository.deleteById(userId);
       cache.remove(getUserCacheKey(userId));
       return true;
     }
-    throw new NotFoundException("User not found with id: " + userId);
+    throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
   }
 
   /**
@@ -148,7 +148,7 @@ public class UserService {
 
   private User getCachedOrFromRepository(String cacheKey, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(IdRequired);
+      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
     if (cache.containsKey(cacheKey)) {
       return (User) cache.get(cacheKey);
@@ -159,7 +159,7 @@ public class UserService {
         cache.put(cacheKey, user);
         return user;
       }
-      throw new NotFoundException("User not found with ID: " + id);
+      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + id);
     }
   }
 }

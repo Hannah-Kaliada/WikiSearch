@@ -77,19 +77,6 @@ public class ConvertToDto {
    * @return the user dto
    * @throws InvalidDataException if invalid data is encountered during conversion
    */
-  public static UserDto convertToUserDto(User user) throws InvalidDataException {
-    if (user == null) {
-      throw new InvalidDataException("User is null. Cannot convert to UserDto.");
-    }
-
-    UserDto userDto = new UserDto();
-    userDto.setId(user.getId());
-    userDto.setUsername(user.getUsername());
-    userDto.setEmail(user.getEmail());
-    userDto.setPassword(user.getPassword());
-    userDto.setCountry(convertCountryToDto(user.getCountry())); // May throw InvalidDataException
-    return userDto;
-  }
 
   /**
    * Convert user list to dto list.
