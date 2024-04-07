@@ -1,8 +1,12 @@
 package com.search.wiki.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.search.wiki.cache.Cache;
 import com.search.wiki.entity.Country;
@@ -10,12 +14,14 @@ import com.search.wiki.exceptions.customexceptions.DuplicateEntryException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+/** The type Country service tests. */
+@ExtendWith(MockitoExtension.class)
 public class CountryServiceTests {
 
   @Mock private CountryRepository countryRepository;
@@ -24,18 +30,13 @@ public class CountryServiceTests {
 
   @InjectMocks private CountryService countryService;
 
-  @BeforeEach
-  public void setup() {
-    MockitoAnnotations.openMocks(this);
-  }
-
+  /** Test add country success. */
   @Test
-  public void testAddCountry_Success() {
+  void testAddCountry_Success() {
     Country inputCountry = new Country();
     inputCountry.setName("Test Country");
 
     when(countryRepository.findByName(any())).thenReturn(Optional.empty());
-
     when(countryRepository.save(any())).thenReturn(inputCountry);
 
     // Call the method to be tested
@@ -48,9 +49,9 @@ public class CountryServiceTests {
     verify(cache, times(1)).put(any(), any());
   }
 
+  /** Test add country duplicate name. */
   @Test
-  public void testAddCountry_DuplicateName() {
-
+  void testAddCountry_DuplicateName() {
     Country inputCountry = new Country();
     inputCountry.setName("Existing Country");
 
@@ -59,9 +60,9 @@ public class CountryServiceTests {
     assertThrows(DuplicateEntryException.class, () -> countryService.addCountry(inputCountry));
   }
 
+  /** Test get country by id existing id. */
   @Test
-  public void testGetCountryById_ExistingId() {
-
+  void testGetCountryById_ExistingId() {
     long countryId = 1L;
     Country existingCountry = new Country();
     existingCountry.setId(countryId);
@@ -76,9 +77,9 @@ public class CountryServiceTests {
     assertEquals("Test Country", retrievedCountry.getName());
   }
 
+  /** Test get country by id nonexistent id. */
   @Test
-  public void testGetCountryById_NonexistentId() {
-
+  void testGetCountryById_NonexistentId() {
     long nonexistentId = 999L;
 
     when(countryRepository.findById(nonexistentId)).thenReturn(Optional.empty());
