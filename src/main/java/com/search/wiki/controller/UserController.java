@@ -25,7 +25,6 @@ public class UserController {
 
   private final UserService userService;
   private final UserWithCountryService userWithCountryService;
-  private final CountryService countryService;
 
   /**
    * Instantiates a new User controller.
@@ -41,7 +40,6 @@ public class UserController {
       CountryService countryService) {
     this.userService = userService;
     this.userWithCountryService = userWithCountryService;
-    this.countryService = countryService;
   }
 
   /**

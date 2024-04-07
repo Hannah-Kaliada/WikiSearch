@@ -86,15 +86,4 @@ public class CountryController {
 
     return countryService.deleteCountry(id);
   }
-
-  /**
-   * Gets country by name.
-   *
-   * @param name the name
-   * @return the country by name
-   */
-  @GetMapping("/name/{name}")
-  public Country getCountryByName(@PathVariable String name) {
-    return countryService.getCountryByName(name);
-  }
 }

@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 public class WikipediaApiService {
 
   private final WikipediaXmlParser wikipediaXmlParser;
-  private final ArticleService articleService;
   private final ArticleRepository articleRepository;
 
   /**
@@ -29,7 +28,6 @@ public class WikipediaApiService {
       ArticleService articleService,
       ArticleRepository articleRepository) {
     this.wikipediaXmlParser = wikipediaXmlParser;
-    this.articleService = articleService;
     this.articleRepository = articleRepository;
   }
 

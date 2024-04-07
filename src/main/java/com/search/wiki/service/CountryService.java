@@ -63,23 +63,6 @@ public class CountryService {
   }
 
   /**
-   * Gets country by name.
-   *
-   * @param name the name
-   * @return the country by name
-   */
-  public Country getCountryByName(String name) {
-    if (!name.matches("^[A-Za-z\\s]+$")) {
-      throw new IllegalArgumentException("Invalid country name");
-    }
-    Long id = getCountryIdByName(name);
-    if (id == null) {
-      throw new NotFoundException("Country not found with name: " + name);
-    }
-    return getCachedOrFromRepository(getCacheKey(id), id);
-  }
-
-  /**
    * Update country.
    *
    * @param country the country
@@ -155,8 +138,9 @@ public class CountryService {
 
   private Country getCachedOrFromRepository(String cacheKey, long id) {
     if (id < 1) {
-      throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
+      throw new IllegalArgumentException("Id cannot be less than 1");
     }
+
     if (cache.containsKey(cacheKey)) {
       return (Country) cache.get(cacheKey);
     } else {
@@ -165,10 +149,13 @@ public class CountryService {
         Country country = countryOptional.get();
         cache.put(cacheKey, country);
         return country;
+      } else {
+        throw new NotFoundException("Country not found with id: " + id);
       }
-      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + id);
     }
   }
+
+
 
   /**
    * Gets country id by name.
@@ -177,14 +164,12 @@ public class CountryService {
    * @return the country id by name
    */
   public Long getCountryIdByName(String countryName) {
-    if (!countryName.matches("^[A-Za-z\\s]+$")) {
-      throw new IllegalArgumentException("Invalid country name");
-    }
     Optional<Country> optionalCountry = repository.findByName(countryName);
-    if (optionalCountry.isEmpty()) {
-      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryName);
+    if (optionalCountry.isPresent()) {
+      return optionalCountry.get().getId();
+    } else {
+      throw new NotFoundException("Country not found with name: " + countryName);
     }
-    return optionalCountry.map(Country::getId).orElse(null);
   }
 
   /**
