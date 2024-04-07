@@ -13,4 +13,6 @@ public class ExceptionConstants {
 
   /** The constant COUNTRY_NOT_FOUND. */
   public static final String COUNTRY_NOT_FOUND = "Country not found with id: ";
+
+  private ExceptionConstants() {}
 }
