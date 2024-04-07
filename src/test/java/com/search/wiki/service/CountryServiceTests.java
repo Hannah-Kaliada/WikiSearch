@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /** The type Country service tests. */
 @ExtendWith(MockitoExtension.class)
-public class CountryServiceTests {
+class CountryServiceTests {
 
   @Mock private CountryRepository countryRepository;
 
