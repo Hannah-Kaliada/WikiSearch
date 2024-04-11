@@ -1,4 +1,4 @@
-package com.search.wiki.service;
+package com.search.wiki.service_tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,7 +14,7 @@ import com.search.wiki.service.utils.ConvertToDto;
 import org.junit.jupiter.api.Test;
 
 /** The type Convert to dto tests. */
-class ConvertToDtoTests {
+class ConvertToDtoTest {
 
   /** Convert country to dto valid country returns country dto. */
   @Test

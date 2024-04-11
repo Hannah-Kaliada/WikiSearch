@@ -35,9 +35,14 @@ public class QueryController {
    * @return the search result
    */
   @GetMapping("/getSearchResult")
-  public ResponseEntity<String> getSearchResult(@RequestParam String searchTerm) {
+  public ResponseEntity<String> getSearchResult(@RequestParam(required = false) String searchTerm) {
+    if (searchTerm == null || searchTerm.isEmpty()) {
+      return ResponseEntity.badRequest().body("Search term is required");
+    }
+
     Query query = new Query(searchTerm);
     wikipediaApiService.search(query);
     return ResponseEntity.ok(searchTerm);
   }
+
 }

@@ -117,7 +117,7 @@ public class UserController {
    */
   @DeleteMapping("/api/v1/users/deleteUser/{id}")
   public ResponseEntity<Boolean> deleteUser(@PathVariable long id) {
-    boolean deleted = userService.deleteUser(id);
+    userService.deleteUser(id);
     return ResponseEntity.ok(true);
   }
 

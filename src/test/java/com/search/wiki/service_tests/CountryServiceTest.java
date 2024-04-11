@@ -1,4 +1,4 @@
-package com.search.wiki.service;
+package com.search.wiki.service_tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.search.wiki.service.CountryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /** The type Country service tests. */
 @ExtendWith(MockitoExtension.class)
-class CountryServiceTests {
+class CountryServiceTest {
 
   @Mock private CountryRepository countryRepository;
 

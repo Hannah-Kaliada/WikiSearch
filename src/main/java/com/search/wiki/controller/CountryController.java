@@ -94,7 +94,15 @@ public class CountryController {
    */
   @DeleteMapping("/deleteCountry/{id}")
   public ResponseEntity<Boolean> deleteCountry(@PathVariable long id) {
+    if (id < 1) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    }
     boolean deleted = countryService.deleteCountry(id);
-    return ResponseEntity.ok(deleted);
+    if (deleted) {
+      return ResponseEntity.ok(true);
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+    }
   }
+
 }

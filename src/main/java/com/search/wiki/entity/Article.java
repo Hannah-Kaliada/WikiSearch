@@ -58,4 +58,10 @@ public class Article {
   public int hashCode() {
     return Objects.hash(id);
   }
+
+  public Article(String title, String url, String imagePath) {
+    this.title = title;
+    this.url = url;
+    this.imagePath = imagePath;
+  }
 }
