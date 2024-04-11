@@ -1,15 +1,14 @@
 package com.search.wiki.service_tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.search.wiki.entity.Article;
 import com.search.wiki.service.WikipediaXmlParser;
-import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.xml.parsers.ParserConfigurationException;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
 class WikipediaXmlParserTest {
 
@@ -17,16 +16,16 @@ class WikipediaXmlParserTest {
 
   @Test
   void parseXml_ValidXml_ReturnsListOfArticles() throws ParserConfigurationException, IOException, SAXException {
-    // Arrange
+
     String validXml = "<Items>" +
             "<Item><Text>Article 1</Text><Url>url1</Url><Image source=\"image1.jpg\"/></Item>" +
             "<Item><Text>Article 2</Text><Url>url2</Url><Image source=\"image2.jpg\"/></Item>" +
             "</Items>";
 
-    // Act
+
     List<Article> articles = xmlParser.parseXml(validXml);
 
-    // Assert
+
     assertNotNull(articles);
     assertEquals(2, articles.size());
 
@@ -43,23 +42,21 @@ class WikipediaXmlParserTest {
 
   @Test
   void parseXml_EmptyXml_ReturnsEmptyListOfArticles() throws ParserConfigurationException, IOException, SAXException {
-    // Arrange
+
     String emptyXml = "";
 
-    // Act
+
     List<Article> articles = xmlParser.parseXml(emptyXml);
 
-    // Assert
+
     assertNotNull(articles);
     assertEquals(0, articles.size());
   }
 
   @Test
   void parseXml_InvalidXml_ThrowsSaxException() {
-    // Arrange
-    String invalidXml = "<Items><Item><Text>Article 1</Text><Url>url1</Url>";
 
-    // Act & Assert
+    String invalidXml = "<Items><Item><Text>Article 1</Text><Url>url1</Url>";
     assertThrows(SAXException.class, () -> xmlParser.parseXml(invalidXml));
   }
 }

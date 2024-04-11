@@ -2,7 +2,6 @@ package com.search.wiki.controller;
 
 import com.search.wiki.entity.Query;
 import com.search.wiki.service.WikipediaApiService;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** The type Query controller. */
 @RestController
-@Data
 @RequestMapping("/api/v1/search")
 public class QueryController {
 

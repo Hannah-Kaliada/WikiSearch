@@ -1,24 +1,21 @@
 package com.search.wiki.controller_tests;
 
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.search.wiki.controller.FavouriteArticlesController;
 import com.search.wiki.controller.dto.FavouriteArticlesDto;
 import com.search.wiki.entity.User;
 import com.search.wiki.service.FavouriteArticlesService;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.mockito.Mockito.*;
-				import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-				import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-public class FavouriteArticlesControllerTest {
+class FavouriteArticlesControllerTest {
 
 		@Test
 		void testAddArticleToUserFavorites() throws Exception {

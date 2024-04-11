@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class WikipediaApiControllerTest {
+class WikipediaApiControllerTest {
 
   @Test
   void testSearch() throws Exception {

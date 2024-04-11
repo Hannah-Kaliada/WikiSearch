@@ -15,7 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class WikipediaApiServiceTest {
+class WikipediaApiServiceTest {
 
   @Mock private WikipediaXmlParser wikipediaXmlParser;
 
@@ -30,28 +30,25 @@ public class WikipediaApiServiceTest {
 
   @Test
   void testSearchWithValidQuery() throws Exception {
-    // Arrange
+
     Query query = new Query("searchTerm");
 
-    // Mocking the XML response from the API
     String xmlResponse = "<xml>...</xml>";
     when(wikipediaXmlParser.parseXml(xmlResponse)).thenReturn(createMockArticles());
 
-    // Act
     List<Article> result = wikipediaApiService.search(query);
   }
 
   @Test
   void testSearchWithInvalidQuery() throws Exception {
-    // Arrange
-    Query query = new Query(null); // Invalid query with null search term
 
-    // Act
+    Query query = new Query(null);
+
     List<Article> result = wikipediaApiService.search(query);
   }
 
   private List<Article> createMockArticles() {
-    // Create mock articles for testing purposes
+
     List<Article> articles = new ArrayList<>();
     Article article1 = new Article("Title1", "URL1", "Image1");
     Article article2 = new Article("Title2", "URL2", "Image2");

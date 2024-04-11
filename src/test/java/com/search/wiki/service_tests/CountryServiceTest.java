@@ -237,19 +237,18 @@ class CountryServiceTest {
     Country newCountry = new Country();
     newCountry.setName("New Country");
 
-    // Mock behavior of repository save method
     when(countryRepository.findByName(newCountry.getName())).thenReturn(Optional.empty());
     when(countryRepository.save(any()))
         .thenAnswer(
             invocation -> {
               Country savedCountry = invocation.getArgument(0);
-              savedCountry.setId(1L); // Simulate setting an ID upon save
+              savedCountry.setId(1L);
               return savedCountry;
             });
 
     Long countryId = countryService.addCountryAndGetId(newCountry);
 
     assertNotNull(countryId);
-    assertEquals(1L, countryId); // Ensure the returned ID is correct
+    assertEquals(1L, countryId);
   }
 }
