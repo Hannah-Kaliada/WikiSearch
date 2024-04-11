@@ -135,6 +135,8 @@ class ArticleControllerTest {
         Article existingArticle = new Article();
         existingArticle.setId(articleId);
         existingArticle.setTitle("Existing Article");
+        existingArticle.setImagePath("");
+
 
         Article updatedArticle = new Article();
         updatedArticle.setId(articleId);

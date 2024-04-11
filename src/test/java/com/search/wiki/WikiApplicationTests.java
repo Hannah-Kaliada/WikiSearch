@@ -1,31 +1,44 @@
 package com.search.wiki;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
-/** The type Wiki application tests. */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class WikiApplicationTests {
 
-  @Autowired private DataSource dataSource;
+  @Autowired private ApplicationContext applicationContext;
 
-  /**
-   * Database is running.
-   *
-   * @throws SQLException the sql exception
-   */
+  @LocalServerPort private int port;
+
+  private final RestTemplate restTemplate = new RestTemplate();
+
   @Test
-  void databaseIsRunning() throws SQLException {
-    assertNotNull(dataSource);
+  void contextLoads() {
+    assertNotNull(applicationContext);
+  }
 
-    try (Connection connection = dataSource.getConnection()) {
-      assertNotNull(connection);
+  @Test
+  void applicationStartsAndRespondsOK() {
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("http://localhost:" + port + "/", String.class);
+    assertTrue(response.getStatusCode().is2xxSuccessful());
+  }
+  @Test
+  void mainMethodRunsSpringApplication() {
+    try (MockedStatic<SpringApplication> mockedStatic = mockStatic(SpringApplication.class)) {
+      WikiApplication.main(new String[]{});
+      mockedStatic.verify(() -> SpringApplication.run(WikiApplication.class, new String[]{}));
     }
   }
 }
