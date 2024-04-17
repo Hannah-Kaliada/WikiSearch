@@ -7,6 +7,8 @@ import com.search.wiki.service.ArticleService;
 import com.search.wiki.service.WikipediaApiService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
@@ -50,21 +52,14 @@ public class ArticleController {
    */
   @PostMapping("/saveArticle")
   public ResponseEntity<String> saveArticle(@RequestBody Article article) {
-    // Simulate saving the article (replace this with your actual save logic)
     service.saveArticle(article);
-
-    // Assume you want to search Wikipedia using the article's title
-    String title = article.getTitle(); // Get the title from the saved article
+    String title = article.getTitle();
 
     if (title == null || title.isEmpty()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid article title.");
     }
-
-    // Construct the query object and perform the search
     Query query = new Query(title);
     wikipediaApiService.search(query);
-
-    // Respond with a success message
     return ResponseEntity.status(HttpStatus.CREATED).body("Article saved successfully!");
   }
 
@@ -140,5 +135,38 @@ public class ArticleController {
   @GetMapping("/search")
   public List<Article> searchArticles(@RequestParam("keyword") String keyword) {
     return service.searchArticlesByKeyword(keyword);
+  }
+
+  /**
+   * Bulk search articles response entity.
+   *
+   * @param queries the queries
+   * @return the response entity
+   */
+  @PostMapping("/bulkSearchArticles")
+  public ResponseEntity<String> bulkSearchArticles(@RequestBody List<Query> queries) {
+    if (queries == null || queries.isEmpty()) {
+      return ResponseEntity.badRequest().body("List of queries is empty.");
+    }
+
+    List<CompletableFuture<Void>> searchFutures =
+        queries.stream()
+            .map(query -> CompletableFuture.runAsync(() -> wikipediaApiService.search(query)))
+            .toList();
+
+    CompletableFuture<Void> allSearches =
+        CompletableFuture.allOf(searchFutures.toArray(new CompletableFuture[0]));
+
+    try {
+      allSearches.get();
+      return ResponseEntity.ok("Bulk search completed successfully!");
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Bulk search was interrupted: " + e.getMessage());
+    } catch (ExecutionException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Bulk search encountered an error: " + e.getCause().getMessage());
+    }
   }
 }

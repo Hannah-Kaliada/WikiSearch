@@ -123,10 +123,7 @@ public class CountryService {
       if (countries.isEmpty()) {
         throw new NotFoundException("No countries found");
       }
-      for (Country country : countries) {
-        String countryCacheKey = getCacheKey(country.getId());
-        cache.put(countryCacheKey, country);
-      }
+      countries.forEach(country -> cache.put(getCacheKey(country.getId()), country));
       cache.put(cacheKey, countries);
       return countries;
     }
@@ -164,12 +161,9 @@ public class CountryService {
    * @return the country id by name
    */
   public Long getCountryIdByName(String countryName) {
-    Optional<Country> optionalCountry = repository.findByName(countryName);
-    if (optionalCountry.isPresent()) {
-      return optionalCountry.get().getId();
-    } else {
-      throw new NotFoundException("Country not found with name: " + countryName);
-    }
+    return repository.findByName(countryName)
+            .map(Country::getId)
+            .orElseThrow(() -> new NotFoundException("Country not found with name: " + countryName));
   }
 
   /**

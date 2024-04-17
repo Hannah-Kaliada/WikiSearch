@@ -23,21 +23,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/** The type Favourite articles service test. */
 @ExtendWith(MockitoExtension.class)
 class FavouriteArticlesServiceTest {
 
-		@Mock
-		private UserRepository userRepository;
-		@Mock
-		private ArticleRepository articleRepository;
-		@Mock
-		private EntityManager entityManager;
+  @Mock private UserRepository userRepository;
+  @Mock private ArticleRepository articleRepository;
+  @Mock private EntityManager entityManager;
 
-		@Mock
-		private Cache cache;
+  @Mock private Cache cache;
 
   @InjectMocks private FavouriteArticlesService service;
 
+  /** Gets user favorite articles user exists in cache returns favorite articles. */
   @Test
   void getUserFavoriteArticles_userExistsInCache_returnsFavoriteArticles() {
     Long userId = 1L;
@@ -51,6 +49,9 @@ class FavouriteArticlesServiceTest {
     assertEquals(userId, favouriteArticles.getUserId());
   }
 
+  /**
+   * Gets user favorite articles user exists in database but not in cache returns favorite articles.
+   */
   @Test
   void getUserFavoriteArticles_userExistsInDatabaseButNotInCache_returnsFavoriteArticles() {
     Long userId = 1L;
@@ -65,6 +66,7 @@ class FavouriteArticlesServiceTest {
     assertEquals(userId, favouriteArticles.getUserId());
   }
 
+  /** Gets user favorite articles user does not exist throws not found exception. */
   @Test
   void getUserFavoriteArticles_userDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -74,6 +76,7 @@ class FavouriteArticlesServiceTest {
     assertThrows(NotFoundException.class, () -> service.getUserFavoriteArticles(userId));
   }
 
+  /** Gets articles saved by user article exists in cache returns users. */
   @Test
   void getArticlesSavedByUser_articleExistsInCache_returnsUsers() {
     Long articleId = 1L;
@@ -88,6 +91,7 @@ class FavouriteArticlesServiceTest {
     assertTrue(users.stream().allMatch(user -> user.getFavoriteArticles().contains(article)));
   }
 
+  /** Gets articles saved by user article exists in database but not in cache returns users. */
   @Test
   void getArticlesSavedByUser_articleExistsInDatabaseButNotInCache_returnsUsers() {
     Long articleId = 1L;
@@ -103,6 +107,7 @@ class FavouriteArticlesServiceTest {
     assertTrue(users.stream().allMatch(user -> user.getFavoriteArticles().contains(article)));
   }
 
+  /** Gets articles saved by user article does not exist throws not found exception. */
   @Test
   void getArticlesSavedByUser_articleDoesNotExist_throwsNotFoundException() {
     Long articleId = 1L;
@@ -112,6 +117,7 @@ class FavouriteArticlesServiceTest {
     assertThrows(NotFoundException.class, () -> service.getArticlesSavedByUser(articleId));
   }
 
+  /** Edit user favorite article all entities exist in cache edits successfully. */
   @Test
   void editUserFavoriteArticle_allEntitiesExistInCache_editsSuccessfully() {
     Long userId = 1L;
@@ -130,6 +136,9 @@ class FavouriteArticlesServiceTest {
     assertTrue(user.getFavoriteArticles().contains(newArticle));
   }
 
+  /**
+   * Edit user favorite article all entities exist in database but not in cache edits successfully.
+   */
   @Test
   void editUserFavoriteArticle_allEntitiesExistInDatabaseButNotInCache_editsSuccessfully() {
     Long userId = 1L;
@@ -151,6 +160,7 @@ class FavouriteArticlesServiceTest {
     assertTrue(user.getFavoriteArticles().contains(newArticle));
   }
 
+  /** Edit user favorite article user does not exist throws not found exception. */
   @Test
   void editUserFavoriteArticle_userDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -165,6 +175,7 @@ class FavouriteArticlesServiceTest {
         () -> service.editUserFavoriteArticle(userId, prevArticleId, newArticleId));
   }
 
+  /** Edit user favorite article prev article does not exist throws not found exception. */
   @Test
   void editUserFavoriteArticle_prevArticleDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -179,6 +190,7 @@ class FavouriteArticlesServiceTest {
         () -> service.editUserFavoriteArticle(userId, prevArticleId, newArticleId));
   }
 
+  /** Edit user favorite article new article does not exist throws not found exception. */
   @Test
   void editUserFavoriteArticle_newArticleDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -196,6 +208,7 @@ class FavouriteArticlesServiceTest {
     verify(userRepository).findById(userId);
   }
 
+  /** Remove article from user favorites user exists in cache removes successfully. */
   @Test
   void removeArticleFromUserFavorites_userExistsInCache_removesSuccessfully() {
     Long userId = 1L;
@@ -211,6 +224,10 @@ class FavouriteArticlesServiceTest {
     assertFalse(user.getFavoriteArticles().contains(articleToRemove));
   }
 
+  /**
+   * Remove article from user favorites user exists in database but not in cache removes
+   * successfully.
+   */
   @Test
   void removeArticleFromUserFavorites_userExistsInDatabaseButNotInCache_removesSuccessfully() {
     Long userId = 1L;
@@ -229,6 +246,7 @@ class FavouriteArticlesServiceTest {
     assertFalse(user.getFavoriteArticles().contains(articleToRemove));
   }
 
+  /** Remove article from user favorites user does not exist throws not found exception. */
   @Test
   void removeArticleFromUserFavorites_userDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -241,6 +259,7 @@ class FavouriteArticlesServiceTest {
         NotFoundException.class, () -> service.removeArticleFromUserFavorites(userId, articleId));
   }
 
+  /** Add article to user favorites user and article exist in cache adds successfully. */
   @Test
   void addArticleToUserFavorites_userAndArticleExistInCache_addsSuccessfully() {
     Long userId = 1L;
@@ -258,6 +277,10 @@ class FavouriteArticlesServiceTest {
     assertTrue(user.getFavoriteArticles().contains(article));
   }
 
+  /**
+   * Add article to user favorites user and article exist in database but not in cache adds
+   * successfully.
+   */
   @Test
   void addArticleToUserFavorites_userAndArticleExistInDatabaseButNotInCache_addsSuccessfully() {
     Long userId = 1L;
@@ -277,6 +300,7 @@ class FavouriteArticlesServiceTest {
     assertTrue(user.getFavoriteArticles().contains(article));
   }
 
+  /** Add article to user favorites user does not exist throws not found exception. */
   @Test
   void addArticleToUserFavorites_userDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -289,6 +313,7 @@ class FavouriteArticlesServiceTest {
         NotFoundException.class, () -> service.addArticleToUserFavorites(userId, articleId));
   }
 
+  /** Add article to user favorites article does not exist throws not found exception. */
   @Test
   void addArticleToUserFavorites_articleDoesNotExist_throwsNotFoundException() {
     Long userId = 1L;
@@ -302,6 +327,7 @@ class FavouriteArticlesServiceTest {
         NotFoundException.class, () -> service.addArticleToUserFavorites(userId, articleId));
   }
 
+  /** Convert to article dto set all fields correct converts successfully. */
   @Test
   void convertToArticleDtoSet_allFieldsCorrect_convertsSuccessfully() {
 
@@ -332,6 +358,7 @@ class FavouriteArticlesServiceTest {
     }
   }
 
+  /** Convert to article dto set empty set converts successfully. */
   @Test
   void convertToArticleDtoSet_emptySet_convertsSuccessfully() {
 
@@ -343,6 +370,12 @@ class FavouriteArticlesServiceTest {
     assertTrue(articleDtos.isEmpty());
   }
 
+  /**
+   * Create user with country user.
+   *
+   * @param countryCode the country code
+   * @return the user
+   */
   static User createUserWithCountry(String countryCode) {
     User user = new User();
     Country country = new Country();

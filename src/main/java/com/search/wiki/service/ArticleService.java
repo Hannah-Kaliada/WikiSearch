@@ -128,9 +128,7 @@ public class ArticleService {
     if (articles.isEmpty()) {
       throw new NotFoundException("No articles found");
     }
-    for (Article article : articles) {
-      cache.put(getCacheKey(article.getId()), article);
-    }
+    articles.forEach(article -> cache.put(getCacheKey(article.getId()), article));
     return articles;
   }
 

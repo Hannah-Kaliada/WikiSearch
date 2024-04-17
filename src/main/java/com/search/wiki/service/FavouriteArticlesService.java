@@ -15,6 +15,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -222,18 +224,18 @@ public class FavouriteArticlesService {
   }
 
   public Set<ArticleDto> convertToArticleDtoSet(Set<Article> articles) {
-    Set<ArticleDto> articleDtoSet = new HashSet<>();
-    articles.forEach(
-        article -> {
-          ArticleDto articleDto = new ArticleDto();
-          articleDto.setId(article.getId());
-          articleDto.setTitle(article.getTitle());
-          articleDto.setUrl(article.getUrl());
-          articleDto.setImagePath(article.getImagePath());
-          articleDtoSet.add(articleDto);
-        });
-    return articleDtoSet;
+    return articles.stream()
+            .map(article -> {
+              ArticleDto articleDto = new ArticleDto();
+              articleDto.setId(article.getId());
+              articleDto.setTitle(article.getTitle());
+              articleDto.setUrl(article.getUrl());
+              articleDto.setImagePath(article.getImagePath());
+              return articleDto;
+            })
+            .collect(Collectors.toSet());
   }
+
 
   private User getUserFromCache(Long userId) {
     return (User) cache.get(getUserCacheKey(userId));

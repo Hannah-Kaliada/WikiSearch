@@ -6,7 +6,6 @@ import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.DuplicateEntryException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.UserRepository;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -127,21 +126,20 @@ public class UserService {
    * @return the all users
    */
   public List<User> getAllUsers() {
-    List<User> users = new ArrayList<>();
     Set<String> userCacheKeys = cache.getCacheKeysStartingWith(USER_CACHE_PREFIX);
-    if (userCacheKeys.size() == repository.count()) {
-      for (String cacheKey : userCacheKeys) {
-        users.add((User) cache.get(cacheKey));
-      }
+
+    List<User> users = userCacheKeys.stream().map(cacheKey -> (User) cache.get(cacheKey)).toList();
+
+    if (users.size() == repository.count()) {
       return users;
     }
+
     users = repository.findAll();
-    for (User user : users) {
-      String userCacheKey = getUserCacheKey(user.getId());
-      cache.put(userCacheKey, user);
-    }
+    users.forEach(user -> cache.put(getUserCacheKey(user.getId()), user));
+
     return users;
   }
+
 
   private String getUserCacheKey(long id) {
     return USER_CACHE_PREFIX + id;

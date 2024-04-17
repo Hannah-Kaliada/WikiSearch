@@ -19,20 +19,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+/** The type Article service test. */
 class ArticleServiceTest {
 
   @Mock private ArticleRepository repository;
-
 
   @Mock private Cache cache;
 
   @InjectMocks private ArticleService articleService;
 
+  /** Sets up. */
   @BeforeEach
   void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
+  /** Test save article success. */
   @Test
   void testSaveArticle_Success() {
     Article article = new Article("Test Article", "https://example.com", "image.jpg");
@@ -45,6 +47,7 @@ class ArticleServiceTest {
     verify(cache).put(anyString(), any(Article.class));
   }
 
+  /** Test find by id existing id success. */
   @Test
   void testFindById_ExistingId_Success() {
     long articleId = 1L;
@@ -59,6 +62,7 @@ class ArticleServiceTest {
     verify(cache).put(anyString(), any(Article.class));
   }
 
+  /** Test find by id non existing id exception thrown. */
   @Test
   void testFindById_NonExistingId_ExceptionThrown() {
     long nonExistingId = 999L;
@@ -68,6 +72,7 @@ class ArticleServiceTest {
     assertThrows(NotFoundException.class, () -> articleService.findById(nonExistingId));
   }
 
+  /** Test update article existing article success. */
   @Test
   void testUpdateArticle_ExistingArticle_Success() {
     long articleId = 1L;
@@ -83,9 +88,9 @@ class ArticleServiceTest {
     assertEquals(updatedArticle.getTitle(), result.getTitle());
     assertEquals(updatedArticle.getUrl(), result.getUrl());
     assertEquals(updatedArticle.getImagePath(), result.getImagePath());
-    // verify(cache).put(anyString(), any(Article.class));
   }
 
+  /** Test update article non existing article exception thrown. */
   @Test
   void testUpdateArticle_NonExistingArticle_ExceptionThrown() {
     long nonExistingId = 999L;
@@ -97,6 +102,7 @@ class ArticleServiceTest {
         NotFoundException.class, () -> articleService.updateArticle(updatedArticle, nonExistingId));
   }
 
+  /** Test delete article success. */
   @Test
   void testDeleteArticle_Success() {
     long articleId = 1L;
@@ -115,12 +121,11 @@ class ArticleServiceTest {
     verify(cache).remove("Article_1");
   }
 
+  /** Test save article null article exception thrown. */
   @Test
   void testSaveArticle_NullArticle_ExceptionThrown() {
-    // Arrange
     Article nullArticle = null;
 
-    // Act and Assert
     assertThrows(
         IllegalArgumentException.class,
         () -> {
@@ -128,13 +133,12 @@ class ArticleServiceTest {
         },
         "Article cannot be null");
 
-    // Verify that repository.save was not called
     verify(repository, never()).save(any(Article.class));
 
-    // Verify that cache.put was not called
     verify(cache, never()).put(anyString(), any(Article.class));
   }
 
+  /** Test delete article non existing article exception thrown. */
   @Test
   void testDeleteArticle_NonExistingArticle_ExceptionThrown() {
     long nonExistingId = 999L;
@@ -144,6 +148,7 @@ class ArticleServiceTest {
     assertThrows(NotFoundException.class, () -> articleService.deleteArticle(nonExistingId));
   }
 
+  /** Test find all articles success. */
   @Test
   void testFindAllArticles_Success() {
     List<Article> articles = new ArrayList<>();
@@ -160,6 +165,7 @@ class ArticleServiceTest {
     verify(cache, times(articles.size())).put(anyString(), any(Article.class));
   }
 
+  /** Test find all articles empty list exception thrown. */
   @Test
   void testFindAllArticles_EmptyList_ExceptionThrown() {
     when(repository.findAll()).thenReturn(new ArrayList<>());
@@ -167,6 +173,7 @@ class ArticleServiceTest {
     assertThrows(NotFoundException.class, () -> articleService.findAllArticles());
   }
 
+  /** Test search articles by keyword success. */
   @Test
   void testSearchArticlesByKeyword_Success() {
     String keyword = "test";
@@ -183,12 +190,11 @@ class ArticleServiceTest {
     assertEquals(articles.size(), result.size());
   }
 
+  /** Test find by id invalid id exception thrown. */
   @Test
   void testFindById_InvalidId_ExceptionThrown() {
-    // Arrange
     long invalidId = -1L;
 
-    // Act and Assert
     IllegalArgumentException exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -199,20 +205,17 @@ class ArticleServiceTest {
 
     assertEquals(ExceptionConstants.ID_REQUIRED, exception.getMessage());
 
-    // Verify that repository.findById was never called
     verify(repository, never()).findById(anyLong());
 
-    // Verify that cache.get was never called
     verify(cache, never()).get(anyString());
   }
 
+  /** Test update article invalid id exception thrown. */
   @Test
   void testUpdateArticle_InvalidId_ExceptionThrown() {
-    // Arrange
     long invalidId = -1L;
     Article updatedArticle = new Article("Updated Article", "https://updated.com", "updated.jpg");
 
-    // Act and Assert
     IllegalArgumentException exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -223,19 +226,16 @@ class ArticleServiceTest {
 
     assertEquals(ExceptionConstants.ID_REQUIRED, exception.getMessage());
 
-    // Verify that repository.findById was never called
     verify(repository, never()).findById(anyLong());
 
-    // Verify that cache.put was never called
     verify(cache, never()).put(anyString(), any(Article.class));
   }
 
+  /** Test delete article invalid id exception thrown. */
   @Test
   void testDeleteArticle_InvalidId_ExceptionThrown() {
-    // Arrange
     long invalidId = -1L;
 
-    // Act and Assert
     IllegalArgumentException exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -243,14 +243,11 @@ class ArticleServiceTest {
             "ID must be greater than or equal to 1");
 
     assertEquals(ExceptionConstants.ID_REQUIRED, exception.getMessage());
-
-    // Verify that repository.deleteById was never called
     verify(repository, never()).deleteById(anyLong());
-
-    // Verify that cache.remove was never called
     verify(cache, never()).remove(anyString());
   }
 
+  /** Test find top 5 articles by user count success. */
   @Test
   void testFindTop5ArticlesByUserCount_Success() {
     List<Article> topArticles = new ArrayList<>();
@@ -267,15 +264,13 @@ class ArticleServiceTest {
     verify(repository).findTop5ArticlesByUserCount(any());
   }
 
+  /** Test find top 5 articles by user count empty list. */
   @Test
   void testFindTop5ArticlesByUserCount_EmptyList() {
     List<Article> topArticles = new ArrayList<>();
     when(repository.findTop5ArticlesByUserCount(any())).thenReturn(topArticles);
-    // Act
     List<Article> result = articleService.findTop5ArticlesByUserCount();
-
-    // Assert
     assertNotNull(result);
-    assertTrue(result.isEmpty()); // Assert that the result list is empty
+    assertTrue(result.isEmpty());
   }
 }

@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+/** The type User service test. */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -26,6 +27,7 @@ class UserServiceTest {
 
   @InjectMocks private UserService userService;
 
+  /** Test add user success. */
   @Test
   void testAddUser_Success() {
     when(userRepository.existsByUsername(anyString())).thenReturn(false);
@@ -44,6 +46,7 @@ class UserServiceTest {
     verify(cache).put("User_1", savedUser);
   }
 
+  /** Test create user failure invalid data. */
   @Test
   void testCreateUser_Failure_InvalidData() {
 
@@ -52,6 +55,7 @@ class UserServiceTest {
     assertThrows(NullPointerException.class, () -> userService.addUser(invalidUser));
   }
 
+  /** Test add user duplicate username. */
   @Test
   void testAddUser_DuplicateUsername() {
 
@@ -61,6 +65,7 @@ class UserServiceTest {
     assertThrows(DuplicateEntryException.class, () -> userService.addUser(testUser));
   }
 
+  /** Test get user by id success. */
   @Test
   void testGetUserById_Success() {
 
@@ -78,6 +83,7 @@ class UserServiceTest {
     assertEquals(user.getPassword(), resultUser.getPassword());
   }
 
+  /** Test get user by id not found. */
   @Test
   void testGetUserById_NotFound() {
     long userId = 999L;
@@ -88,6 +94,7 @@ class UserServiceTest {
     assertThrows(NotFoundException.class, () -> userService.getUserById(userId));
   }
 
+  /** Test update user success. */
   @Test
   void testUpdateUser_Success() {
     long userId = 1L;
@@ -107,6 +114,7 @@ class UserServiceTest {
     verify(cache).put("User_" + userId, updatedUser);
   }
 
+  /** Test update user user not found. */
   @Test
   void testUpdateUser_UserNotFound() {
 
@@ -118,6 +126,7 @@ class UserServiceTest {
     assertThrows(NotFoundException.class, () -> userService.updateUser(updatedUser, userId));
   }
 
+  /** Test delete user success. */
   @Test
   void testDeleteUser_Success() {
 
@@ -132,6 +141,7 @@ class UserServiceTest {
     verify(cache).remove("User_" + userId);
   }
 
+  /** Test get all users success. */
   @Test
   void testGetAllUsers_Success() {
 
@@ -152,6 +162,7 @@ class UserServiceTest {
     }
   }
 
+  /** Test delete user user not found. */
   @Test
   void testDeleteUser_UserNotFound() {
     long userId = 999L;
@@ -164,6 +175,7 @@ class UserServiceTest {
     assertThrows(NotFoundException.class, () -> userService.deleteUser(userId));
   }
 
+  /** Test add user null user throws illegal argument exception. */
   @Test
   void testAddUser_NullUser_ThrowsIllegalArgumentException() {
     assertThrows(
@@ -173,6 +185,7 @@ class UserServiceTest {
         });
   }
 
+  /** Test get user by id invalid id throws illegal argument exception. */
   @Test
   void testGetUserById_InvalidId_ThrowsIllegalArgumentException() {
     long invalidId = 0L;
@@ -184,6 +197,7 @@ class UserServiceTest {
         });
   }
 
+  /** Test update user invalid id throws illegal argument exception. */
   @Test
   void testUpdateUser_InvalidId_ThrowsIllegalArgumentException() {
     long invalidId = 0L;
@@ -196,6 +210,7 @@ class UserServiceTest {
         });
   }
 
+  /** Test delete user invalid id throws illegal argument exception. */
   @Test
   void testDeleteUser_InvalidId_ThrowsIllegalArgumentException() {
     long invalidId = 0L;
@@ -207,6 +222,7 @@ class UserServiceTest {
         });
   }
 
+  /** Test get all users from repository when cache is empty. */
   @Test
   void testGetAllUsers_FromRepositoryWhenCacheIsEmpty() {
     // Prepare mock data
