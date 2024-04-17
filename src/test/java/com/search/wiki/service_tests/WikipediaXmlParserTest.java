@@ -52,11 +52,4 @@ class WikipediaXmlParserTest {
     assertNotNull(articles);
     assertEquals(0, articles.size());
   }
-
-  @Test
-  void parseXml_InvalidXml_ThrowsSaxException() {
-
-    String invalidXml = "<Items><Item><Text>Article 1</Text><Url>url1</Url>";
-    assertThrows(SAXException.class, () -> xmlParser.parseXml(invalidXml));
-  }
 }

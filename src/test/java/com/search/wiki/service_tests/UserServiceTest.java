@@ -28,24 +28,26 @@ class UserServiceTest {
 
   @Test
   void testAddUser_Success() {
-
     when(userRepository.existsByUsername(anyString())).thenReturn(false);
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(userRepository.save(any(User.class)))
-        .thenReturn(new User(1L, "testuser", "test@example.com", "password", null, null));
 
-    User testUser = new User(1L, "testuser", "test@example.com", "password", null, null);
-    User savedUser = userService.addUser(testUser);
+    User expectedUser = new User(1L, "testuser", "test@example.com", "password", null);
+
+    when(userRepository.save(any(User.class))).thenReturn(expectedUser);
+
+    User savedUser = userService.addUser(expectedUser);
 
     assertNotNull(savedUser);
-    assertEquals(testUser.getId(), savedUser.getId());
-    verify(cache).put(eq("User_1"), eq(savedUser));
+
+    assertEquals(expectedUser.getId(), savedUser.getId());
+
+    verify(cache).put("User_1", savedUser);
   }
 
   @Test
   void testCreateUser_Failure_InvalidData() {
 
-    User invalidUser = new User(1L, null, "test@example.com", "password", null, null);
+    User invalidUser = new User(1L, null, "test@example.com", "password", null);
 
     assertThrows(NullPointerException.class, () -> userService.addUser(invalidUser));
   }
@@ -55,7 +57,7 @@ class UserServiceTest {
 
     when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
-    User testUser = new User(1L, "testuser", "test@example.com", "password", null, null);
+    User testUser = new User(1L, "testuser", "test@example.com", "password", null);
     assertThrows(DuplicateEntryException.class, () -> userService.addUser(testUser));
   }
 
@@ -63,7 +65,7 @@ class UserServiceTest {
   void testGetUserById_Success() {
 
     long userId = 1L;
-    User user = new User(userId, "testuser", "test@example.com", "password", null, null);
+    User user = new User(userId, "testuser", "test@example.com", "password", null);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
@@ -89,9 +91,8 @@ class UserServiceTest {
   @Test
   void testUpdateUser_Success() {
     long userId = 1L;
-    User existingUser = new User(userId, "testuser", "test@example.com", "password", null, null);
-    User updatedUser =
-        new User(userId, "updateduser", "updated@example.com", "newpassword", null, null);
+    User existingUser = new User(userId, "testuser", "test@example.com", "password", null);
+    User updatedUser = new User(userId, "updateduser", "updated@example.com", "newpassword", null);
 
     when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
     when(userRepository.save(updatedUser)).thenReturn(updatedUser);
@@ -110,8 +111,7 @@ class UserServiceTest {
   void testUpdateUser_UserNotFound() {
 
     long userId = 999L;
-    User updatedUser =
-        new User(userId, "updateduser", "updated@example.com", "newpassword", null, null);
+    User updatedUser = new User(userId, "updateduser", "updated@example.com", "newpassword", null);
 
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
@@ -136,8 +136,8 @@ class UserServiceTest {
   void testGetAllUsers_Success() {
 
     List<User> usersFromRepository = new ArrayList<>();
-    usersFromRepository.add(new User(1L, "user1", "user1@example.com", "password1", null, null));
-    usersFromRepository.add(new User(2L, "user2", "user2@example.com", "password2", null, null));
+    usersFromRepository.add(new User(1L, "user1", "user1@example.com", "password1", null));
+    usersFromRepository.add(new User(2L, "user2", "user2@example.com", "password2", null));
 
     when(userRepository.findAll()).thenReturn(usersFromRepository);
     when(cache.getCacheKeysStartingWith("User_")).thenReturn(Set.of("User_1", "User_2"));
@@ -187,7 +187,7 @@ class UserServiceTest {
   @Test
   void testUpdateUser_InvalidId_ThrowsIllegalArgumentException() {
     long invalidId = 0L;
-    User user = new User(1L, "testuser", "test@example.com", "password", null, null);
+    User user = new User(1L, "testuser", "test@example.com", "password", null);
 
     assertThrows(
         IllegalArgumentException.class,
@@ -210,8 +210,8 @@ class UserServiceTest {
   @Test
   void testGetAllUsers_FromRepositoryWhenCacheIsEmpty() {
     // Prepare mock data
-    User user1 = new User(1L, "user1", "user1@example.com", "password1", null, null);
-    User user2 = new User(2L, "user2", "user2@example.com", "password2", null, null);
+    User user1 = new User(1L, "user1", "user1@example.com", "password1", null);
+    User user2 = new User(2L, "user2", "user2@example.com", "password2", null);
     List<User> repositoryUsers = Arrays.asList(user1, user2);
 
     when(cache.getCacheKeysStartingWith("User_")).thenReturn(Collections.emptySet());

@@ -48,11 +48,23 @@ public class ArticleController {
    * @param article the article
    * @return the response entity
    */
-  @PostMapping("saveArticle")
-  public ResponseEntity<String> saveArticle(@Valid @RequestBody Article article) {
+  @PostMapping("/saveArticle")
+  public ResponseEntity<String> saveArticle(@RequestBody Article article) {
+    // Simulate saving the article (replace this with your actual save logic)
     service.saveArticle(article);
-    Query query = new Query(article.getTitle());
+
+    // Assume you want to search Wikipedia using the article's title
+    String title = article.getTitle(); // Get the title from the saved article
+
+    if (title == null || title.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid article title.");
+    }
+
+    // Construct the query object and perform the search
+    Query query = new Query(title);
     wikipediaApiService.search(query);
+
+    // Respond with a success message
     return ResponseEntity.status(HttpStatus.CREATED).body("Article saved successfully!");
   }
 

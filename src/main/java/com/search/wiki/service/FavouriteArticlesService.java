@@ -117,24 +117,21 @@ public class FavouriteArticlesService {
       user = userRepository.findById(userId).orElse(null);
       if (user != null) {
         cache.put(userCacheKey, user);
-      }
-      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
+      } else throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
     }
 
     if (prevArticle == null) {
       prevArticle = articleRepository.findById(prevArticleId).orElse(null);
       if (prevArticle != null) {
         cache.put(getArticleCacheKey(prevArticleId), prevArticle);
-      }
-      throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + prevArticleId);
+      } else throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + prevArticleId);
     }
 
     if (newArticle == null) {
       newArticle = articleRepository.findById(newArticleId).orElse(null);
       if (newArticle != null) {
         cache.put(getArticleCacheKey(newArticleId), newArticle);
-      }
-      throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + newArticleId);
+      } else throw new NotFoundException(ExceptionConstants.ARTICLE_NOT_FOUND + newArticleId);
     }
 
     entityManager.detach(user);
@@ -224,9 +221,7 @@ public class FavouriteArticlesService {
     return users;
   }
 
-
-
-  private Set<ArticleDto> convertToArticleDtoSet(Set<Article> articles) {
+  public Set<ArticleDto> convertToArticleDtoSet(Set<Article> articles) {
     Set<ArticleDto> articleDtoSet = new HashSet<>();
     articles.forEach(
         article -> {

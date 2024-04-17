@@ -1,5 +1,7 @@
 package com.search.wiki.controller.dto;
 
+import java.util.Objects;
+
 public class ArticleDto {
 
   private Long id;
@@ -39,28 +41,19 @@ public class ArticleDto {
     this.imagePath = imagePath;
   }
 
-  // Дополнительно можно переопределить методы equals() и hashCode(), если это необходимо для вашего
-  // использования
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
-    ArticleDto that = (ArticleDto) o;
-
-    if (id != null ? !id.equals(that.id) : that.id != null) return false;
-    if (title != null ? !title.equals(that.title) : that.title != null) return false;
-    if (url != null ? !url.equals(that.url) : that.url != null) return false;
-    return imagePath != null ? imagePath.equals(that.imagePath) : that.imagePath == null;
+    ArticleDto articleDto = (ArticleDto) o;
+    return Objects.equals(id, articleDto.id)
+        && Objects.equals(title, articleDto.title)
+        && Objects.equals(url, articleDto.url)
+        && Objects.equals(imagePath, articleDto.imagePath);
   }
 
   @Override
   public int hashCode() {
-    int result = id != null ? id.hashCode() : 0;
-    result = 31 * result + (title != null ? title.hashCode() : 0);
-    result = 31 * result + (url != null ? url.hashCode() : 0);
-    result = 31 * result + (imagePath != null ? imagePath.hashCode() : 0);
-    return result;
+    return Objects.hash(id, title, url, imagePath);
   }
 }

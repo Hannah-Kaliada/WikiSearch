@@ -37,7 +37,6 @@ public class QueryController {
     if (searchTerm == null || searchTerm.isEmpty()) {
       return ResponseEntity.badRequest().body("Search term is required");
     }
-
     Query query = new Query(searchTerm);
     wikipediaApiService.search(query);
     return ResponseEntity.ok(searchTerm);

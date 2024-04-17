@@ -5,8 +5,6 @@ import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
 import com.search.wiki.exceptions.customexceptions.InvalidDataException;
-import java.util.ArrayList;
-import java.util.List;
 
 /** The type Convert to dto. */
 public class ConvertToDto {

@@ -6,7 +6,6 @@ import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.Country;
 import com.search.wiki.entity.User;
 import com.search.wiki.exceptions.ExceptionConstants;
-import com.search.wiki.exceptions.customexceptions.DatabaseAccessException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
 import com.search.wiki.repository.UserRepository;
@@ -64,12 +63,6 @@ public class UserWithCountryService {
       user.setCountry(newCountry);
     }
     User addedUser = userService.addUser(user);
-    if (addedUser.getCountry() == null) {
-      throw new DatabaseAccessException("Failed to add country to user");
-    }
-    if (addedUser == null) {
-      throw new DatabaseAccessException("Failed to add user to the database");
-    }
     return ConvertToDto.convertUserToDto(addedUser);
   }
 
@@ -112,31 +105,34 @@ public class UserWithCountryService {
     if (userId < 1 || countryId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
+
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
+
+    if (user == null) {
+      user =
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId));
+    }
+
     String countryCacheKey = getCountryCacheKey(countryId);
     Country country = (Country) countryCache.get(countryCacheKey);
 
-    if (user == null) {
-      user = userRepository.findById(userId).orElse(null);
-    }
-
     if (country == null) {
-      country = countryRepository.findById(countryId).orElse(null);
+      country =
+          countryRepository
+              .findById(countryId)
+              .orElseThrow(
+                  () -> new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryId));
+      countryCache.put(countryCacheKey, country);
     }
 
-    if (user != null && country != null) {
-      user.setCountry(country);
-      User updatedUser = userRepository.save(user);
-      userCache.put(userCacheKey, updatedUser);
-      return convertToDto(updatedUser);
-    } else if (user == null) {
-      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
-    } else if (country == null) {
-      throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryId);
-    }
+    user.setCountry(country);
+    User updatedUser = userRepository.save(user);
+    userCache.put(userCacheKey, updatedUser);
 
-    return null;
+    return convertToDto(updatedUser);
   }
 
   /**
@@ -148,25 +144,21 @@ public class UserWithCountryService {
     if (userId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
+
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
 
     if (user == null) {
-      user = userRepository.findById(userId).orElse(null);
+      user =
+          userRepository
+              .findById(userId)
+              .orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId));
     }
 
-    if (user != null) {
-      user.setCountry(null);
-      User updatedUser = userRepository.save(user);
+    user.setCountry(null);
+    User updatedUser = userRepository.save(user);
 
-      if (updatedUser != null) {
-        userCache.put(userCacheKey, updatedUser);
-      } else {
-        throw new DatabaseAccessException("Failed to remove country from user");
-      }
-    } else {
-      throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
-    }
+    userCache.put(userCacheKey, updatedUser);
   }
 
   /**
@@ -180,48 +172,35 @@ public class UserWithCountryService {
     if (userId < 1 || countryId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
+
     String userCacheKey = getUserCacheKey(userId);
     User user = (User) userCache.get(userCacheKey);
-    String countryCacheKey = getCountryCacheKey(countryId);
-    Country country = (Country) countryCache.get(countryCacheKey);
 
     if (user == null) {
       user =
           userRepository
               .findById(userId)
               .orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId));
-      if (user != null) {
-        userCache.put(userCacheKey, user);
-      } else {
-        throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + userId);
-      }
+      userCache.put(userCacheKey, user);
     }
+
+    String countryCacheKey = getCountryCacheKey(countryId);
+    Country country = (Country) countryCache.get(countryCacheKey);
 
     if (country == null) {
       country =
           countryRepository
               .findById(countryId)
               .orElseThrow(
-                  () -> new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + userId));
-      if (country != null) {
-        countryCache.put(countryCacheKey, country);
-      } else {
-        throw new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + userId);
-      }
+                  () -> new NotFoundException(ExceptionConstants.COUNTRY_NOT_FOUND + countryId));
+      countryCache.put(countryCacheKey, country);
     }
 
-    if (user != null && country != null) {
-      user.setCountry(country);
-      User updatedUser = userRepository.save(user);
+    user.setCountry(country);
+    User updatedUser = userRepository.save(user);
 
-      if (updatedUser != null) {
-        userCache.put(userCacheKey, updatedUser);
-        return convertToDto(updatedUser);
-      } else {
-        throw new DatabaseAccessException("Failed to update user country in the database");
-      }
-    }
-    return null;
+    userCache.put(userCacheKey, updatedUser);
+    return convertToDto(updatedUser);
   }
 
   /**
@@ -259,7 +238,7 @@ public class UserWithCountryService {
     return userDtos;
   }
 
-  private UserDto convertToDto(User user) {
+  public UserDto convertToDto(User user) {
     if (user == null) {
       throw new IllegalArgumentException("User cannot be null");
     }
@@ -281,16 +260,16 @@ public class UserWithCountryService {
     return userDto;
   }
 
-  private Country getCountryFromCache(Long countryId) {
+  public Country getCountryFromCache(Long countryId) {
     String cacheKey = getCountryCacheKey(countryId);
     return (Country) countryCache.get(cacheKey);
   }
 
-  private String getUserCacheKey(Long userId) {
+  public String getUserCacheKey(Long userId) {
     return "User_" + userId;
   }
 
-  private String getCountryCacheKey(Long countryId) {
+  public String getCountryCacheKey(Long countryId) {
     return "Country_" + countryId;
   }
 }

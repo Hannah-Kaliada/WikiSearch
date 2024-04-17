@@ -43,7 +43,6 @@ class WikipediaApiControllerTest {
     articles.add(article2);
     when(wikipediaApiService.search(query)).thenReturn(articles);
 
-    // Выполнение POST-запроса и проверка результата
     mockMvc
         .perform(
             MockMvcRequestBuilders.post("/api/v1/search")

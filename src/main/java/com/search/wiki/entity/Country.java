@@ -13,21 +13,13 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
-/** The type Country. */
-@Getter
-@Setter
 @Entity
-@Table(name = "countries")
 @DynamicUpdate
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "countries")
 public class Country {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -39,34 +31,47 @@ public class Country {
   @JsonManagedReference
   private List<User> users = new ArrayList<>();
 
-  /**
-   * Gets users.
-   *
-   * @return the users
-   */
+  public Country() {
+    // Пустой конструктор
+  }
+
+  public Country(long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public List<User> getUsers() {
     return users;
   }
 
-  /**
-   * Sets users.
-   *
-   * @param users the users
-   */
   public void setUsers(List<User> users) {
     this.users = users;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
     Country country = (Country) o;
-    return id == country.getId();
+
+    return id == country.id;
   }
 
   @Override

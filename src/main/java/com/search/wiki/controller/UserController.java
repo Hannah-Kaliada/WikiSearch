@@ -90,7 +90,7 @@ public class UserController {
    * @return the response entity
    */
   @PostMapping("/addUser")
-  public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+  public ResponseEntity<User> addUser( @RequestBody User user) {
     User addedUser = userService.addUser(user);
     return ResponseEntity.ok(addedUser);
   }

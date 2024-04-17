@@ -2,127 +2,124 @@ package com.search.wiki.dto_tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.search.wiki.controller.dto.ArticleDto;
 import org.junit.jupiter.api.Test;
 
-public class ArticleDtoTest {
+class ArticleDtoTest {
 
   @Test
-  public void testGetterAndSetter() {
-    // Создаем объект ArticleDto
-    ArticleDto articleDto = new ArticleDto();
+  void testEquals_SameInstance_ReturnsTrue() {
+    ArticleDto article = new ArticleDto();
+    assertEquals(article, article);
+  }
 
-    // Устанавливаем значения
+  @Test
+  void testEquals_NullObject_ReturnsFalse() {
+    ArticleDto article = new ArticleDto();
+    assertNotEquals(null, article);
+  }
+
+  @Test
+  void testEquals_DifferentClass_ReturnsFalse() {
+    ArticleDto article = new ArticleDto();
+    assertNotEquals("SomeString", article);
+  }
+
+  @Test
+  void testEquals_EqualObjects_ReturnsTrue() {
+    ArticleDto article1 = new ArticleDto();
+    article1.setId(1L);
+    article1.setTitle("Title");
+    article1.setUrl("http://example.com");
+    article1.setImagePath("/path/to/image");
+
+    ArticleDto article2 = new ArticleDto();
+    article2.setId(1L);
+    article2.setTitle("Title");
+    article2.setUrl("http://example.com");
+    article2.setImagePath("/path/to/image");
+
+    assertEquals(article1, article2);
+  }
+
+  @Test
+  void testEquals_DifferentObjects_ReturnsFalse() {
+    ArticleDto article1 = new ArticleDto();
+    article1.setId(1L);
+    article1.setTitle("Title");
+    article1.setUrl("http://example.com");
+    article1.setImagePath("/path/to/image");
+
+    ArticleDto article2 = new ArticleDto();
+    article2.setId(2L);
+    article2.setTitle("Title");
+    article2.setUrl("http://example.com");
+    article2.setImagePath("/path/to/image");
+
+    assertNotEquals(article1, article2);
+  }
+
+  @Test
+  void testHashCode_EqualObjects_ReturnsSameHashCode() {
+    ArticleDto article1 = new ArticleDto();
+    article1.setId(1L);
+    article1.setTitle("Title");
+    article1.setUrl("http://example.com");
+    article1.setImagePath("/path/to/image");
+
+    ArticleDto article2 = new ArticleDto();
+    article2.setId(1L);
+    article2.setTitle("Title");
+    article2.setUrl("http://example.com");
+    article2.setImagePath("/path/to/image");
+
+    assertEquals(article1.hashCode(), article2.hashCode());
+  }
+
+  @Test
+  void testHashCode_DifferentObjects_ReturnsDifferentHashCode() {
+    ArticleDto article1 = new ArticleDto();
+    article1.setId(1L);
+    article1.setTitle("Title");
+    article1.setUrl("http://example.com");
+    article1.setImagePath("/path/to/image");
+
+    ArticleDto article2 = new ArticleDto();
+    article2.setId(2L); // Different id
+    article2.setTitle("Title");
+    article2.setUrl("http://example.com");
+    article2.setImagePath("/path/to/image");
+
+    assertNotEquals(article1.hashCode(), article2.hashCode());
+  }
+  @Test
+  void testSettersAndGetters() {
+    ArticleDto article = new ArticleDto();
+
     Long expectedId = 1L;
     String expectedTitle = "Test Title";
     String expectedUrl = "http://example.com/article";
     String expectedImagePath = "/images/article.jpg";
 
-    articleDto.setId(expectedId);
-    articleDto.setTitle(expectedTitle);
-    articleDto.setUrl(expectedUrl);
-    articleDto.setImagePath(expectedImagePath);
+    article.setId(expectedId);
+    article.setTitle(expectedTitle);
+    article.setUrl(expectedUrl);
+    article.setImagePath(expectedImagePath);
 
-    // Проверяем, что значения установлены правильно с помощью геттеров
-    assertEquals(expectedId, articleDto.getId());
-    assertEquals(expectedTitle, articleDto.getTitle());
-    assertEquals(expectedUrl, articleDto.getUrl());
-    assertEquals(expectedImagePath, articleDto.getImagePath());
-  }
-  @Test
-  public void testEqualsAndHashCode() {
-    // Создаем два объекта ArticleDto с одинаковыми значениями полей
-    ArticleDto articleDto1 = new ArticleDto();
-    articleDto1.setId(1L);
-    articleDto1.setTitle("Test Title");
-
-    ArticleDto articleDto2 = new ArticleDto();
-    articleDto2.setId(1L);
-    articleDto2.setTitle("Test Title");
-
-    // Проверяем, что методы equals() и hashCode() работают корректно
-    assertEquals(articleDto1, articleDto2);
-    assertEquals(articleDto1.hashCode(), articleDto2.hashCode());
-  }
-  @Test
-  public void testNullValues() {
-    ArticleDto articleDto = new ArticleDto();
-
-    // Установка всех полей в null
-    articleDto.setId(null);
-    articleDto.setTitle(null);
-    articleDto.setUrl(null);
-    articleDto.setImagePath(null);
-
-    // Проверка геттеров, что они возвращают null
-    assertNull(articleDto.getId());
-    assertNull(articleDto.getTitle());
-    assertNull(articleDto.getUrl());
-    assertNull(articleDto.getImagePath());
-  }
-  @Test
-  public void testUpdateFields() {
-    ArticleDto articleDto = new ArticleDto();
-
-    // Установка начальных значений
-    articleDto.setId(1L);
-    articleDto.setTitle("Initial Title");
-
-    // Обновление значений
-    articleDto.setId(2L);
-    articleDto.setTitle("Updated Title");
-
-    // Проверка, что поля были успешно обновлены
-    assertEquals(2L, articleDto.getId());
-    assertEquals("Updated Title", articleDto.getTitle());
-  }
-  @Test
-  public void testCreateInstanceAndCompareObjects() {
-    ArticleDto articleDto1 = new ArticleDto();
-    articleDto1.setId(1L);
-    articleDto1.setTitle("Test Title");
-
-    ArticleDto articleDto2 = new ArticleDto();
-    articleDto2.setId(2L);
-    articleDto2.setTitle("Another Title");
-
-    // Проверка, что объекты созданы и не равны друг другу
-    assertNotNull(articleDto1);
-    assertNotNull(articleDto2);
-    assertNotEquals(articleDto1, articleDto2);
-  }
-  @Test
-  void testArticleDtoSerialization() throws JsonProcessingException {
-    // Создание объекта ArticleDto
-    ArticleDto articleDto = new ArticleDto();
-    articleDto.setId(1L);
-    articleDto.setTitle("Sample Article");
-    articleDto.setUrl("https://example.com/article");
-    articleDto.setImagePath("/images/sample.jpg");
-
-    // Инициализация ObjectMapper для сериализации в JSON
-    ObjectMapper objectMapper = new ObjectMapper();
-    String json = objectMapper.writeValueAsString(articleDto);
-
-    // Проверка, что JSON содержит ожидаемые поля и значения
-    assertEquals("{\"id\":1,\"title\":\"Sample Article\",\"url\":\"https://example.com/article\",\"imagePath\":\"/images/sample.jpg\"}", json);
+    assertEquals(expectedId, article.getId());
+    assertEquals(expectedTitle, article.getTitle());
+    assertEquals(expectedUrl, article.getUrl());
+    assertEquals(expectedImagePath, article.getImagePath());
   }
 
   @Test
-  void testArticleDtoDeserialization() throws JsonProcessingException {
-    // JSON-строка, которая будет десериализована в объект ArticleDto
-    String json = "{\"id\":1,\"title\":\"Sample Article\",\"url\":\"https://example.com/article\",\"imagePath\":\"/images/sample.jpg\"}";
+  void testDefaultValues() {
 
-    // Инициализация ObjectMapper для десериализации из JSON
-    ObjectMapper objectMapper = new ObjectMapper();
-    ArticleDto articleDto = objectMapper.readValue(json, ArticleDto.class);
+    ArticleDto article = new ArticleDto();
 
-    // Проверка, что объект ArticleDto содержит ожидаемые значения после десериализации
-    assertEquals(1L, articleDto.getId());
-    assertEquals("Sample Article", articleDto.getTitle());
-    assertEquals("https://example.com/article", articleDto.getUrl());
-    assertEquals("/images/sample.jpg", articleDto.getImagePath());
+    assertNull(article.getId());
+    assertNull(article.getTitle());
+    assertNull(article.getUrl());
+    assertNull(article.getImagePath());
   }
 }

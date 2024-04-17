@@ -44,9 +44,6 @@ public class ArticleService {
     }
 
     Article savedArticle = repository.save(article);
-    if (savedArticle == null) {
-      throw new DatabaseAccessException("Error saving article");
-    }
 
     cache.put(getCacheKey(savedArticle.getId()), savedArticle);
     return savedArticle;
@@ -85,10 +82,6 @@ public class ArticleService {
       existingArticle.setImagePath(article.getImagePath());
 
       Article updatedArticle = repository.save(existingArticle);
-
-      if (updatedArticle == null) {
-        throw new DatabaseAccessException("Error updating article");
-      }
 
       String cacheKey = getCacheKey(updatedArticle.getId());
       cache.put(cacheKey, updatedArticle);

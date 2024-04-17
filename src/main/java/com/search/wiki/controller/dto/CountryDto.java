@@ -1,35 +1,49 @@
 package com.search.wiki.controller.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
-
-/** The type Country dto. */
-@Data
 public class CountryDto {
-  @NotBlank(message = "Id is mandatory")
+
   private Long id;
-  @NotBlank(message = "Name is mandatory")
-  @Size(max = 255, message = "Name cannot exceed 255 characters")
-  @Pattern(regexp = "^[A-Za-z\\s]+$", message = "Name should contain only alphabets and spaces")
   private String name;
 
-  /**
-   * Gets name.
-   *
-   * @return the name
-   */
+  public CountryDto() {
+  }
+
+  public CountryDto(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
   public String getName() {
     return name;
   }
 
-  /**
-   * Gets id.
-   *
-   * @return the id
-   */
-  public Long getId() {
-    return id;
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    CountryDto that = (CountryDto) o;
+
+    if (id != null ? !id.equals(that.id) : that.id != null) return false;
+    return name != null ? name.equals(that.name) : that.name == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    return result;
   }
 }

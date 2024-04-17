@@ -1,22 +1,21 @@
 package com.search.wiki.controller_tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.search.wiki.controller.ArticleController;
 import com.search.wiki.entity.Article;
 import com.search.wiki.entity.Query;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.service.ArticleService;
 import com.search.wiki.service.WikipediaApiService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class ArticleControllerTest {
 
@@ -106,27 +105,28 @@ class ArticleControllerTest {
         Article articleToSave = new Article();
         articleToSave.setTitle("New Article");
 
-        // Mock behavior of articleService.saveArticle() to return the saved article
-        when(articleService.saveArticle(articleToSave)).thenReturn(articleToSave);
+    // Mock behavior of articleService.saveArticle() to return the saved article
+    when(articleService.saveArticle(articleToSave)).thenReturn(articleToSave);
 
-        // Call controller method
-        ResponseEntity<String> responseEntity = articleController.saveArticle(articleToSave);
+    // Call controller method
+    ResponseEntity<String> responseEntity = articleController.saveArticle(articleToSave);
 
-        // Verify the response
-        assertNotNull(responseEntity);
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals("Article saved successfully!", responseEntity.getBody());
+    // Verify the response
+    assertNotNull(responseEntity);
+    assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+    assertEquals("Article saved successfully!", responseEntity.getBody());
 
-        // Verify that saveArticle() was called with the expected argument
-        verify(articleService, times(1)).saveArticle(articleToSave);
+    // Verify that saveArticle() was called with the expected argument
+    verify(articleService, times(1)).saveArticle(articleToSave);
 
-        // Verify that wikipediaApiService.search() was called with the expected argument
-        verify(wikipediaApiService, times(1)).search(queryCaptor.capture());
+    // Verify that wikipediaApiService.search() was called with the expected argument
+    ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+    verify(wikipediaApiService, times(1)).search(queryCaptor.capture());
 
-        // Assert the captured argument (Query object) passed to wikipediaApiService.search()
-        Query capturedQuery = queryCaptor.getValue();
-        assertNotNull(capturedQuery);
-        assertEquals(articleToSave.getTitle(), capturedQuery.getSearchTerm());
+    // Assert the captured argument (Query object) passed to wikipediaApiService.search()
+    Query capturedQuery = queryCaptor.getValue();
+    assertNotNull(capturedQuery);
+    assertEquals(articleToSave.getTitle(), capturedQuery.getSearchTerm());
     }
 
     @Test

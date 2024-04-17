@@ -1,13 +1,11 @@
 package com.search.wiki.service;
 
 import com.search.wiki.entity.Article;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,59 +14,40 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 @Service
 public class WikipediaXmlParser {
 
   private static final Logger logger = LoggerFactory.getLogger(WikipediaXmlParser.class);
 
-  public List<Article> parseXml(String xml)
-      throws ParserConfigurationException, SAXException, IOException {
+  public List<Article> parseXml(String xml) {
     List<Article> articles = new ArrayList<>();
-    if (xml == null || xml.trim().isEmpty()) {
-      return articles;
-    }
-
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder;
-
     try {
-      builder = factory.newDocumentBuilder();
-    } catch (ParserConfigurationException e) {
-      logger.error("Error creating DocumentBuilder: " + e.getMessage());
-      throw e;
-    }
+      DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      Document doc = builder.parse(new InputSource(new StringReader(xml)));
 
-    Document doc;
+      NodeList itemNodes = doc.getElementsByTagName("Item");
 
-    try {
-      doc = builder.parse(new InputSource(new StringReader(xml)));
-    } catch (SAXException | IOException e) {
-      logger.error("Error parsing XML: " + e.getMessage());
-      throw e;
-    }
+      for (int i = 0; i < itemNodes.getLength(); i++) {
+        Node itemNode = itemNodes.item(i);
+        if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
+          Element itemElement = (Element) itemNode;
 
-    NodeList itemNodes = doc.getElementsByTagName("Item");
+          String title = getElementTextByTagName(itemElement, "Text");
+          String url = getElementTextByTagName(itemElement, "Url");
+          String imagePath = getElementAttributeByTagName(itemElement, "Image", "source");
 
-    for (int i = 0; i < itemNodes.getLength(); i++) {
-      Node itemNode = itemNodes.item(i);
-      if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element itemElement = (Element) itemNode;
+          Article article = new Article();
+          article.setTitle(title);
+          article.setUrl(url);
+          article.setImagePath(imagePath);
 
-        String title = getElementTextByTagName(itemElement, "Text");
-        String url = getElementTextByTagName(itemElement, "Url");
-        String imagePath = getElementAttributeByTagName(itemElement, "Image", "source");
-
-        Article article = new Article();
-        article.setTitle(title);
-        article.setUrl(url);
-        article.setImagePath(imagePath);
-
-        articles.add(article);
+          articles.add(article);
+        }
       }
+    } catch (Exception e) {
+      logger.error("Error parsing XML: {}", e.getMessage(), e);
     }
-
     return articles;
   }
 
