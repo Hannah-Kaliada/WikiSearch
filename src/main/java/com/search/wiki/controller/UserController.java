@@ -90,7 +90,7 @@ public class UserController {
    * @return the response entity
    */
   @PostMapping("/addUser")
-  public ResponseEntity<User> addUser( @RequestBody User user) {
+  public ResponseEntity<User> addUser(@RequestBody User user) {
     User addedUser = userService.addUser(user);
     return ResponseEntity.ok(addedUser);
   }
@@ -182,5 +182,11 @@ public class UserController {
   public ResponseEntity<List<UserDto>> getAllUsersWithCountries() {
     List<UserDto> users = userWithCountryService.getAllUsersWithCountries();
     return ResponseEntity.ok(users);
+  }
+
+  @GetMapping("/count")
+  public int getCount() {
+    // Получение количества обращений
+    return userService.getRequestCount();
   }
 }

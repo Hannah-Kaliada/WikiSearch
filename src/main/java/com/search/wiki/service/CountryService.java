@@ -6,6 +6,7 @@ import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.DuplicateEntryException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.CountryRepository;
+import com.search.wiki.service.utils.RequestCountService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class CountryService {
   private final CountryRepository repository;
   private final Cache cache;
   private static final String COUNTRY_CACHE_PREFIX = "Country_";
+  private final RequestCountService requestCountService;
 
   /**
    * Instantiates a new Country service.
@@ -25,9 +27,11 @@ public class CountryService {
    * @param repository the repository
    * @param cache the cache
    */
-  public CountryService(CountryRepository repository, Cache cache) {
+  public CountryService(
+      CountryRepository repository, Cache cache, RequestCountService requestCountService) {
     this.repository = repository;
     this.cache = cache;
+    this.requestCountService = requestCountService;
   }
 
   /**
@@ -37,6 +41,7 @@ public class CountryService {
    * @return the country
    */
   public Country addCountry(Country country) {
+    requestCountService.incrementRequestCount();
     if (country == null) {
       throw new IllegalArgumentException("Country cannot be null");
     }
@@ -55,6 +60,7 @@ public class CountryService {
    * @return the country by id
    */
   public Country getCountryById(long id) {
+    requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
@@ -70,6 +76,7 @@ public class CountryService {
    * @return the country
    */
   public Country updateCountry(Country country, Long id) {
+    requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
@@ -94,6 +101,7 @@ public class CountryService {
    */
   @Transactional
   public boolean deleteCountry(long countryId) {
+    requestCountService.incrementRequestCount();
     if (countryId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
@@ -115,6 +123,7 @@ public class CountryService {
    * @return the all countries
    */
   public List<Country> getAllCountries() {
+    requestCountService.incrementRequestCount();
     String cacheKey = COUNTRY_CACHE_PREFIX + "AllCountries";
     if (cache.containsKey(cacheKey)) {
       return (List<Country>) cache.get(cacheKey);
@@ -161,6 +170,7 @@ public class CountryService {
    * @return the country id by name
    */
   public Long getCountryIdByName(String countryName) {
+    requestCountService.incrementRequestCount();
     return repository.findByName(countryName)
             .map(Country::getId)
             .orElseThrow(() -> new NotFoundException("Country not found with name: " + countryName));
@@ -173,6 +183,7 @@ public class CountryService {
    * @return the long
    */
   public Long addCountryAndGetId(Country country) {
+    requestCountService.incrementRequestCount();
     if (country == null) {
       throw new IllegalArgumentException("Country cannot be null");
     }
@@ -181,5 +192,22 @@ public class CountryService {
     }
     repository.save(country);
     return country.getId();
+  }
+
+  @Transactional
+  public void bulkAddCountries(List<String> countryNames) {
+    requestCountService.incrementRequestCount();
+    countryNames.stream()
+        .map(
+            countryName -> {
+              Country country = new Country();
+              country.setName(countryName);
+              return country;
+            })
+        .forEach(repository::save);
+  }
+
+  public int getRequestCount() {
+    return requestCountService.getRequestCount();
   }
 }

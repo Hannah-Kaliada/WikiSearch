@@ -105,4 +105,18 @@ public class CountryController {
     }
   }
 
+  @PostMapping("/addCountries")
+  public ResponseEntity<String> bulkAddCountries(@RequestBody List<String> countryNames) {
+    if (countryNames == null || countryNames.isEmpty()) {
+      return ResponseEntity.badRequest().body("List of country names is empty.");
+    }
+    countryService.bulkAddCountries(countryNames);
+    return ResponseEntity.status(HttpStatus.CREATED).body("Bulk countries added successfully!");
+  }
+
+  @GetMapping("/count")
+  public int getCount() {
+    // Получение количества обращений
+    return countryService.getRequestCount();
+  }
 }

@@ -6,6 +6,7 @@ import com.search.wiki.exceptions.ExceptionConstants;
 import com.search.wiki.exceptions.customexceptions.DuplicateEntryException;
 import com.search.wiki.exceptions.customexceptions.NotFoundException;
 import com.search.wiki.repository.UserRepository;
+import com.search.wiki.service.utils.RequestCountService;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +20,7 @@ public class UserService {
   private final UserRepository repository;
   private final Cache cache;
   private static final String USER_CACHE_PREFIX = "User_";
+  private final RequestCountService requestCountService;
 
   /**
    * Instantiates a new User service.
@@ -26,9 +28,11 @@ public class UserService {
    * @param repository the repository
    * @param cache the cache
    */
-  public UserService(UserRepository repository, Cache cache) {
+  public UserService(
+      UserRepository repository, Cache cache, RequestCountService requestCountService) {
     this.repository = repository;
     this.cache = cache;
+    this.requestCountService = requestCountService;
   }
 
   /**
@@ -38,6 +42,7 @@ public class UserService {
    * @return the user
    */
   public User addUser(User user) {
+    requestCountService.incrementRequestCount();
     if (user == null) {
       throw new IllegalArgumentException("User cannot be null");
     } else if (repository.existsByUsername(user.getUsername())) {
@@ -58,6 +63,7 @@ public class UserService {
    * @return the user by id
    */
   public User getUserById(long id) {
+    requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
@@ -74,6 +80,7 @@ public class UserService {
    */
   @Transactional
   public User updateUser(User user, long id) {
+    requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
@@ -109,6 +116,7 @@ public class UserService {
    */
   @Transactional
   public boolean deleteUser(long userId) {
+    requestCountService.incrementRequestCount();
     if (userId < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
     }
@@ -126,6 +134,7 @@ public class UserService {
    * @return the all users
    */
   public List<User> getAllUsers() {
+    requestCountService.incrementRequestCount();
     Set<String> userCacheKeys = cache.getCacheKeysStartingWith(USER_CACHE_PREFIX);
 
     List<User> users = userCacheKeys.stream().map(cacheKey -> (User) cache.get(cacheKey)).toList();
@@ -160,5 +169,9 @@ public class UserService {
       }
       throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND + id);
     }
+  }
+
+  public int getRequestCount() {
+    return requestCountService.getRequestCount();
   }
 }

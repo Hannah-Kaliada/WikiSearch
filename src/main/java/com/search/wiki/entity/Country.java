@@ -32,7 +32,6 @@ public class Country {
   private List<User> users = new ArrayList<>();
 
   public Country() {
-    // Пустой конструктор
   }
 
   public Country(long id, String name) {
