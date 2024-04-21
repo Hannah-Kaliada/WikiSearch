@@ -26,8 +26,9 @@ public class CountryService {
    *
    * @param repository the repository
    * @param cache the cache
+   * @param requestCountService the request count service
    */
-  public CountryService(
+public CountryService(
       CountryRepository repository, Cache cache, RequestCountService requestCountService) {
     this.repository = repository;
     this.cache = cache;
@@ -40,7 +41,7 @@ public class CountryService {
    * @param country the country
    * @return the country
    */
-  public Country addCountry(Country country) {
+public Country addCountry(Country country) {
     requestCountService.incrementRequestCount();
     if (country == null) {
       throw new IllegalArgumentException("Country cannot be null");
@@ -59,7 +60,7 @@ public class CountryService {
    * @param id the id
    * @return the country by id
    */
-  public Country getCountryById(long id) {
+public Country getCountryById(long id) {
     requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
@@ -75,7 +76,7 @@ public class CountryService {
    * @param id the id
    * @return the country
    */
-  public Country updateCountry(Country country, Long id) {
+public Country updateCountry(Country country, Long id) {
     requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
@@ -99,7 +100,7 @@ public class CountryService {
    * @param countryId the country id
    * @return the boolean
    */
-  @Transactional
+@Transactional
   public boolean deleteCountry(long countryId) {
     requestCountService.incrementRequestCount();
     if (countryId < 1) {
@@ -122,7 +123,7 @@ public class CountryService {
    *
    * @return the all countries
    */
-  public List<Country> getAllCountries() {
+public List<Country> getAllCountries() {
     requestCountService.incrementRequestCount();
     String cacheKey = COUNTRY_CACHE_PREFIX + "AllCountries";
     if (cache.containsKey(cacheKey)) {
@@ -169,7 +170,7 @@ public class CountryService {
    * @param countryName the country name
    * @return the country id by name
    */
-  public Long getCountryIdByName(String countryName) {
+public Long getCountryIdByName(String countryName) {
     requestCountService.incrementRequestCount();
     return repository.findByName(countryName)
             .map(Country::getId)
@@ -182,7 +183,7 @@ public class CountryService {
    * @param country the country
    * @return the long
    */
-  public Long addCountryAndGetId(Country country) {
+public Long addCountryAndGetId(Country country) {
     requestCountService.incrementRequestCount();
     if (country == null) {
       throw new IllegalArgumentException("Country cannot be null");
@@ -194,7 +195,12 @@ public class CountryService {
     return country.getId();
   }
 
-  @Transactional
+  /**
+   * Bulk add countries.
+   *
+   * @param countryNames the country names
+   */
+@Transactional
   public void bulkAddCountries(List<String> countryNames) {
     requestCountService.incrementRequestCount();
     countryNames.stream()
@@ -207,6 +213,11 @@ public class CountryService {
         .forEach(repository::save);
   }
 
+  /**
+   * Gets request count.
+   *
+   * @return the request count
+   */
   public int getRequestCount() {
     return requestCountService.getRequestCount();
   }

@@ -28,7 +28,7 @@ public class CountryController {
    *
    * @param countryService the country service
    */
-  @Autowired
+@Autowired
   public CountryController(CountryService countryService) {
     this.countryService = countryService;
   }
@@ -38,7 +38,7 @@ public class CountryController {
    *
    * @return the all countries
    */
-  @GetMapping
+@GetMapping
   public ResponseEntity<List<Country>> getAllCountries() {
     List<Country> countries = countryService.getAllCountries();
     return ResponseEntity.ok(countries);
@@ -50,7 +50,7 @@ public class CountryController {
    * @param id the id
    * @return the country by id
    */
-  @GetMapping("/{id}")
+@GetMapping("/{id}")
   public ResponseEntity<Country> getCountryById(@PathVariable long id) {
     Country country = countryService.getCountryById(id);
     return country != null ? ResponseEntity.ok(country) : ResponseEntity.notFound().build();
@@ -62,7 +62,7 @@ public class CountryController {
    * @param country the country
    * @return the response entity
    */
-  @PostMapping("/addCountry")
+@PostMapping("/addCountry")
   public ResponseEntity<Country> addCountry(@Valid @RequestBody Country country) {
     Country addedCountry = countryService.addCountry(country);
     return ResponseEntity.status(HttpStatus.CREATED).body(addedCountry);
@@ -75,7 +75,7 @@ public class CountryController {
    * @param country the country
    * @return the response entity
    */
-  @PutMapping("/updateCountry/{id}")
+@PutMapping("/updateCountry/{id}")
   public ResponseEntity<Country> updateCountry(
       @PathVariable long id, @Valid @RequestBody Country country) {
     Country updatedCountry = countryService.updateCountry(country, id);
@@ -92,7 +92,7 @@ public class CountryController {
    * @param id the id
    * @return the response entity
    */
-  @DeleteMapping("/deleteCountry/{id}")
+@DeleteMapping("/deleteCountry/{id}")
   public ResponseEntity<Boolean> deleteCountry(@PathVariable long id) {
     if (id < 1) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
@@ -105,7 +105,13 @@ public class CountryController {
     }
   }
 
-  @PostMapping("/addCountries")
+  /**
+   * Bulk add countries response entity.
+   *
+   * @param countryNames the country names
+   * @return the response entity
+   */
+@PostMapping("/addCountries")
   public ResponseEntity<String> bulkAddCountries(@RequestBody List<String> countryNames) {
     if (countryNames == null || countryNames.isEmpty()) {
       return ResponseEntity.badRequest().body("List of country names is empty.");
@@ -114,6 +120,11 @@ public class CountryController {
     return ResponseEntity.status(HttpStatus.CREATED).body("Bulk countries added successfully!");
   }
 
+  /**
+   * Gets count.
+   *
+   * @return the count
+   */
   @GetMapping("/count")
   public int getCount() {
     // Получение количества обращений

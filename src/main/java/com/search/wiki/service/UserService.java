@@ -27,8 +27,9 @@ public class UserService {
    *
    * @param repository the repository
    * @param cache the cache
+   * @param requestCountService the request count service
    */
-  public UserService(
+public UserService(
       UserRepository repository, Cache cache, RequestCountService requestCountService) {
     this.repository = repository;
     this.cache = cache;
@@ -41,7 +42,7 @@ public class UserService {
    * @param user the user
    * @return the user
    */
-  public User addUser(User user) {
+public User addUser(User user) {
     requestCountService.incrementRequestCount();
     if (user == null) {
       throw new IllegalArgumentException("User cannot be null");
@@ -62,7 +63,7 @@ public class UserService {
    * @param id the id
    * @return the user by id
    */
-  public User getUserById(long id) {
+public User getUserById(long id) {
     requestCountService.incrementRequestCount();
     if (id < 1) {
       throw new IllegalArgumentException(ExceptionConstants.ID_REQUIRED);
@@ -78,7 +79,7 @@ public class UserService {
    * @param id the id
    * @return the user
    */
-  @Transactional
+@Transactional
   public User updateUser(User user, long id) {
     requestCountService.incrementRequestCount();
     if (id < 1) {
@@ -114,7 +115,7 @@ public class UserService {
    * @param userId the user id
    * @return the boolean
    */
-  @Transactional
+@Transactional
   public boolean deleteUser(long userId) {
     requestCountService.incrementRequestCount();
     if (userId < 1) {
@@ -133,7 +134,7 @@ public class UserService {
    *
    * @return the all users
    */
-  public List<User> getAllUsers() {
+public List<User> getAllUsers() {
     requestCountService.incrementRequestCount();
     Set<String> userCacheKeys = cache.getCacheKeysStartingWith(USER_CACHE_PREFIX);
 
@@ -171,6 +172,11 @@ public class UserService {
     }
   }
 
+  /**
+   * Gets request count.
+   *
+   * @return the request count
+   */
   public int getRequestCount() {
     return requestCountService.getRequestCount();
   }

@@ -33,7 +33,7 @@ public class UserController {
    * @param userWithCountryService the user with country service
    * @param countryService the country service
    */
-  @Autowired
+@Autowired
   public UserController(
       UserService userService,
       UserWithCountryService userWithCountryService,
@@ -49,7 +49,7 @@ public class UserController {
    * @param countryName the country name
    * @return the response entity
    */
-  @PostMapping("/addUserAndCountry/{countryName}")
+@PostMapping("/addUserAndCountry/{countryName}")
   public ResponseEntity<UserDto> addUserAndCountry(
       @Valid @RequestBody UserDto userDto, @PathVariable String countryName) {
     UserDto addedUser = userWithCountryService.addUserAndCountry(userDto, countryName);
@@ -65,7 +65,7 @@ public class UserController {
    *
    * @return the all users
    */
-  @GetMapping
+@GetMapping
   public ResponseEntity<List<User>> getAllUsers() {
     List<User> users = userService.getAllUsers();
     return ResponseEntity.ok(users);
@@ -77,7 +77,7 @@ public class UserController {
    * @param id the id
    * @return the user by id
    */
-  @GetMapping("/{id}")
+@GetMapping("/{id}")
   public ResponseEntity<User> getUserById(@PathVariable long id) {
     User user = userService.getUserById(id);
     return ResponseEntity.ok(user);
@@ -89,7 +89,7 @@ public class UserController {
    * @param user the user
    * @return the response entity
    */
-  @PostMapping("/addUser")
+@PostMapping("/addUser")
   public ResponseEntity<User> addUser(@RequestBody User user) {
     User addedUser = userService.addUser(user);
     return ResponseEntity.ok(addedUser);
@@ -102,7 +102,7 @@ public class UserController {
    * @param userId the user id
    * @return the response entity
    */
-  @PutMapping("/api/v1/users/updateUser/{userId}")
+@PutMapping("/api/v1/users/updateUser/{userId}")
   public ResponseEntity<User> updateUser(
       @Valid @RequestBody User user, @PathVariable("userId") long userId) {
     User updatedUser = userService.updateUser(user, userId);
@@ -115,7 +115,7 @@ public class UserController {
    * @param id the id
    * @return the response entity
    */
-  @DeleteMapping("/api/v1/users/deleteUser/{id}")
+@DeleteMapping("/api/v1/users/deleteUser/{id}")
   public ResponseEntity<Boolean> deleteUser(@PathVariable long id) {
     userService.deleteUser(id);
     return ResponseEntity.ok(true);
@@ -127,7 +127,7 @@ public class UserController {
    * @param countryId the country id
    * @return the all users in country
    */
-  @GetMapping("/getAllUsersInCountry/{countryId}")
+@GetMapping("/getAllUsersInCountry/{countryId}")
   public ResponseEntity<List<UserDto>> getAllUsersInCountry(@PathVariable Long countryId) {
     List<UserDto> users = userWithCountryService.getAllUsersInCountry(countryId);
     return ResponseEntity.ok(users);
@@ -140,7 +140,7 @@ public class UserController {
    * @param countryId the country id
    * @return the response entity
    */
-  @PostMapping("/addCountryToUser/{userId}/{countryId}")
+@PostMapping("/addCountryToUser/{userId}/{countryId}")
   public ResponseEntity<UserDto> addCountryToUser(
       @PathVariable Long userId, @PathVariable Long countryId) {
     UserDto updatedUser = userWithCountryService.addCountryToUser(userId, countryId);
@@ -153,7 +153,7 @@ public class UserController {
    * @param userId the user id
    * @return the response entity
    */
-  @DeleteMapping("/removeCountryFromUser/{userId}")
+@DeleteMapping("/removeCountryFromUser/{userId}")
   public ResponseEntity<Void> removeCountryFromUser(@PathVariable Long userId) {
     userWithCountryService.removeCountryFromUser(userId);
     return ResponseEntity.noContent().build();
@@ -166,7 +166,7 @@ public class UserController {
    * @param countryId the country id
    * @return the response entity
    */
-  @PutMapping("/updateUserCountry/{userId}/{countryId}")
+@PutMapping("/updateUserCountry/{userId}/{countryId}")
   public ResponseEntity<UserDto> updateUserCountry(
       @PathVariable Long userId, @PathVariable Long countryId) {
     UserDto updatedUser = userWithCountryService.updateUserCountry(userId, countryId);
@@ -178,12 +178,17 @@ public class UserController {
    *
    * @return the all users with countries
    */
-  @GetMapping("/getAllUsersWithCountries")
+@GetMapping("/getAllUsersWithCountries")
   public ResponseEntity<List<UserDto>> getAllUsersWithCountries() {
     List<UserDto> users = userWithCountryService.getAllUsersWithCountries();
     return ResponseEntity.ok(users);
   }
 
+  /**
+   * Gets count.
+   *
+   * @return the count
+   */
   @GetMapping("/count")
   public int getCount() {
     // Получение количества обращений
