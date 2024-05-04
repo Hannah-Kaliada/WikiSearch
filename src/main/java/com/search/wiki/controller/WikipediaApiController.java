@@ -28,11 +28,14 @@ public class WikipediaApiController {
   /**
    * Search response entity.
    *
-   * @param query the query
+   * @param searchTerm the query
    * @return the response entity
    */
   @PostMapping("/search")
-  public ResponseEntity<List<Article>> search(@RequestBody Query query) {
+  @CrossOrigin
+  public ResponseEntity<List<Article>> search(@RequestParam("searchTerm") String searchTerm) {
+    Query query = new Query();
+    query.setSearchTerm(searchTerm);
     List<Article> articles = wikipediaApiService.search(query);
     return ResponseEntity.ok(articles);
   }

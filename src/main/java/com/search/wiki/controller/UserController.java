@@ -9,14 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** The type User controller. */
 @RestController
@@ -50,6 +43,7 @@ public class UserController {
    * @return the response entity
    */
 @PostMapping("/addUserAndCountry/{countryName}")
+@CrossOrigin
   public ResponseEntity<UserDto> addUserAndCountry(
       @Valid @RequestBody UserDto userDto, @PathVariable String countryName) {
     UserDto addedUser = userWithCountryService.addUserAndCountry(userDto, countryName);
@@ -66,6 +60,7 @@ public class UserController {
    * @return the all users
    */
 @GetMapping
+@CrossOrigin
   public ResponseEntity<List<User>> getAllUsers() {
     List<User> users = userService.getAllUsers();
     return ResponseEntity.ok(users);
@@ -78,6 +73,7 @@ public class UserController {
    * @return the user by id
    */
 @GetMapping("/{id}")
+@CrossOrigin
   public ResponseEntity<User> getUserById(@PathVariable long id) {
     User user = userService.getUserById(id);
     return ResponseEntity.ok(user);
@@ -90,6 +86,7 @@ public class UserController {
    * @return the response entity
    */
 @PostMapping("/addUser")
+@CrossOrigin
   public ResponseEntity<User> addUser(@RequestBody User user) {
     User addedUser = userService.addUser(user);
     return ResponseEntity.ok(addedUser);
@@ -102,7 +99,8 @@ public class UserController {
    * @param userId the user id
    * @return the response entity
    */
-@PutMapping("/api/v1/users/updateUser/{userId}")
+@PutMapping("/updateUser/{userId}")
+@CrossOrigin
   public ResponseEntity<User> updateUser(
       @Valid @RequestBody User user, @PathVariable("userId") long userId) {
     User updatedUser = userService.updateUser(user, userId);
@@ -115,7 +113,8 @@ public class UserController {
    * @param id the id
    * @return the response entity
    */
-@DeleteMapping("/api/v1/users/deleteUser/{id}")
+@DeleteMapping("/deleteUser/{id}")
+@CrossOrigin
   public ResponseEntity<Boolean> deleteUser(@PathVariable long id) {
     userService.deleteUser(id);
     return ResponseEntity.ok(true);
@@ -128,6 +127,7 @@ public class UserController {
    * @return the all users in country
    */
 @GetMapping("/getAllUsersInCountry/{countryId}")
+@CrossOrigin
   public ResponseEntity<List<UserDto>> getAllUsersInCountry(@PathVariable Long countryId) {
     List<UserDto> users = userWithCountryService.getAllUsersInCountry(countryId);
     return ResponseEntity.ok(users);
@@ -141,6 +141,7 @@ public class UserController {
    * @return the response entity
    */
 @PostMapping("/addCountryToUser/{userId}/{countryId}")
+@CrossOrigin
   public ResponseEntity<UserDto> addCountryToUser(
       @PathVariable Long userId, @PathVariable Long countryId) {
     UserDto updatedUser = userWithCountryService.addCountryToUser(userId, countryId);
@@ -154,6 +155,7 @@ public class UserController {
    * @return the response entity
    */
 @DeleteMapping("/removeCountryFromUser/{userId}")
+@CrossOrigin
   public ResponseEntity<Void> removeCountryFromUser(@PathVariable Long userId) {
     userWithCountryService.removeCountryFromUser(userId);
     return ResponseEntity.noContent().build();
@@ -167,6 +169,7 @@ public class UserController {
    * @return the response entity
    */
 @PutMapping("/updateUserCountry/{userId}/{countryId}")
+@CrossOrigin
   public ResponseEntity<UserDto> updateUserCountry(
       @PathVariable Long userId, @PathVariable Long countryId) {
     UserDto updatedUser = userWithCountryService.updateUserCountry(userId, countryId);
@@ -179,6 +182,7 @@ public class UserController {
    * @return the all users with countries
    */
 @GetMapping("/getAllUsersWithCountries")
+@CrossOrigin
   public ResponseEntity<List<UserDto>> getAllUsersWithCountries() {
     List<UserDto> users = userWithCountryService.getAllUsersWithCountries();
     return ResponseEntity.ok(users);
@@ -190,6 +194,7 @@ public class UserController {
    * @return the count
    */
   @GetMapping("/count")
+  @CrossOrigin
   public int getCount() {
     // Получение количества обращений
     return userService.getRequestCount();

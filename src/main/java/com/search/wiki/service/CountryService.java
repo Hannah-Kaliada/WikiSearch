@@ -125,19 +125,9 @@ public Country updateCountry(Country country, Long id) {
    */
 public List<Country> getAllCountries() {
     requestCountService.incrementRequestCount();
-    String cacheKey = COUNTRY_CACHE_PREFIX + "AllCountries";
-    if (cache.containsKey(cacheKey)) {
-      return (List<Country>) cache.get(cacheKey);
-    } else {
-      List<Country> countries = repository.findAll();
-      if (countries.isEmpty()) {
-        throw new NotFoundException("No countries found");
-      }
-      countries.forEach(country -> cache.put(getCacheKey(country.getId()), country));
-      cache.put(cacheKey, countries);
-      return countries;
+    return repository.findAll();
     }
-  }
+
 
   private String getCacheKey(long id) {
     return COUNTRY_CACHE_PREFIX + id;
