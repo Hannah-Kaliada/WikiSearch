@@ -10,6 +10,7 @@ const UserCard = ({ user, onDelete }) => {
                 <td>{user.id}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
+                <td>{user.country}</td>
                 <td>
                     <button onClick={() => onDelete(user.id)}>Delete</button>
                 </td>
@@ -40,7 +41,8 @@ const UserCrud = () => {
     const [modalUsername, setModalUsername] = useState('');
     const [modalEmail, setModalEmail] = useState('');
     const [modalPassword, setModalPassword] = useState('');
-
+    const [modalCountry, setModalCountry] = useState('');
+    const [error, setError] = useState('');
     const fetchUsers = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/v1/users');
@@ -53,7 +55,7 @@ const UserCrud = () => {
 
     const handleCreateUser = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/users/addUser', {
+            const response = await axios.post(`http://localhost:8080/api/v1/users/addUserAndCountry/${modalCountry}`, {
                 username: modalUsername,
                 email: modalEmail,
                 password: modalPassword,
@@ -64,9 +66,11 @@ const UserCrud = () => {
             setModalUsername('');
             setModalEmail('');
             setModalPassword('');
-            setIsModalOpen(false); // Close modal after user creation
+            setModalCountry('');
+            setIsModalOpen(false);
         } catch (error) {
             console.error('Error creating user:', error);
+            setError('Failed to create user. Please try again.');
         }
     };
 
@@ -92,6 +96,8 @@ const UserCrud = () => {
             setModalEmail(value);
         } else if (name === 'password') {
             setModalPassword(value);
+        } else if (name === 'country') {
+            setModalCountry(value);
         }
     };
 
@@ -105,6 +111,7 @@ const UserCrud = () => {
 
     const openModal = () => {
         setIsModalOpen(true);
+        setError('');
     };
 
     const closeModal = () => {
@@ -141,22 +148,32 @@ const UserCrud = () => {
                 }}
             >
                 <h2>Create User</h2>
-                <div style={{ marginBottom: '10px' }}>
+                {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+                <div style={{marginBottom: '10px'}}>
                     <label>Username:</label>
-                    <br />
-                    <input type="text" name="username" value={modalUsername} onChange={handleModalInputChange} style={{ width: '100%', boxSizing: 'border-box', marginBottom: '10px' }} />
+                    <br/>
+                    <input type="text" name="username" value={modalUsername} onChange={handleModalInputChange}
+                           style={{width: '100%', boxSizing: 'border-box', marginBottom: '10px'}}/>
                 </div>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{marginBottom: '10px'}}>
                     <label>Email:</label>
-                    <br />
-                    <input type="email" name="email" value={modalEmail} onChange={handleModalInputChange} style={{ width: '100%', boxSizing: 'border-box', marginBottom: '10px' }} />
+                    <br/>
+                    <input type="email" name="email" value={modalEmail} onChange={handleModalInputChange}
+                           style={{width: '100%', boxSizing: 'border-box', marginBottom: '10px'}}/>
                 </div>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{marginBottom: '10px'}}>
                     <label>Password:</label>
-                    <br />
-                    <input type="password" name="password" value={modalPassword} onChange={handleModalInputChange} style={{ width: '100%', boxSizing: 'border-box', marginBottom: '10px' }} />
+                    <br/>
+                    <input type="password" name="password" value={modalPassword} onChange={handleModalInputChange}
+                           style={{width: '100%', boxSizing: 'border-box', marginBottom: '10px'}}/>
                 </div>
-                <button onClick={handleCreateUser} style={{ marginRight: '10px' }}>Add User</button>
+                <div style={{marginBottom: '10px'}}>
+                    <label>Country:</label>
+                    <br/>
+                    <input type="text" name="country" value={modalCountry} onChange={handleModalInputChange}
+                           style={{width: '100%', boxSizing: 'border-box', marginBottom: '10px'}}/>
+                </div>
+                <button onClick={handleCreateUser} style={{marginRight: '10px'}}>Add User</button>
                 <button onClick={closeModal}>Cancel</button>
             </Modal>
 
@@ -170,6 +187,7 @@ const UserCrud = () => {
                             <th>ID</th>
                             <th>Username</th>
                             <th>Email</th>
+                            <th>Country</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
