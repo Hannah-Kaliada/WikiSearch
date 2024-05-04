@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import Modal from 'react-modal';
 import './UserCrud.css';
 
-const UserCard = ({user, onDelete}) => {
+const UserCard = ({ user, onDelete }) => {
     return (
         <>
             <tr className="user-card">
@@ -35,6 +36,10 @@ const UserCrud = () => {
     const [name, setName] = useState('');
     const [isLoaded, setIsLoaded] = useState(false); // New state to track if users are loaded
     const [isOpen, setIsOpen] = useState(false); // New state to track if user list is open or closed
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalUsername, setModalUsername] = useState('');
+    const [modalEmail, setModalEmail] = useState('');
+    const [modalPassword, setModalPassword] = useState('');
 
     const fetchUsers = async () => {
         try {
@@ -49,12 +54,17 @@ const UserCrud = () => {
     const handleCreateUser = async () => {
         try {
             const response = await axios.post('http://localhost:8080/api/v1/users/addUser', {
-                username: name, email: "etegf",
-                password: "etdjsddskiegf", favoriteArticles: []
+                username: modalUsername,
+                email: modalEmail,
+                password: modalPassword,
+                favoriteArticles: []
             });
             console.log("Added user:", response.data);
             setUsers([...users, response.data]);
-            setName('');
+            setModalUsername('');
+            setModalEmail('');
+            setModalPassword('');
+            setIsModalOpen(false); // Close modal after user creation
         } catch (error) {
             console.error('Error creating user:', error);
         }
@@ -74,12 +84,31 @@ const UserCrud = () => {
         setName(e.target.value);
     };
 
+    const handleModalInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'username') {
+            setModalUsername(value);
+        } else if (name === 'email') {
+            setModalEmail(value);
+        } else if (name === 'password') {
+            setModalPassword(value);
+        }
+    };
+
     const handleToggleUsers = () => {
         setIsOpen(!isOpen); // Toggle isOpen state
         if (!isLoaded) {
             fetchUsers(); // Load users only if not already loaded
             setIsLoaded(true); // Set isLoaded to true once users are loaded
         }
+    };
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
     };
 
     return (
@@ -90,9 +119,48 @@ const UserCrud = () => {
             </div>
             {/* Button to toggle users */}
             <hr></hr>
-            <label>Create User: </label>
-            <input type="text" value={name} onChange={handleInputChange}/>
-            <button onClick={handleCreateUser}>Add User</button>
+            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
+                <button onClick={openModal}>Add User</button>
+            </div>
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                style={{
+                    content: {
+                        width: 'fit-content',
+                        height: 'fit-content',
+                        margin: 'auto',
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                        padding: '20px',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    },
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    },
+                }}
+            >
+                <h2>Create User</h2>
+                <div style={{ marginBottom: '10px' }}>
+                    <label>Username:</label>
+                    <br />
+                    <input type="text" name="username" value={modalUsername} onChange={handleModalInputChange} style={{ width: '100%', boxSizing: 'border-box', marginBottom: '10px' }} />
+                </div>
+                <div style={{ marginBottom: '10px' }}>
+                    <label>Email:</label>
+                    <br />
+                    <input type="email" name="email" value={modalEmail} onChange={handleModalInputChange} style={{ width: '100%', boxSizing: 'border-box', marginBottom: '10px' }} />
+                </div>
+                <div style={{ marginBottom: '10px' }}>
+                    <label>Password:</label>
+                    <br />
+                    <input type="password" name="password" value={modalPassword} onChange={handleModalInputChange} style={{ width: '100%', boxSizing: 'border-box', marginBottom: '10px' }} />
+                </div>
+                <button onClick={handleCreateUser} style={{ marginRight: '10px' }}>Add User</button>
+                <button onClick={closeModal}>Cancel</button>
+            </Modal>
+
+
             {isOpen && ( // Render user list only if isOpen is true
                 <>
                     <h3>All Users</h3>
