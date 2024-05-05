@@ -56,7 +56,7 @@ const AdminPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const correctHash = '93969d193161ae6fbd17b30055a9ed9789cb4bd80a7df0c6df15d3dd98fd7591'; // хеш пароля "hp"
+        const correctHash = '93969d193161ae6fbd17b30055a9ed9789cb4bd80a7df0c6df15d3dd98fd7591';
 
 
         const enteredPasswordHash = await sha256(password);

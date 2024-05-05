@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
 const ArticleCrud = () => {
@@ -49,8 +49,8 @@ const ArticleCrud = () => {
 
     return (
         <div className="crud-form">
-            <hr />
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+            <hr/>
+            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
                 <button onClick={() => setShowAllArticles(!showAllArticles)}>
                     {showAllArticles ? 'Hide Articles' : 'Show Articles'}
                 </button>
@@ -68,7 +68,7 @@ const ArticleCrud = () => {
                         <button onClick={() => setSortBy('title')}>Sort by Title</button>
                         <button onClick={() => setSortBy('id')}>Sort by ID</button>
                     </div>
-                    <table style={{ width: '100%', textAlign: 'center' }}>
+                    <table style={{width: '100%', textAlign: 'center'}}>
                         <tbody>
                         {filteredArticles.map((article) => (
                             <tr key={article.id}>
@@ -83,7 +83,7 @@ const ArticleCrud = () => {
                     </table>
                 </div>
             )}
-            <hr />
+            <hr/>
         </div>
     );
 };

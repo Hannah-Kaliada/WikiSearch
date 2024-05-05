@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import './UserCrud.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import {faSync} from "@fortawesome/free-solid-svg-icons/faSync";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
+
 
 const UserCard = ({user, onDelete, fetchUsers}) => {
     const [country, setCountry] = useState('Loading...');
@@ -160,7 +160,7 @@ const UserCrud = () => {
     const [modalEmail, setModalEmail] = useState('');
     const [modalPassword, setModalPassword] = useState('');
     const [modalCountry, setModalCountry] = useState('');
-                           const [sortType, setSortType] = useState('');
+    const [sortType, setSortType] = useState('');
 
     const [error, setError] = useState('');
     const fetchUsers = async () => {
@@ -168,15 +168,15 @@ const UserCrud = () => {
             const response = await axios.get('http://localhost:8080/api/v1/users');
             console.log("Fetched users:", response.data);
             setUsers(response.data);
-                           setIsLoaded(true);
+            setIsLoaded(true);
         } catch (error) {
             console.error('Error fetching users:', error);
         }
     };
 
-                           const handleSortChange = (e) => {
-                           setSortType(e.target.value);
-                       };
+    const handleSortChange = (e) => {
+        setSortType(e.target.value);
+    };
 
 
     const handleCreateUser = async () => {
@@ -200,38 +200,38 @@ const UserCrud = () => {
         }
     };
 
-                           const handleSearchUser = (searchTerm) => {
-                           const foundUsers = document.querySelectorAll('.user-card');
-                           let userFound = false;
+    const handleSearchUser = (searchTerm) => {
+        const foundUsers = document.querySelectorAll('.user-card');
+        let userFound = false;
 
-                           foundUsers.forEach(userRow => {
-                           const userEmail = userRow.querySelector('td:nth-child(3)').textContent; // Change 3 to the appropriate column number
-                               if (userEmail === searchTerm) {
-                                   userRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                   userRow.style.border = '4px solid #0044ff';
-                                   userFound = true;
-                               } else {
-                                   userRow.style.border = 'none';
-                               }
-                           });
+        foundUsers.forEach(userRow => {
+            const userEmail = userRow.querySelector('td:nth-child(3)').textContent;
+            if (userEmail === searchTerm) {
+                userRow.scrollIntoView({behavior: 'smooth', block: 'center'});
+                userRow.style.border = '4px solid #0044ff';
+                userFound = true;
+            } else {
+                userRow.style.border = 'none';
+            }
+        });
 
-                           if (!userFound) {
-                           setError('User not found.');
-                       } else {
-                           setError('');
-                       }
-                       };
+        if (!userFound) {
+            setError('User not found.');
+        } else {
+            setError('');
+        }
+    };
 
-                           const resetSearch = () => {
-                           setSearchTerm('');
-                           setError('');
-                           users.forEach(user => {
-                           const userRow = document.getElementById(`user-${user.id}`);
-                           if (userRow) {
-                           userRow.style.border = 'none';
-                       }
-                       });
-                       };
+    const resetSearch = () => {
+        setSearchTerm('');
+        setError('');
+        users.forEach(user => {
+            const userRow = document.getElementById(`user-${user.id}`);
+            if (userRow) {
+                userRow.style.border = 'none';
+            }
+        });
+    };
 
     const handleDeleteUser = async (id) => {
         try {
@@ -244,11 +244,11 @@ const UserCrud = () => {
     };
 
     const handleInputChange = (e) => {
-                           setSearchTerm(e.target.value);
+        setSearchTerm(e.target.value);
     };
 
     const handleModalInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         if (name === 'username') {
             setModalUsername(value);
         } else if (name === 'email') {
@@ -260,23 +260,22 @@ const UserCrud = () => {
         }
     };
 
-                           const sortUsers = (users) => {
-                           if (sortType === 'id') {
-                           return users.slice().sort((a, b) => a.id - b.id);
-                       } else if (sortType === 'username') {
-                           return users.slice().sort((a, b) => a.username.localeCompare(b.username));
-                       } else if (sortType === 'email') {
-                           return users.slice().sort((a, b) => a.email.localeCompare(b.email));
-                       } else {
-                           return users;
-                       }
-                       };
+    const sortUsers = (users) => {
+        if (sortType === 'id') {
+            return users.slice().sort((a, b) => a.id - b.id);
+        } else if (sortType === 'username') {
+            return users.slice().sort((a, b) => a.username.localeCompare(b.username));
+        } else if (sortType === 'email') {
+            return users.slice().sort((a, b) => a.email.localeCompare(b.email));
+        } else {
+            return users;
+        }
+    };
 
     const handleToggleUsers = () => {
         setIsOpen(!isOpen);
-        fetchUsers(); // Вызываем fetchUsers при каждом открытии
+        fetchUsers();
     };
-
 
 
     const openModal = () => {
@@ -294,12 +293,12 @@ const UserCrud = () => {
             <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
                 <button onClick={handleToggleUsers}>{isOpen ? 'Hide Users' : 'Show Users'}</button>
             </div>
-        <hr/>
-        <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
-            <input type="text" value={searchTerm} onChange={handleInputChange} placeholder="Search by email"/>
-            <button onClick={() => handleSearchUser(searchTerm)} disabled={!searchTerm}>Search</button>
-            <button onClick={resetSearch}>Reset</button>
-        </div>
+            <hr/>
+            <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
+                <input type="text" value={searchTerm} onChange={handleInputChange} placeholder="Search by email"/>
+                <button onClick={() => handleSearchUser(searchTerm)} disabled={!searchTerm}>Search</button>
+                <button onClick={resetSearch}>Reset</button>
+            </div>
             <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
                 <button onClick={openModal}>Add User</button>
             </div>
@@ -322,7 +321,7 @@ const UserCrud = () => {
                 }}
             >
                 <h2>Create User</h2>
-                {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+                {error && <div style={{color: 'red', marginBottom: '10px'}}>{error}</div>}
                 <div style={{marginBottom: '10px'}}>
                     <label>Username:</label>
                     <br/>
@@ -352,7 +351,7 @@ const UserCrud = () => {
             </Modal>
 
 
-        {isOpen && (
+            {isOpen && (
                 <>
                     <h3>All Users</h3>
                     <div>

@@ -1,18 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const AboutPage = () => {
     return (
         <div style={styles.container}>
             <h1 style={styles.heading}>About WikiSearch</h1>
             <p style={styles.paragraph}>
-                WikiSearch is a server dedicated to providing information from Wikipedia. It allows users to search for articles and save their favorite articles to their account.
+                WikiSearch is a server dedicated to providing information from Wikipedia. It allows users to search for
+                articles and save their favorite articles to their account.
             </p>
             <p style={styles.paragraph}>
                 <Link to="/home" style={styles.link}>
-                    <FontAwesomeIcon icon={faSearch} style={styles.icon} /> Start searching...
+                    <FontAwesomeIcon icon={faSearch} style={styles.icon}/> Start searching...
                 </Link>
             </p>
             <p style={styles.contact}>

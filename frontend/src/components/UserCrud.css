@@ -38,12 +38,15 @@
 .user-card button:hover {
     background-color: #d32f2f;
 }
+
 select#sort {
     background-color: #ffffff;
 }
+
 select#sort:focus {
     outline: 2px solid #005500;
 }
+
 .favorite-articles-list {
     list-style-type: none;
     padding: 0;
@@ -72,6 +75,7 @@ select#sort:focus {
     border: none;
     cursor: pointer;
 }
+
 .found-user {
     border: 2px solid green;
 }

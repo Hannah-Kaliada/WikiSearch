@@ -4,6 +4,7 @@ body {
     height: 100vh;
     flex-direction: column;
 }
+
 #header {
     background: linear-gradient(to right, rgba(200, 200, 200, 0.1), rgba(180, 180, 180, 1));
     width: 100%;
@@ -20,8 +21,10 @@ body {
     text-align: left;
     display: inline;
     padding-left: 120px;
+    font-family: 'Rubik', sans-serif;
     justify-content: space-between;
 }
+
 #wiki-logo {
     position: absolute;
     left: 0;
@@ -116,12 +119,13 @@ input[type="button"]:hover {
 .article-title a:hover {
     text-decoration: underline;
 }
+
 #menu-button {
     position: absolute;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png'); /* Задаем фон кнопке */
+    background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png');
     background-size: contain;
     width: 100px;
     height: 100px;
@@ -156,13 +160,15 @@ input[type="button"]:hover {
 
 .profile-button {
     margin-left: 10px;
+    width: 50px;
+    height: 50px;
     background-color: rgba(0, 0, 0, 0.1);
     color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
 }
+
 
 .ReactModal__Overlay {
     position: fixed;

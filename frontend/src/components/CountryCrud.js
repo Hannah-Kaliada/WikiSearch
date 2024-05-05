@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import '../AdminPage.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {faSync} from "@fortawesome/free-solid-svg-icons/faSync";
 
-const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
+const CountryCrud = ({country, onCreate, onUpdate, onDelete}) => {
     const [name, setName] = useState(country ? country.name : '');
     const [countries, setCountries] = useState([]);
     const [showAllCountries, setShowAllCountries] = useState(false);
@@ -26,7 +26,6 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
         setSelectedCountryId(id);
     };
 
-// Функция для отмены обновления
     const cancelUpdate = () => {
         setSelectedCountryId(null);
     };
@@ -40,19 +39,19 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
         }
     };
 
-    // Функция для периодического обновления списка стран
+
     const pollCountries = () => {
         setInterval(() => {
             if (showAllCountries) {
                 fetchCountries();
             }
-        }, 1000); // Обновление каждые 5 секунд (можно изменить интервал по вашему усмотрению)
+        }, 1000);
     };
 
     useEffect(() => {
         if (showAllCountries) {
             fetchCountries();
-            pollCountries(); // Запускаем поллинг при отображении всех стран
+            pollCountries();
         }
     }, [showAllCountries]);
     useEffect(() => {
@@ -61,7 +60,7 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
 
     const handleCreate = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/countries/addCountry', { name });
+            const response = await axios.post('http://localhost:8080/api/v1/countries/addCountry', {name});
             onCreate(response.data);
             setName('');
         } catch (error) {
@@ -71,10 +70,10 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
 
     const handleUpdate = async (id) => {
         try {
-            const response = await axios.put(`http://localhost:8080/api/v1/countries/updateCountry/${id}`, { name: updatedName });
+            const response = await axios.put(`http://localhost:8080/api/v1/countries/updateCountry/${id}`, {name: updatedName});
             onUpdate(response.data);
             fetchCountries();
-            setShowUpdateInput({ ...showUpdateInput, [id]: false });
+            setShowUpdateInput({...showUpdateInput, [id]: false});
         } catch (error) {
             console.error('Error updating country:', error);
         }
@@ -150,7 +149,7 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
                     <button onClick={() => handleDelete(country.id)}>Delete</button>
                 </div>
             ) : (
-                 <button onClick={handleCreate}>Create</button>
+                <button onClick={handleCreate}>Create</button>
             )}
         </div>
     );

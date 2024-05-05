@@ -1,0 +1,18 @@
+.star-button {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    color: grey;
+    cursor: pointer;
+    scale: 1.5;
+}
+.star-button.starred {
+    color: yellow;
+}
+
+.article {
+    position: relative;
+    margin-bottom: 20px;
+}

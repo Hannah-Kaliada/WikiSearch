@@ -1,12 +1,9 @@
-/* Пример стилей для таблицы внутри ReactModal */
-
-/* Стили для таблицы */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-/* Стили для заголовка таблицы */
+
 th {
     background-color: #f2f2f2;
     border: 1px solid #ddd;
@@ -14,20 +11,17 @@ th {
     text-align: left;
 }
 
-/* Стили для ячеек таблицы */
 td {
     border: 1px solid #ddd;
     padding: 8px;
 }
 
-/* Стили для четных строк таблицы */
 tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
-/* Стили для кнопок внутри ячеек */
 td button {
-    background-color: #4CAF50; /* Зеленый цвет */
+    background-color: #4CAF50;
     color: white;
     border: none;
     padding: 8px 12px;

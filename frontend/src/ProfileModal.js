@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import './ProfileModule.css';
 
-const ProfileModal = ({ isOpen, onRequestClose, user }) => {
+const ProfileModal = ({isOpen, onRequestClose, user}) => {
     const [showPassword, setShowPassword] = useState(false);
     const [updatedUser, setUpdatedUser] = useState(user);
 
@@ -19,8 +19,7 @@ const ProfileModal = ({ isOpen, onRequestClose, user }) => {
         try {
             const response = await axios.delete(`http://localhost:8080/api/v1/favorite-articles/${user.id}/remove/${articleId}`);
             if (response.status === 200) {
-                // Обновить информацию о пользователе после удаления статьи
-                const updatedUserCopy = { ...updatedUser };
+                const updatedUserCopy = {...updatedUser};
                 updatedUserCopy.favoriteArticles = updatedUserCopy.favoriteArticles.filter(article => article.id !== articleId);
                 setUpdatedUser(updatedUserCopy);
             }
@@ -30,7 +29,7 @@ const ProfileModal = ({ isOpen, onRequestClose, user }) => {
     };
 
     if (!updatedUser) {
-        return null; // Возвращаем null, если user пустой
+        return null;
     }
 
     return (
@@ -40,7 +39,9 @@ const ProfileModal = ({ isOpen, onRequestClose, user }) => {
             contentLabel="Profile Modal"
             ariaHideApp={false}
         >
-            <button onClick={onRequestClose} style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer' }}>X</button>
+            <button onClick={onRequestClose}
+                    style={{position: 'absolute', top: '10px', right: '10px', cursor: 'pointer'}}>X
+            </button>
             <h2>{updatedUser.username}'s profile</h2>
             <div>
                 <p>Username: {updatedUser.username}</p>
@@ -54,7 +55,7 @@ const ProfileModal = ({ isOpen, onRequestClose, user }) => {
                     <tbody>
                     {updatedUser.favoriteArticles.map((article, index) => (
                         <tr key={index}>
-                            <td><img src={article.imagePath} alt="Thumbnail" width="50" height="50" /></td>
+                            <td><img src={article.imagePath} alt="Thumbnail" width="50" height="50"/></td>
                             <td>
                                 <div>
                                     <a href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>
