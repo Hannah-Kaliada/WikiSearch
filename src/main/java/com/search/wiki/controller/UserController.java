@@ -211,4 +211,10 @@ public class UserController {
     }
   }
 
+  @PostMapping("/login")
+  @CrossOrigin
+  public long loginUser(@RequestBody User loginRequest) {
+    return userService.getUserIdByEmailAndPassword(
+        loginRequest.getEmail(), loginRequest.getPassword());
+  }
 }

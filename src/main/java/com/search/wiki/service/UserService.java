@@ -10,6 +10,10 @@ import com.search.wiki.service.utils.RequestCountService;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,21 @@ public class UserService {
   private final Cache cache;
   private static final String USER_CACHE_PREFIX = "User_";
   private final RequestCountService requestCountService;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public long getUserIdByEmailAndPassword(String email, String password) {
+        try {
+            return entityManager.createQuery(
+                            "SELECT u.id FROM User u WHERE u.email = :email AND u.password = :password", Long.class)
+                    .setParameter("email", email)
+                    .setParameter("password", password)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            // Если пользователь с таким email и password не найден, возвращаем 0 или можно обработать исключение по вашему усмотрению
+            return 0;
+        }
+    }
 
   /**
    * Instantiates a new User service.
