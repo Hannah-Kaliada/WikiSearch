@@ -69,6 +69,12 @@ public Country getCountryById(long id) {
     return getCachedOrFromRepository(cacheKey, id);
   }
 
+  public Country getCountryByName(String name) {
+    requestCountService.incrementRequestCount();
+    return repository.findByName(name)
+            .orElseThrow(() -> new NotFoundException("Country not found with name: " + name));
+  }
+
   /**
    * Update country.
    *

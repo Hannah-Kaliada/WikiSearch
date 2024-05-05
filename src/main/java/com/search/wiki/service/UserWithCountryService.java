@@ -237,6 +237,29 @@ public class UserWithCountryService {
 
     return userDtos;
   }
+  public CountryDto getCountryByUserId(long userId) {
+    User user = userService.getUserById(userId);
+
+    if (user != null && user.getCountry() != null) {
+      Country country = getCountryFromCache(user.getCountry().getId());
+
+      if (country == null) {
+        country = countryService.getCountryById(user.getCountry().getId());
+
+        if (country != null) {
+          String cacheKey = getCountryCacheKey(country.getId());
+          if (!countryCache.containsKey(cacheKey)) {
+            countryCache.put(cacheKey, country);
+          }
+        }
+      }
+
+      return ConvertToDto.convertCountryToDto(country);
+    }
+
+    return null;
+  }
+
 
   public UserDto convertToDto(User user) {
     if (user == null) {

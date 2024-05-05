@@ -1,40 +1,147 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import './UserCrud.css';
 
-const UserCard = ({ user, onDelete }) => {
+const UserCard = ({user, onDelete, fetchUsers}) => {
+    const [country, setCountry] = useState('Loading...');
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedUsername, setEditedUsername] = useState(user.username);
+    const [editedEmail, setEditedEmail] = useState(user.email);
+    const [countryId, setCountryId] = useState(user.countryId);
+    const [countryOptions, setCountryOptions] = useState([]);
+    const [selectedCountryName, setSelectedCountryName] = useState(''); // Для отслеживания выбранной страны в режиме редактирования
+
+    useEffect(() => {
+        const fetchCountry = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/v1/users/${user.id}/country`);
+                setCountry(response.data.name);
+            } catch (error) {
+                console.error('Error fetching country:', error);
+                setCountry('N/A');
+            }
+        };
+        fetchCountry();
+    }, [user.id]);
+
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v1/countries');
+                setCountryOptions(response.data);
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+            }
+        };
+        fetchCountries();
+    }, []);
+
+    const handleEdit = () => {
+        setIsEditing(true);
+        // Сохраняем текущую выбранную страну при начале редактирования
+        setSelectedCountryName(country);
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditedUsername(user.username);
+        setEditedEmail(user.email);
+        setCountry(selectedCountryName);
+    };
+
+    const handleSaveEdit = async () => {
+        try {
+            // Получаем идентификатор страны по ее названию
+            const countryResponse = await axios.get(`http://localhost:8080/api/v1/countries/name/${country}`);
+            const countryId = countryResponse.data.id;
+
+            // Обновляем данные пользователя на сервере
+            const updatedUserData = {
+                id: user.id,
+                username: editedUsername,
+                email: editedEmail,
+                password: user.password
+            };
+
+            // Выполняем запрос на обновление пользователя с новыми данными
+            await axios.put(`http://localhost:8080/api/v1/users/updateUser/${user.id}`, updatedUserData);
+
+            // Обновляем страну пользователя на сервере
+            await axios.put(`http://localhost:8080/api/v1/users/updateUserCountry/${user.id}/${countryId}`);
+            fetchUsers();
+            setIsEditing(false); // Завершаем режим редактирования
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
+    };
+
+
+    const handleInputChange = (e) => {
+        const {name, value} = e.target;
+        if (name === 'username') {
+            setEditedUsername(value);
+        } else if (name === 'email') {
+            setEditedEmail(value);
+        }
+    };
+
+    const handleCountryChange = (e) => {
+        // Сохраняем выбранную страну в состояние
+        setCountry(e.target.value);
+    };
+
     return (
         <>
-            <tr className="user-card">
-                <td>{user.id}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.country}</td>
-                <td>
-                    <button onClick={() => onDelete(user.id)}>Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td colSpan="6">
-                    <strong>Favorite Articles:</strong>
-                    <ul>
-                        {user.favoriteArticles.map(article => (
-                            <li key={article.id}>
-                                <a href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                            </li>
+        <tr className="user-card">
+            <td>{user.id}</td>
+            <td>{isEditing ? <input type="text" name="username" value={editedUsername}
+                                    onChange={handleInputChange}/> : user.username}</td>
+            <td>{isEditing ?
+                <input type="email" name="email" value={editedEmail} onChange={handleInputChange}/> : user.email}</td>
+            <td>
+                {isEditing ? (
+                    <select value={country} onChange={handleCountryChange}>
+                        <option value="">Select country</option>
+                        {countryOptions.map(country => (
+                            <option key={country.id} value={country.name}>{country.name}</option>
                         ))}
-                    </ul>
-                </td>
-            </tr>
+                    </select>
+                ) : (
+                    country
+                )}
+            </td>
+            <td>
+                {isEditing ? (
+                    <>
+                        <button onClick={handleSaveEdit}>Save</button>
+                        <button onClick={handleCancelEdit}>Cancel</button>
+                    </>
+                ) : (
+                    <button onClick={handleEdit}>Edit</button>
+                )}
+                <button onClick={() => onDelete(user.id)}>Delete</button>
+            </td>
+        </tr>
+        <tr>
+            <td colSpan="6">
+                <strong>Favorite Articles:</strong>
+                <ul>
+                    {user.favoriteArticles.map(article => (
+                        <li key={article.id}>
+                            <a href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>
+                        </li>
+                    ))}
+                </ul>
+            </td>
+        </tr>
         </>
-    );
+        );
 };
-
-
 const UserCrud = () => {
     const [users, setUsers] = useState([]);
     const [name, setName] = useState('');
+                           const [searchTerm, setSearchTerm] = useState('');
     const [isLoaded, setIsLoaded] = useState(false); // New state to track if users are loaded
     const [isOpen, setIsOpen] = useState(false); // New state to track if user list is open or closed
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,16 +149,24 @@ const UserCrud = () => {
     const [modalEmail, setModalEmail] = useState('');
     const [modalPassword, setModalPassword] = useState('');
     const [modalCountry, setModalCountry] = useState('');
+                           const [sortType, setSortType] = useState('');
+
     const [error, setError] = useState('');
     const fetchUsers = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/v1/users');
             console.log("Fetched users:", response.data);
             setUsers(response.data);
+                           setIsLoaded(true);
         } catch (error) {
             console.error('Error fetching users:', error);
         }
     };
+
+                           const handleSortChange = (e) => {
+                           setSortType(e.target.value);
+                       };
+
 
     const handleCreateUser = async () => {
         try {
@@ -74,6 +189,40 @@ const UserCrud = () => {
         }
     };
 
+                           const handleSearchUser = (searchTerm) => {
+                           const foundUsers = document.querySelectorAll('.user-card');
+                           let userFound = false;
+
+                           foundUsers.forEach(userRow => {
+                           const userEmail = userRow.querySelector('td:nth-child(3)').textContent; // Change 3 to the appropriate column number
+                           if (userEmail === searchTerm) {
+                           userRow.scrollIntoView({behavior: 'smooth', block: 'center'});
+                           userRow.style.border = '2px solid green';
+                           userFound = true;
+                       } else {
+                           userRow.style.border = 'none';
+                       }
+                       });
+
+                           if (!userFound) {
+                           setError('User not found.');
+                       } else {
+                           setError('');
+                       }
+                       };
+
+                           const resetSearch = () => {
+                           setSearchTerm('');
+                           setError('');
+                           // Сбрасываем стиль подчеркивания всех пользователей
+                           users.forEach(user => {
+                           const userRow = document.getElementById(`user-${user.id}`);
+                           if (userRow) {
+                           userRow.style.border = 'none';
+                       }
+                       });
+                       };
+
     const handleDeleteUser = async (id) => {
         try {
             console.log("Deleting user with ID:", id);
@@ -85,7 +234,7 @@ const UserCrud = () => {
     };
 
     const handleInputChange = (e) => {
-        setName(e.target.value);
+                           setSearchTerm(e.target.value);
     };
 
     const handleModalInputChange = (e) => {
@@ -100,6 +249,19 @@ const UserCrud = () => {
             setModalCountry(value);
         }
     };
+
+                           const sortUsers = (users) => {
+                           if (sortType === 'id') {
+                           return users.slice().sort((a, b) => a.id - b.id);
+                       } else if (sortType === 'username') {
+                           return users.slice().sort((a, b) => a.username.localeCompare(b.username));
+                       } else if (sortType === 'email') {
+                           return users.slice().sort((a, b) => a.email.localeCompare(b.email));
+                       } else {
+                           return users;
+                       }
+                       };
+
 
     const handleToggleUsers = () => {
         setIsOpen(!isOpen); // Toggle isOpen state
@@ -124,8 +286,12 @@ const UserCrud = () => {
             <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
                 <button onClick={handleToggleUsers}>{isOpen ? 'Hide Users' : 'Show Users'}</button>
             </div>
-            {/* Button to toggle users */}
-            <hr></hr>
+        <hr/>
+        <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
+            <input type="text" value={searchTerm} onChange={handleInputChange} placeholder="Search by email"/>
+            <button onClick={() => handleSearchUser(searchTerm)} disabled={!searchTerm}>Search</button>
+            <button onClick={resetSearch}>Reset</button>
+        </div>
             <div style={{display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
                 <button onClick={openModal}>Add User</button>
             </div>
@@ -178,9 +344,18 @@ const UserCrud = () => {
             </Modal>
 
 
-            {isOpen && ( // Render user list only if isOpen is true
+        {isOpen && (
                 <>
                     <h3>All Users</h3>
+                    <div>
+                        <label htmlFor="sort">Sort by:&ensp;</label>
+                        <select id="sort" value={sortType} onChange={handleSortChange}>
+                            <option value="">None</option>
+                            <option value="id">ID</option>
+                            <option value="username">Username</option>
+                            <option value="email">Email</option>
+                        </select>
+                    </div>
                     <table className="user-table">
                         <thead>
                         <tr>
@@ -192,13 +367,14 @@ const UserCrud = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {users.map(user => (
-                            <UserCard key={user.id} user={user} onDelete={handleDeleteUser}/>
+                        {sortUsers(users).map(user => (
+                            <UserCard key={user.id} user={user} onDelete={handleDeleteUser} fetchUsers={fetchUsers}/>
                         ))}
                         </tbody>
                     </table>
                 </>
             )}
+
         </div>
     );
 };

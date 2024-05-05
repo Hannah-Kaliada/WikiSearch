@@ -33,6 +33,7 @@ public class CountryController {
    * @return the all countries
    */
 @GetMapping
+@CrossOrigin
   public ResponseEntity<List<Country>> getAllCountries() {
     List<Country> countries = countryService.getAllCountries();
     return ResponseEntity.ok(countries);
@@ -45,10 +46,19 @@ public class CountryController {
    * @return the country by id
    */
 @GetMapping("/{id}")
+@CrossOrigin
   public ResponseEntity<Country> getCountryById(@PathVariable long id) {
     Country country = countryService.getCountryById(id);
     return country != null ? ResponseEntity.ok(country) : ResponseEntity.notFound().build();
   }
+
+  @GetMapping("name/{name}")
+  @CrossOrigin
+  public ResponseEntity<Country> getCountryByName(@PathVariable String name) {
+    Country country = countryService.getCountryByName(name);
+    return country != null ? ResponseEntity.ok(country) : ResponseEntity.notFound().build();
+  }
+
 
   /**
    * Add country response entity.
@@ -57,6 +67,7 @@ public class CountryController {
    * @return the response entity
    */
 @PostMapping("/addCountry")
+@CrossOrigin
   public ResponseEntity<Country> addCountry(@Valid @RequestBody Country country) {
     Country addedCountry = countryService.addCountry(country);
     return ResponseEntity.status(HttpStatus.CREATED).body(addedCountry);
@@ -70,6 +81,7 @@ public class CountryController {
    * @return the response entity
    */
 @PutMapping("/updateCountry/{id}")
+@CrossOrigin
   public ResponseEntity<Country> updateCountry(
       @PathVariable long id, @Valid @RequestBody Country country) {
     Country updatedCountry = countryService.updateCountry(country, id);
@@ -87,6 +99,7 @@ public class CountryController {
    * @return the response entity
    */
 @DeleteMapping("/deleteCountry/{id}")
+@CrossOrigin
   public ResponseEntity<Boolean> deleteCountry(@PathVariable long id) {
     if (id < 1) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
@@ -106,6 +119,7 @@ public class CountryController {
    * @return the response entity
    */
 @PostMapping("/addCountries")
+@CrossOrigin
   public ResponseEntity<String> bulkAddCountries(@RequestBody List<String> countryNames) {
     if (countryNames == null || countryNames.isEmpty()) {
       return ResponseEntity.badRequest().body("List of country names is empty.");
@@ -120,6 +134,7 @@ public class CountryController {
    * @return the count
    */
   @GetMapping("/count")
+  @CrossOrigin
   public int getCount() {
     // Получение количества обращений
     return countryService.getRequestCount();

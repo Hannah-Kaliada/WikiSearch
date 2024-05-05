@@ -1,5 +1,6 @@
 package com.search.wiki.controller;
 
+import com.search.wiki.controller.dto.CountryDto;
 import com.search.wiki.controller.dto.UserDto;
 import com.search.wiki.entity.User;
 import com.search.wiki.service.CountryService;
@@ -199,4 +200,16 @@ public class UserController {
     // Получение количества обращений
     return userService.getRequestCount();
   }
+  @GetMapping("/{userId}/country")
+  @CrossOrigin
+  public ResponseEntity<CountryDto> getCountryByUserId(@PathVariable long userId) {
+    CountryDto countryDto = userWithCountryService.getCountryByUserId(userId);
+
+    if (countryDto != null) {
+      return ResponseEntity.ok(countryDto);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
 }

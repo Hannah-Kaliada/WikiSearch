@@ -34,4 +34,10 @@
 .user-card button:hover {
     background-color: #d32f2f;
 }
+select#sort {
+    background-color: #ffffff; /* Зеленый цвет */
+}
+select#sort:focus {
+    outline: 2px solid #005500; /* Зеленая обводка при выделении */
+}
 
