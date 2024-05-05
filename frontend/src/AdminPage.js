@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import './AdminPage.css';
 import CountryCrud from './components/CountryCrud';
 import UserCrud from './components/UserCrud';
+import ArticleCrud from "./components/ArticlesCrud";
 
 const EntityBlock = ({entityName}) => {
     const [expanded, setExpanded] = useState(false);
@@ -30,7 +31,7 @@ const EntityBlock = ({entityName}) => {
         case 'Articles':
             entityInfo = (
                 <div>
-                    <p>Информация о сущности 3</p>
+                    <ArticleCrud/>
                 </div>
             );
             break;

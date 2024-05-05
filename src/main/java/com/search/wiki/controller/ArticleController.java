@@ -31,6 +31,7 @@ public class ArticleController {
    * @return the response entity
    */
   @GetMapping()
+  @CrossOrigin
   public ResponseEntity<List<Article>> findAllArticles() {
     List<Article> articles = service.findAllArticles();
     return ResponseEntity.ok(articles);
@@ -43,6 +44,7 @@ public class ArticleController {
    * @return the response entity
    */
   @PostMapping("/saveArticle")
+  @CrossOrigin
   public ResponseEntity<String> saveArticle(@RequestBody Article article) {
     service.saveArticle(article);
     String title = article.getTitle();
@@ -62,6 +64,7 @@ public class ArticleController {
    * @return the response entity
    */
   @GetMapping("/{id}")
+  @CrossOrigin
   public ResponseEntity<Article> findById(@PathVariable long id) {
 
     Article article = service.findById(id);
@@ -80,6 +83,7 @@ public class ArticleController {
    * @return the response entity
    */
   @PutMapping("updateArticle/{id}")
+  @CrossOrigin
   public ResponseEntity<Article> updateArticle(
       @Valid @RequestBody Article article, @PathVariable long id) {
 
@@ -98,6 +102,7 @@ public class ArticleController {
    * @return the response entity
    */
   @DeleteMapping("deleteArticle/{id}")
+  @CrossOrigin
   public ResponseEntity<String> deleteArticle(@PathVariable long id) {
     boolean deleted = service.deleteArticle(id);
     if (deleted) {
@@ -113,6 +118,7 @@ public class ArticleController {
    * @return the top 5 articles by user count
    */
   @GetMapping("/top5ByUserCount")
+  @CrossOrigin
   public ResponseEntity<List<Article>> getTop5ArticlesByUserCount() {
     List<Article> top5Articles = service.findTop5ArticlesByUserCount();
     return ResponseEntity.ok(top5Articles);
@@ -137,6 +143,7 @@ public class ArticleController {
    * @return the response entity
    */
   @PostMapping("/bulkSearchArticles")
+  @CrossOrigin
   public ResponseEntity<String> bulkSearchArticles(@RequestBody List<Query> queries) {
     if (queries == null || queries.isEmpty()) {
       return ResponseEntity.badRequest().body("List of queries is empty.");

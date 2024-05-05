@@ -12,6 +12,15 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
     const [updatedName, setUpdatedName] = useState('');
     const [showUpdateInput, setShowUpdateInput] = useState(false);
     const [selectedCountryId, setSelectedCountryId] = useState(null);
+    const [sortBy, setSortBy] = useState(null);
+
+    const sortCountries = () => {
+        if (sortBy === 'name') {
+            setCountries(countries.slice().sort((a, b) => a.name.localeCompare(b.name)));
+        } else if (sortBy === 'id') {
+            setCountries(countries.slice().sort((a, b) => a.id - b.id));
+        }
+    };
 
     const selectCountryForUpdate = (id) => {
         setSelectedCountryId(id);
@@ -46,6 +55,9 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
             pollCountries(); // Запускаем поллинг при отображении всех стран
         }
     }, [showAllCountries]);
+    useEffect(() => {
+        sortCountries();
+    }, [sortBy, countries]);
 
     const handleCreate = async () => {
         try {
@@ -87,6 +99,10 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
             {showAllCountries && (
                 <div>
                     <h3>All Countries</h3>
+                    <div>
+                        <button onClick={() => setSortBy('name')}>Sort by Name</button>
+                        <button onClick={() => setSortBy('id')}>Sort by ID</button>
+                    </div>
                     <table style={{width: '100%', textAlign: 'center'}}>
                         <tbody>
                         {countries.map((country) => (
@@ -101,7 +117,7 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
                                 <td>
                                     {selectedCountryId !== country.id ? (
                                         <button onClick={() => selectCountryForUpdate(country.id)}>
-                                            <FontAwesomeIcon icon={faSync} style={{ color: 'black' }} />
+                                            <FontAwesomeIcon icon={faSync} style={{color: 'black'}}/>
                                         </button>
                                     ) : (
                                         <>
@@ -110,15 +126,15 @@ const CountryCrud = ({ country, onCreate, onUpdate, onDelete }) => {
                                                 value={updatedName}
                                                 onChange={(e) => setUpdatedName(e.target.value)}
                                                 placeholder="New name"
-                                                style={{ marginLeft: '10px' }}
+                                                style={{marginLeft: '10px'}}
                                             />
                                             <button onClick={() => handleUpdate(country.id)}>Update</button>
                                             <button onClick={cancelUpdate}>Cancel</button>
                                         </>
                                     )}
-                            </td>
+                                </td>
                             </tr>
-                            ))}
+                        ))}
                         </tbody>
                     </table>
                 </div>

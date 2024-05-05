@@ -1,20 +1,24 @@
 .user-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #dcdcdc;
 }
 
 .user-table th, .user-table td {
-    border: 1px solid #ddd;
+    border: 2px solid #000000;
     padding: 8px;
 }
 
+
 .user-table th {
-    background-color: #f2f2f2;
+    background-color: #606060;
+    color: white;
     text-align: left;
 }
 
 .user-card td {
     vertical-align: top;
+    background-color: #ffffff;
 }
 
 .user-card button {
@@ -40,4 +44,36 @@ select#sort {
 select#sort:focus {
     outline: 2px solid #005500;
 }
+.favorite-articles-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.favorite-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.favorite-article-item {
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.favorite-article-item a {
+    text-decoration: none;
+    color: #333;
+}
+
+.favorite-article-item button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.found-user {
+    border: 2px solid green;
+}
+
 

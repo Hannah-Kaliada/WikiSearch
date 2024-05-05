@@ -6,13 +6,7 @@ import com.search.wiki.service.FavouriteArticlesService;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** The type Favourite articles controller. */
 @RestController
@@ -30,6 +24,7 @@ public class FavouriteArticlesController {
    * @return the response entity
    */
   @PostMapping("/{userId}/add/{articleId}")
+  @CrossOrigin
   public ResponseEntity<Void> addArticleToUserFavorites(
       @PathVariable Long userId, @PathVariable Long articleId) {
     favouriteArticlesService.addArticleToUserFavorites(userId, articleId);
@@ -44,6 +39,7 @@ public class FavouriteArticlesController {
    * @return the response entity
    */
   @DeleteMapping("/{userId}/remove/{articleId}")
+  @CrossOrigin
   public ResponseEntity<Void> removeArticleFromUserFavorites(
       @PathVariable Long userId, @PathVariable Long articleId) {
     favouriteArticlesService.removeArticleFromUserFavorites(userId, articleId);
@@ -59,6 +55,7 @@ public class FavouriteArticlesController {
    * @return the response entity
    */
   @PutMapping("/{userId}/edit/{prevArticleId}/{newArticleId}")
+  @CrossOrigin
   public ResponseEntity<Void> editUserFavoriteArticle(
       @PathVariable Long userId,
       @PathVariable Long prevArticleId,
@@ -74,6 +71,7 @@ public class FavouriteArticlesController {
    * @return the articles saved by user
    */
   @GetMapping("/{articleId}/get-saved-users")
+  @CrossOrigin
   public ResponseEntity<Set<User>> getArticlesSavedByUser(@PathVariable Long articleId) {
     Set<User> savedUsers = favouriteArticlesService.getArticlesSavedByUser(articleId);
     return ResponseEntity.ok(savedUsers);
@@ -86,6 +84,7 @@ public class FavouriteArticlesController {
    * @return the user favorite articles
    */
   @GetMapping("/{userId}/get-favorite-articles")
+  @CrossOrigin
   public ResponseEntity<FavouriteArticlesDto> getUserFavoriteArticles(@PathVariable Long userId) {
     FavouriteArticlesDto articles = favouriteArticlesService.getUserFavoriteArticles(userId);
     return ResponseEntity.ok(articles);

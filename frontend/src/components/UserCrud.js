@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import './UserCrud.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import {faSync} from "@fortawesome/free-solid-svg-icons/faSync";
 
 const UserCard = ({user, onDelete, fetchUsers}) => {
     const [country, setCountry] = useState('Loading...');
@@ -83,58 +86,73 @@ const UserCard = ({user, onDelete, fetchUsers}) => {
 
         setCountry(e.target.value);
     };
+    const handleRemoveArticle = async (userId, articleId) => {
+        try {
+            await axios.delete(`http://localhost:8080/api/v1/favorite-articles/${userId}/remove/${articleId}`);
+            fetchUsers(); // Optionally, fetch updated user data after removal
+        } catch (error) {
+            console.error('Error removing article:', error);
+        }
+    };
+
 
     return (
         <>
-        <tr className="user-card">
-            <td>{user.id}</td>
-            <td>{isEditing ? <input type="text" name="username" value={editedUsername}
-                                    onChange={handleInputChange}/> : user.username}</td>
-            <td>{isEditing ?
-                <input type="email" name="email" value={editedEmail} onChange={handleInputChange}/> : user.email}</td>
-            <td>
-                {isEditing ? (
-                    <select value={country} onChange={handleCountryChange}>
-                        <option value="">Select country</option>
-                        {countryOptions.map(country => (
-                            <option key={country.id} value={country.name}>{country.name}</option>
+            <tr className="user-card">
+                <td>{user.id}</td>
+                <td>{isEditing ? <input type="text" name="username" value={editedUsername}
+                                        onChange={handleInputChange}/> : user.username}</td>
+                <td>{isEditing ?
+                    <input type="email" name="email" value={editedEmail}
+                           onChange={handleInputChange}/> : user.email}</td>
+                <td>
+                    {isEditing ? (
+                        <select value={country} onChange={handleCountryChange}>
+                            <option value="">Select country</option>
+                            {countryOptions.map(country => (
+                                <option key={country.id} value={country.name}>{country.name}</option>
+                            ))}
+                        </select>
+                    ) : (
+                        country
+                    )}
+                </td>
+                <td>
+                    {isEditing ? (
+                        <>
+                            <button onClick={handleSaveEdit}>Save</button>
+                            <button onClick={handleCancelEdit}>Cancel</button>
+                        </>
+                    ) : (
+                        <button onClick={handleEdit}>Edit</button>
+                    )}
+                    <button onClick={() => onDelete(user.id)}>Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td colSpan="6">
+                    <strong>Favorite Articles:</strong>
+                    <ul className="favorite-articles-list favorite-articles-grid">
+                        {user.favoriteArticles.map(article => (
+                            <li key={article.id} className="favorite-article-item">
+                                <a href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>
+                                <button onClick={() => handleRemoveArticle(user.id, article.id)}>
+                                    <FontAwesomeIcon icon={faTrash} style={{color: 'grey'}}/>
+                                </button>
+                            </li>
                         ))}
-                    </select>
-                ) : (
-                    country
-                )}
-            </td>
-            <td>
-                {isEditing ? (
-                    <>
-                        <button onClick={handleSaveEdit}>Save</button>
-                        <button onClick={handleCancelEdit}>Cancel</button>
-                    </>
-                ) : (
-                    <button onClick={handleEdit}>Edit</button>
-                )}
-                <button onClick={() => onDelete(user.id)}>Delete</button>
-            </td>
-        </tr>
-        <tr>
-            <td colSpan="6">
-                <strong>Favorite Articles:</strong>
-                <ul>
-                    {user.favoriteArticles.map(article => (
-                        <li key={article.id}>
-                            <a href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                        </li>
-                    ))}
-                </ul>
-            </td>
-        </tr>
+                    </ul>
+                </td>
+            </tr>
+
+
         </>
-        );
+    );
 };
 const UserCrud = () => {
     const [users, setUsers] = useState([]);
     const [name, setName] = useState('');
-                           const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -188,14 +206,14 @@ const UserCrud = () => {
 
                            foundUsers.forEach(userRow => {
                            const userEmail = userRow.querySelector('td:nth-child(3)').textContent; // Change 3 to the appropriate column number
-                           if (userEmail === searchTerm) {
-                           userRow.scrollIntoView({behavior: 'smooth', block: 'center'});
-                           userRow.style.border = '2px solid green';
-                           userFound = true;
-                       } else {
-                           userRow.style.border = 'none';
-                       }
-                       });
+                               if (userEmail === searchTerm) {
+                                   userRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                   userRow.style.border = '4px solid #0044ff';
+                                   userFound = true;
+                               } else {
+                                   userRow.style.border = 'none';
+                               }
+                           });
 
                            if (!userFound) {
                            setError('User not found.');
@@ -254,14 +272,12 @@ const UserCrud = () => {
                        }
                        };
 
-
     const handleToggleUsers = () => {
         setIsOpen(!isOpen);
-        if (!isLoaded) {
-            fetchUsers();
-            setIsLoaded(true);
-        }
+        fetchUsers(); // Вызываем fetchUsers при каждом открытии
     };
+
+
 
     const openModal = () => {
         setIsModalOpen(true);
