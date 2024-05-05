@@ -4,10 +4,8 @@
     justify-content: center;
     min-height: 100vh;
     background-color: #f2f2f2;
-    //background-image: url('https://media.tenor.com/sTqLUqoyZc4AAAAM/1557o94d12hr.gif');
-    //background-size: cover;
+    background-image: url('https://media.tenor.com/sTqLUqoyZc4AAAAM/1557o94d12hr.gif');
 }
-
 .content {
     width: 100%;
     //nmax-width: 900px;
@@ -19,9 +17,9 @@
 }
 
 .title {
-    font-family: 'Rubik', sans-serif; /* Установка шрифта Rubik */
-    font-size: 2em; /* Увеличение размера текста */
-    color: gray; /* Назначение серого цвета */
+    font-family: 'Rubik', sans-serif;
+    font-size: 2em;
+    color: gray;
 }
 
 .label {
@@ -54,6 +52,6 @@
 }
 
 .authenticated {
-    background-color: #ccc; /* Серый фон для аутентифицированных пользователей */
+    background-color: #ccc;
 }
 

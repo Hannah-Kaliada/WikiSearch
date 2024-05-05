@@ -10,7 +10,7 @@ const UserCard = ({user, onDelete, fetchUsers}) => {
     const [editedEmail, setEditedEmail] = useState(user.email);
     const [countryId, setCountryId] = useState(user.countryId);
     const [countryOptions, setCountryOptions] = useState([]);
-    const [selectedCountryName, setSelectedCountryName] = useState(''); // Для отслеживания выбранной страны в режиме редактирования
+    const [selectedCountryName, setSelectedCountryName] = useState('');
 
     useEffect(() => {
         const fetchCountry = async () => {
@@ -39,7 +39,6 @@ const UserCard = ({user, onDelete, fetchUsers}) => {
 
     const handleEdit = () => {
         setIsEditing(true);
-        // Сохраняем текущую выбранную страну при начале редактирования
         setSelectedCountryName(country);
     };
 
@@ -52,25 +51,19 @@ const UserCard = ({user, onDelete, fetchUsers}) => {
 
     const handleSaveEdit = async () => {
         try {
-            // Получаем идентификатор страны по ее названию
             const countryResponse = await axios.get(`http://localhost:8080/api/v1/countries/name/${country}`);
             const countryId = countryResponse.data.id;
-
-            // Обновляем данные пользователя на сервере
             const updatedUserData = {
                 id: user.id,
                 username: editedUsername,
                 email: editedEmail,
                 password: user.password
             };
-
-            // Выполняем запрос на обновление пользователя с новыми данными
             await axios.put(`http://localhost:8080/api/v1/users/updateUser/${user.id}`, updatedUserData);
 
-            // Обновляем страну пользователя на сервере
             await axios.put(`http://localhost:8080/api/v1/users/updateUserCountry/${user.id}/${countryId}`);
             fetchUsers();
-            setIsEditing(false); // Завершаем режим редактирования
+            setIsEditing(false);
         } catch (error) {
             console.error('Error updating user:', error);
         }
@@ -87,7 +80,7 @@ const UserCard = ({user, onDelete, fetchUsers}) => {
     };
 
     const handleCountryChange = (e) => {
-        // Сохраняем выбранную страну в состояние
+
         setCountry(e.target.value);
     };
 
@@ -142,8 +135,8 @@ const UserCrud = () => {
     const [users, setUsers] = useState([]);
     const [name, setName] = useState('');
                            const [searchTerm, setSearchTerm] = useState('');
-    const [isLoaded, setIsLoaded] = useState(false); // New state to track if users are loaded
-    const [isOpen, setIsOpen] = useState(false); // New state to track if user list is open or closed
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalUsername, setModalUsername] = useState('');
     const [modalEmail, setModalEmail] = useState('');
@@ -214,7 +207,6 @@ const UserCrud = () => {
                            const resetSearch = () => {
                            setSearchTerm('');
                            setError('');
-                           // Сбрасываем стиль подчеркивания всех пользователей
                            users.forEach(user => {
                            const userRow = document.getElementById(`user-${user.id}`);
                            if (userRow) {
@@ -264,10 +256,10 @@ const UserCrud = () => {
 
 
     const handleToggleUsers = () => {
-        setIsOpen(!isOpen); // Toggle isOpen state
+        setIsOpen(!isOpen);
         if (!isLoaded) {
-            fetchUsers(); // Load users only if not already loaded
-            setIsLoaded(true); // Set isLoaded to true once users are loaded
+            fetchUsers();
+            setIsLoaded(true);
         }
     };
 

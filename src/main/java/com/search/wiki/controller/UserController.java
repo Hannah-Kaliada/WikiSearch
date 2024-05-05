@@ -197,7 +197,6 @@ public class UserController {
   @GetMapping("/count")
   @CrossOrigin
   public int getCount() {
-    // Получение количества обращений
     return userService.getRequestCount();
   }
   @GetMapping("/{userId}/country")
