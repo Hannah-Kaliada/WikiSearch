@@ -30,3 +30,5 @@ logging:
     rollingpolicy:
       max-file-size: 500MB
       max-history: 1
+  server:
+    port: 8080
