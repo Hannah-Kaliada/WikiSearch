@@ -1,20 +1,12 @@
-# Используем Node.js как базовый образ
-FROM node:14
+FROM node:14-alpine
 
-# Устанавливаем рабочую директорию в /app
 WORKDIR /app
-
-# Копируем package.json и package-lock.json в текущую директорию
-COPY package*.json ./
-
-# Устанавливаем зависимости
-RUN npm install
 
 # Копируем все файлы в текущую директорию
 COPY . .
 
-# Открываем порт 3000 для внешних подключений
-EXPOSE 3000
+# Устанавливаем зависимости
+RUN npm install
 
 # Команда для запуска приложения
 CMD ["npm", "start"]

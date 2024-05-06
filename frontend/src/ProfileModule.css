@@ -21,7 +21,6 @@ tr:nth-child(even) {
 }
 
 td button {
-    background-color: #4CAF50;
     color: white;
     border: none;
     padding: 8px 12px;

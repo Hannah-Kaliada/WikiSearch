@@ -6,6 +6,7 @@ import ResultPage from "./ResultPage";
 import AdminPage from "./AdminPage";
 import LoginPage from "./LoginPage";
 import TermsOfUsePage from "./TermsOfUsePage";
+import SignupPage from "./SignupPage";
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
                 <Route path="/secret" element={<AdminPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path="/terms-of-use" element={<TermsOfUsePage/>}/>
+                <Route path="/sign-up" element={<SignupPage/>}/>
             </Routes>
         </Router>
     );

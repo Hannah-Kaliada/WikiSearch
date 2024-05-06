@@ -26,3 +26,8 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - psql-db
+  frontend-react:
+    container_name: my-react-app
+    build: ./frontend
+    ports:
+      - "3000:3000"

@@ -133,7 +133,7 @@ const UserCard = ({user, onDelete, fetchUsers}) => {
                 <td colSpan="6">
                     <strong>Favorite Articles:</strong>
                     <ul className="favorite-articles-list favorite-articles-grid">
-                        {user.favoriteArticles.map(article => (
+                        {user.favoriteArticles && user.favoriteArticles.map(article => (
                             <li key={article.id} className="favorite-article-item">
                                 <a href={article.url} target="_blank" rel="noopener noreferrer">{article.title}</a>
                                 <button onClick={() => handleRemoveArticle(user.id, article.id)}>

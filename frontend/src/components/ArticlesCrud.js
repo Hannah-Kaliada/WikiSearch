@@ -75,7 +75,7 @@ const ArticleCrud = () => {
                                 <td>{article.id}</td>
                                 <td>{article.title}</td>
                                 <td>
-                                    <button onClick={() => handleDelete(article.id)}>Delete</button>
+                                    <button style={{ backgroundColor: 'black' }} onClick={() => handleDelete(article.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
