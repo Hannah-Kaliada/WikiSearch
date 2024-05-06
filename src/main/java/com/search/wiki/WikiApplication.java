@@ -16,6 +16,7 @@ public class WikiApplication {
    * @param args the input arguments
    */
   public static void main(String[] args) {
+    System.setProperty("server.address", "0.0.0.0");
     SpringApplication.run(WikiApplication.class, args);
   }
 
