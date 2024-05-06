@@ -1,0 +1,15 @@
+# Exported from Render on 2024-05-06T13:03:07Z
+services:
+- type: web
+  name: WikiSearch
+  runtime: docker
+  repo: https://github.com/Hannah-Kaliada/WikiSearch
+  plan: free
+  envVars:
+  - key: PORT
+    sync: false
+  region: ohio
+  dockerContext: .
+  dockerfilePath: ./Dockerfile
+  pullRequestPreviewsEnabled: true
+version: "1"
