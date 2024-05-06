@@ -3,6 +3,7 @@ services:
 - type: web
   name: WikiSearch
   runtime: docker
+  port: 3000
   repo: https://github.com/Hannah-Kaliada/WikiSearch
   plan: free
   envVars:
