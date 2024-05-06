@@ -15,7 +15,7 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        fetch('/api/v1/articles/top5ByUserCount')
+        fetch('http://localhost:8080/api/v1/articles/top5ByUserCount')
             .then(response => response.json())
             .then(articles => {
                 setArticles(articles.slice(0, 5));

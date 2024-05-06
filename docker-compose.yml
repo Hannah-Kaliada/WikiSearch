@@ -1,33 +1,45 @@
 version: "3.8"
 
 services:
-  psql-db:
+  db:
+    platform: linux/amd64
+    container_name: db
     image: postgres
-    container_name: psql-db
-    restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=wiki_db
     ports:
-      - '5432:5432'
+        - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      net:
 
-  wiki:
-    container_name: wiki_app
+  backend:
+    container_name: backend
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '8080:8080'
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://psql-db:5432/wiki_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - "8080:8080"
     depends_on:
-      - psql-db
-  frontend-react:
+      - db
+    environment:
+      - spring.jpa.hibernate.ddl-auto=update
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/wiki_db
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+    networks:
+      net:
+    restart: on-failure
+
+  my-react-app:
     container_name: my-react-app
     build: ./frontend
     ports:
       - "3000:3000"
+
+networks:
+  net:
